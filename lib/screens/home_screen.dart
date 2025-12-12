@@ -16,6 +16,47 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
+  final TextEditingController _amountController = TextEditingController();
+  final TextEditingController _resultController = TextEditingController();
+  String _fromCurrency = 'USD';
+  String _toCurrency = 'EUR';
+
+  final List<Map<String, dynamic>> _currencyRates = [
+    {'code': 'USD', 'name': 'US Dollar', 'rate': 1.0, 'symbol': '\$'},
+    {'code': 'EUR', 'name': 'Euro', 'rate': 0.925, 'symbol': '€'},
+    {'code': 'GBP', 'name': 'British Pound', 'rate': 0.795, 'symbol': '£'},
+    {'code': 'JPY', 'name': 'Japanese Yen', 'rate': 145.50, 'symbol': '¥'},
+    {'code': 'AUD', 'name': 'Australian Dollar', 'rate': 1.52, 'symbol': 'A\$'},
+    {'code': 'CAD', 'name': 'Canadian Dollar', 'rate': 1.35, 'symbol': 'C\$'},
+    {'code': 'CHF', 'name': 'Swiss Franc', 'rate': 0.885, 'symbol': 'Fr'},
+    {'code': 'CNY', 'name': 'Chinese Yuan', 'rate': 7.24, 'symbol': '¥'},
+    {'code': 'INR', 'name': 'Indian Rupee', 'rate': 83.45, 'symbol': '₹'},
+    {'code': 'MXN', 'name': 'Mexican Peso', 'rate': 17.05, 'symbol': '\$'},
+    {'code': 'PKR', 'name': 'Pakistani Rupee', 'rate': 278.50, 'symbol': 'Rs'},
+  ];
+
+  @override
+  void dispose() {
+    _amountController.dispose();
+    _resultController.dispose();
+    super.dispose();
+  }
+
+  void _convertCurrency() {
+    if (_amountController.text.isEmpty) {
+      _resultController.clear();
+      return;
+    }
+
+    double amount = double.tryParse(_amountController.text) ?? 0.0;
+    double fromRate = _currencyRates.firstWhere((c) => c['code'] == _fromCurrency)['rate'];
+    double toRate = _currencyRates.firstWhere((c) => c['code'] == _toCurrency)['rate'];
+
+    double result = amount * (toRate / fromRate);
+    
+    // Format to 2 decimal places
+    _resultController.text = result.toStringAsFixed(2);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -148,81 +189,162 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: Column(
                       children: [
                         // From Currency
-                        TextField(
-                          style: TextStyle(color: themeProvider.getTextColor()),
-                          keyboardType: TextInputType.number,
-                          decoration: InputDecoration(
-                            hintText: 'Enter amount',
-                            hintStyle: TextStyle(color: themeProvider.getSecondaryTextColor()),
-                            prefixText: '\$ ',
-                            prefixStyle: TextStyle(
-                              color: themeProvider.getTextColor(),
-                              fontSize: 18,
+                        Row(
+                          children: [
+                            Expanded(
+                              child: TextField(
+                                controller: _amountController,
+                                onChanged: (value) => _convertCurrency(),
+                                style: TextStyle(color: themeProvider.getTextColor()),
+                                keyboardType: TextInputType.number,
+                                decoration: InputDecoration(
+                                  labelText: 'Amount',
+                                  labelStyle: TextStyle(color: themeProvider.getSecondaryTextColor()),
+                                  hintText: 'Enter amount',
+                                  hintStyle: TextStyle(color: themeProvider.getSecondaryTextColor()),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                    borderSide: BorderSide(color: themeProvider.getBorderColor()),
+                                  ),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                    borderSide: BorderSide(color: themeProvider.getBorderColor()),
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                    borderSide:
+                                        BorderSide(color: themeProvider.getAccentColor(), width: 2),
+                                  ),
+                                ),
+                              ),
                             ),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(8),
-                              borderSide: BorderSide(color: themeProvider.getBorderColor()),
+                            const SizedBox(width: 12),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                              decoration: BoxDecoration(
+                                color: themeProvider.getCardBackgroundColor(),
+                                borderRadius: BorderRadius.circular(8),
+                                border: Border.all(color: themeProvider.getBorderColor()),
+                              ),
+                              child: DropdownButtonHideUnderline(
+                                child: DropdownButton<String>(
+                                  value: _fromCurrency,
+                                  dropdownColor: themeProvider.getCardBackgroundColor(),
+                                  icon: Icon(Icons.arrow_drop_down, color: themeProvider.getTextColor()),
+                                  items: _currencyRates.map<DropdownMenuItem<String>>((currency) {
+                                    return DropdownMenuItem<String>(
+                                      value: currency['code'] as String,
+                                      child: Text(
+                                        currency['code'] as String,
+                                        style: TextStyle(
+                                          color: themeProvider.getTextColor(),
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    );
+                                  }).toList(),
+                                  onChanged: (value) {
+                                    setState(() {
+                                      _fromCurrency = value!;
+                                      _convertCurrency();
+                                    });
+                                  },
+                                ),
+                              ),
                             ),
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(8),
-                              borderSide: BorderSide(color: themeProvider.getBorderColor()),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(8),
-                              borderSide:
-                                  BorderSide(color: themeProvider.getAccentColor(), width: 2),
-                            ),
-                          ),
+                          ],
                         ),
                         const SizedBox(height: 12),
                         Center(
-                          child: Container(
-                            padding: const EdgeInsets.all(8),
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: themeProvider.getCardBackgroundColor(),
-                              border: Border.all(color: themeProvider.getBorderColor()),
-                            ),
-                            child: Icon(
-                              Icons.swap_vert,
-                              color: themeProvider.getTextColor(),
+                          child: GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                final temp = _fromCurrency;
+                                _fromCurrency = _toCurrency;
+                                _toCurrency = temp;
+                                _convertCurrency();
+                              });
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: themeProvider.getCardBackgroundColor(),
+                                border: Border.all(color: themeProvider.getBorderColor()),
+                              ),
+                              child: Icon(
+                                Icons.swap_vert,
+                                color: themeProvider.getTextColor(),
+                              ),
                             ),
                           ),
                         ),
                         const SizedBox(height: 12),
                         // To Currency
-                        TextField(
-                          style: TextStyle(color: themeProvider.getTextColor()),
-                          readOnly: true,
-                          decoration: InputDecoration(
-                            hintText: '0.00',
-                            hintStyle: TextStyle(color: themeProvider.getSecondaryTextColor()),
-                            prefixText: '€ ',
-                            prefixStyle: TextStyle(
-                              color: themeProvider.getTextColor(),
-                              fontSize: 18,
+                        Row(
+                          children: [
+                            Expanded(
+                              child: TextField(
+                                controller: _resultController,
+                                style: TextStyle(color: themeProvider.getTextColor()),
+                                readOnly: true,
+                                decoration: InputDecoration(
+                                  labelText: 'Converted Amount',
+                                  labelStyle: TextStyle(color: themeProvider.getSecondaryTextColor()),
+                                  hintText: '0.00',
+                                  hintStyle: TextStyle(color: themeProvider.getSecondaryTextColor()),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                    borderSide: BorderSide(color: themeProvider.getBorderColor()),
+                                  ),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                    borderSide: BorderSide(color: themeProvider.getBorderColor()),
+                                  ),
+                                ),
+                              ),
                             ),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(8),
-                              borderSide: BorderSide(color: themeProvider.getBorderColor()),
+                            const SizedBox(width: 12),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                              decoration: BoxDecoration(
+                                color: themeProvider.getCardBackgroundColor(),
+                                borderRadius: BorderRadius.circular(8),
+                                border: Border.all(color: themeProvider.getBorderColor()),
+                              ),
+                              child: DropdownButtonHideUnderline(
+                                child: DropdownButton<String>(
+                                  value: _toCurrency,
+                                  dropdownColor: themeProvider.getCardBackgroundColor(),
+                                  icon: Icon(Icons.arrow_drop_down, color: themeProvider.getTextColor()),
+                                  items: _currencyRates.map<DropdownMenuItem<String>>((currency) {
+                                    return DropdownMenuItem<String>(
+                                      value: currency['code'] as String,
+                                      child: Text(
+                                        currency['code'] as String,
+                                        style: TextStyle(
+                                          color: themeProvider.getTextColor(),
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    );
+                                  }).toList(),
+                                  onChanged: (value) {
+                                    setState(() {
+                                      _toCurrency = value!;
+                                      _convertCurrency();
+                                    });
+                                  },
+                                ),
+                              ),
                             ),
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(8),
-                              borderSide: BorderSide(color: themeProvider.getBorderColor()),
-                            ),
-                          ),
+                          ],
                         ),
                         const SizedBox(height: 16),
                         SizedBox(
                           width: double.infinity,
                           child: ElevatedButton(
-                            onPressed: () {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text('Conversion feature coming soon'),
-                                ),
-                              );
-                            },
+                            onPressed: _convertCurrency,
                             style: ElevatedButton.styleFrom(
                               backgroundColor: themeProvider.getAccentColor(),
                               padding: const EdgeInsets.symmetric(vertical: 12),

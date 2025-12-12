@@ -22,6 +22,7 @@ class _CurrencyRateScreenState extends State<CurrencyRateScreen> {
     {'code': 'CNY', 'name': 'Chinese Yuan', 'rate': 7.24, 'change': '+0.1%'},
     {'code': 'INR', 'name': 'Indian Rupee', 'rate': 83.45, 'change': '-0.3%'},
     {'code': 'MXN', 'name': 'Mexican Peso', 'rate': 17.05, 'change': '+0.5%'},
+    {'code': 'PKR', 'name': 'Pakistani Rupee', 'rate': 278.50, 'change': '+0.1%'},
   ];
 
   late List<Map<String, dynamic>> _filteredRates;
