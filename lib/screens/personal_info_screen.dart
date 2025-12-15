@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
+import 'dart:convert';
 import '../providers/theme_provider.dart';
 import '../providers/auth_provider.dart';
 
@@ -16,6 +19,8 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
   late TextEditingController _emailController;
   late TextEditingController _phoneController;
   bool _isEditing = false;
+  final ImagePicker _picker = ImagePicker();
+  String? _selectedImagePath;
 
   @override
   void initState() {
@@ -32,6 +37,51 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
     _emailController.dispose();
     _phoneController.dispose();
     super.dispose();
+  }
+
+  Future<void> _pickImage() async {
+    // For now, we'll use a simple dialog to show available avatar options
+    // In a production app, you would implement proper file upload
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Choose Avatar'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text('Select a profile picture:'),
+            const SizedBox(height: 16),
+            Wrap(
+              spacing: 10,
+              runSpacing: 10,
+              children: List.generate(12, (index) {
+                final avatarUrl = 'https://i.pravatar.cc/150?img=${index + 1}';
+                return GestureDetector(
+                  onTap: () {
+                    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+                    authProvider.updatePhotoUrl(avatarUrl);
+                    Navigator.pop(context);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Profile picture updated!')),
+                    );
+                  },
+                  child: CircleAvatar(
+                    radius: 30,
+                    backgroundImage: NetworkImage(avatarUrl),
+                  ),
+                );
+              }),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+        ],
+      ),
+    );
   }
 
   void _saveChanges() {
@@ -112,6 +162,9 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
                                 children: [
                                   Consumer<AuthProvider>(
                                     builder: (context, authProvider, child) {
+                                      final photoUrl = authProvider.user?.photoUrl ?? 
+                                                      'https://i.pravatar.cc/150?img=11';
+                                      
                                       return Container(
                                         width: 120,
                                         height: 120,
@@ -122,10 +175,7 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
                                             width: 3,
                                           ),
                                           image: DecorationImage(
-                                            image: NetworkImage(
-                                              authProvider.user?.photoUrl ?? 
-                                              'https://i.pravatar.cc/150?img=11'
-                                            ),
+                                            image: NetworkImage(photoUrl),
                                             fit: BoxFit.cover,
                                           ),
                                         ),
@@ -136,16 +186,19 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
                                     Positioned(
                                       bottom: 0,
                                       right: 0,
-                                      child: Container(
-                                        padding: const EdgeInsets.all(8),
-                                        decoration: BoxDecoration(
-                                          color: themeProvider.getAccentColor(),
-                                          shape: BoxShape.circle,
-                                        ),
-                                        child: const Icon(
-                                          Icons.camera_alt,
-                                          color: Colors.white,
-                                          size: 20,
+                                      child: GestureDetector(
+                                        onTap: _pickImage,
+                                        child: Container(
+                                          padding: const EdgeInsets.all(8),
+                                          decoration: BoxDecoration(
+                                            color: themeProvider.getAccentColor(),
+                                            shape: BoxShape.circle,
+                                          ),
+                                          child: const Icon(
+                                            Icons.camera_alt,
+                                            color: Colors.white,
+                                            size: 20,
+                                          ),
                                         ),
                                       ),
                                     ),

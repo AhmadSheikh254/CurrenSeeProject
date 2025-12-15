@@ -118,4 +118,21 @@ class AuthProvider extends ChangeNotifier {
       notifyListeners();
     }
   }
+
+  // Update profile photo
+  void updatePhotoUrl(String photoUrl) {
+    if (_user != null) {
+      _user = User(
+        id: _user!.id,
+        name: _user!.name,
+        email: _user!.email,
+        photoUrl: photoUrl,
+      );
+      
+      // Update in the registered users map
+      _registeredUsers[_user!.email] = _user!;
+      
+      notifyListeners();
+    }
+  }
 }
