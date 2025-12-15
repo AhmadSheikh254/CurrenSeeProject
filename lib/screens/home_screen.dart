@@ -567,7 +567,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               color: Colors.white.withOpacity(0.2),
                               shape: BoxShape.circle,
                             ),
-                            child: const Icon(Icons.newspaper, color: Colors.white, size: 28),
+                            child: const Icon(Icons.newspaper, color: Colors.black, size: 28),
                           ),
                           const SizedBox(width: 16),
                           const Expanded(
@@ -579,7 +579,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   style: TextStyle(
                                     fontSize: 18,
                                     fontWeight: FontWeight.bold,
-                                    color: Colors.white,
+                                    color: Colors.black,
                                   ),
                                 ),
                                 SizedBox(height: 4),
@@ -587,13 +587,13 @@ class _HomeScreenState extends State<HomeScreen> {
                                   'Stay updated with latest trends',
                                   style: TextStyle(
                                     fontSize: 12,
-                                    color: Colors.white70,
+                                    color: Colors.black,
                                   ),
                                 ),
                               ],
                             ),
                           ),
-                          const Icon(Icons.arrow_forward_ios, color: Colors.white, size: 16),
+                          const Icon(Icons.arrow_forward_ios, color: Colors.black, size: 16),
                         ],
                       ),
                     ),

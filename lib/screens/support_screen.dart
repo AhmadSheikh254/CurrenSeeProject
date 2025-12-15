@@ -195,30 +195,32 @@ class SupportScreen extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: themeProvider.getBorderColor()),
       ),
-      child: Theme(
-        data: Theme.of(themeProvider.isDarkMode ?  ThemeData.dark() : ThemeData.light()).copyWith(dividerColor: Colors.transparent),
-        child: ExpansionTile(
-          title: Text(
-            question,
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              color: themeProvider.getTextColor(),
-            ),
-          ),
-          iconColor: themeProvider.getAccentColor(),
-          collapsedIconColor: themeProvider.getTextColor(),
-          children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-              child: Text(
-                answer,
-                style: TextStyle(
-                  color: themeProvider.getSecondaryTextColor(),
-                  height: 1.5,
-                ),
+      child: Builder(
+        builder: (context) => Theme(
+          data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+          child: ExpansionTile(
+            title: Text(
+              question,
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: themeProvider.getTextColor(),
               ),
             ),
-          ],
+            iconColor: themeProvider.getAccentColor(),
+            collapsedIconColor: themeProvider.getTextColor(),
+            children: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                child: Text(
+                  answer,
+                  style: TextStyle(
+                    color: themeProvider.getSecondaryTextColor(),
+                    height: 1.5,
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

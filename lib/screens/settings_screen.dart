@@ -169,7 +169,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         _showLogoutDialog(context, themeProvider);
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.red,
+                        backgroundColor: themeProvider.getAccentColor(),
                         padding: const EdgeInsets.symmetric(vertical: 14),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),

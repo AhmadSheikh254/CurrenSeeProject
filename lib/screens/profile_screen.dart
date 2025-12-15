@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:provider/provider.dart';
 import '../providers/theme_provider.dart';
 import '../providers/auth_provider.dart';
 import 'alerts_screen.dart';
 import 'support_screen.dart';
 import 'feedback_screen.dart';
+import 'personal_info_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -15,102 +15,6 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  Widget _buildStatCard(ThemeProvider themeProvider, String label, String value, IconData icon) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: themeProvider.getCardBackgroundColor(),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: themeProvider.getBorderColor()),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(icon, color: themeProvider.getAccentColor(), size: 28),
-          const SizedBox(height: 8),
-          Text(
-            value,
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: themeProvider.getTextColor(),
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: 12,
-              color: themeProvider.getSecondaryTextColor(),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildMenuOption(
-    ThemeProvider themeProvider, {
-    required IconData icon,
-    required String title,
-    required String subtitle,
-    required VoidCallback onTap,
-    bool isDestructive = false,
-  }) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      decoration: BoxDecoration(
-        color: themeProvider.getCardBackgroundColor(),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: themeProvider.getBorderColor()),
-      ),
-      child: ListTile(
-        onTap: onTap,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-        leading: Container(
-          padding: const EdgeInsets.all(8),
-          decoration: BoxDecoration(
-            color: isDestructive
-                ? Colors.red.withOpacity(0.1)
-                : themeProvider.getAccentColor().withOpacity(0.1),
-            shape: BoxShape.circle,
-          ),
-          child: Icon(
-            icon,
-            color: isDestructive ? Colors.red : themeProvider.getAccentColor(),
-            size: 20,
-          ),
-        ),
-        title: Text(
-          title,
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            color: isDestructive ? Colors.red : themeProvider.getTextColor(),
-          ),
-        ),
-        subtitle: Text(
-          subtitle,
-          style: TextStyle(
-            fontSize: 12,
-            color: themeProvider.getSecondaryTextColor(),
-          ),
-        ),
-        trailing: Icon(
-          Icons.arrow_forward_ios,
-          size: 16,
-          color: themeProvider.getSecondaryTextColor(),
-        ),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Consumer<ThemeProvider>(
@@ -162,6 +66,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   Consumer<AuthProvider>(
                     builder: (context, authProvider, child) {
                       final user = authProvider.user;
+                      
+                      // Print user information to console
+                      if (user != null) {
+                        print('=== LOGGED IN USER INFO ===');
+                        print('User ID: ${user.id}');
+                        print('Name: ${user.name}');
+                        print('Email: ${user.email}');
+                        print('Photo URL: ${user.photoUrl}');
+                        print('==========================');
+                      } else {
+                        print('No user logged in');
+                      }
+                      
                       return Container(
                         padding: const EdgeInsets.all(20),
                         decoration: BoxDecoration(
@@ -246,7 +163,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               ),
                             ),
                             IconButton(
-                              onPressed: () {},
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (context) => const PersonalInfoScreen()),
+                                );
+                              },
                               icon: Icon(
                                 Icons.edit_outlined,
                                 color: themeProvider.getAccentColor(),
@@ -315,7 +237,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     icon: Icons.person_outline,
                     title: 'Personal Info',
                     subtitle: 'Edit your name, email, and address',
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const PersonalInfoScreen()),
+                      );
+                    },
                   ),
                   _buildMenuOption(
                     themeProvider,
@@ -366,7 +293,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         Navigator.of(context).pushNamedAndRemoveUntil('/login', (route) => false);
                       }
                     },
-                    isDestructive: true,
                   ),
                 ],
               ),
