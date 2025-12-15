@@ -40,22 +40,48 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
   }
 
   Future<void> _pickImage() async {
-    // For now, we'll use a simple dialog to show available avatar options
-    // In a production app, you would implement proper file upload
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Choose Avatar'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Text('Select a profile picture:'),
-            const SizedBox(height: 16),
-            Wrap(
-              spacing: 10,
-              runSpacing: 10,
-              children: List.generate(12, (index) {
-                final avatarUrl = 'https://i.pravatar.cc/150?img=${index + 1}';
+      builder: (context) {
+        final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
+        
+        // Mix of different avatar styles using PNG format
+        final avatarUrls = [
+          'https://api.dicebear.com/7.x/avataaars/png?seed=Felix',
+          'https://api.dicebear.com/7.x/avataaars/png?seed=Aneka',
+          'https://api.dicebear.com/7.x/avataaars/png?seed=Luna',
+          'https://api.dicebear.com/7.x/avataaars/png?seed=Max',
+          'https://api.dicebear.com/7.x/bottts/png?seed=Robot1',
+          'https://api.dicebear.com/7.x/bottts/png?seed=Robot2',
+          'https://api.dicebear.com/7.x/adventurer/png?seed=Sarah',
+          'https://api.dicebear.com/7.x/adventurer/png?seed=John',
+          'https://api.dicebear.com/7.x/big-smile/png?seed=Happy',
+          'https://api.dicebear.com/7.x/big-smile/png?seed=Joy',
+          'https://api.dicebear.com/7.x/personas/png?seed=Alex',
+          'https://api.dicebear.com/7.x/personas/png?seed=Sam',
+        ];
+        
+        return AlertDialog(
+          backgroundColor: themeProvider.getCardBackgroundColor(),
+          title: Text(
+            'Choose Avatar',
+            style: TextStyle(
+              color: themeProvider.getTextColor(),
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          content: SizedBox(
+            width: double.maxFinite,
+            height: 400,
+            child: GridView.builder(
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 3,
+                crossAxisSpacing: 12,
+                mainAxisSpacing: 12,
+              ),
+              itemCount: avatarUrls.length,
+              itemBuilder: (context, index) {
+                final avatarUrl = avatarUrls[index];
                 return GestureDetector(
                   onTap: () {
                     final authProvider = Provider.of<AuthProvider>(context, listen: false);
@@ -65,22 +91,40 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
                       const SnackBar(content: Text('Profile picture updated!')),
                     );
                   },
-                  child: CircleAvatar(
-                    radius: 30,
-                    backgroundImage: NetworkImage(avatarUrl),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: themeProvider.getAccentColor(),
+                        width: 2,
+                      ),
+                      color: Colors.white,
+                    ),
+                    child: ClipOval(
+                      child: Image.network(
+                        avatarUrl,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) {
+                          return const Icon(Icons.person, size: 40);
+                        },
+                      ),
+                    ),
                   ),
                 );
-              }),
+              },
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text(
+                'Cancel',
+                style: TextStyle(color: themeProvider.getTextColor()),
+              ),
             ),
           ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 
@@ -379,7 +423,7 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
                                       child: const Text(
                                         'Save Changes',
                                         style: TextStyle(
-                                          color: Colors.white,
+                                          color: Colors.black,
                                           fontSize: 16,
                                           fontWeight: FontWeight.bold,
                                         ),
