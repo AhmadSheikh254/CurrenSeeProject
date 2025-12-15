@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/theme_provider.dart';
+import '../services/currency_service.dart';
+import 'currency_details_screen.dart';
 
 class CurrencyRateScreen extends StatefulWidget {
   const CurrencyRateScreen({super.key});
@@ -11,19 +13,10 @@ class CurrencyRateScreen extends StatefulWidget {
 
 class _CurrencyRateScreenState extends State<CurrencyRateScreen> {
   late TextEditingController _searchController;
-  final List<Map<String, dynamic>> _currencyRates = [
-    {'code': 'USD', 'name': 'US Dollar', 'rate': 1.0, 'change': '+0.2%'},
-    {'code': 'EUR', 'name': 'Euro', 'rate': 0.925, 'change': '-0.5%'},
-    {'code': 'GBP', 'name': 'British Pound', 'rate': 0.795, 'change': '+0.3%'},
-    {'code': 'JPY', 'name': 'Japanese Yen', 'rate': 145.50, 'change': '-0.1%'},
-    {'code': 'AUD', 'name': 'Australian Dollar', 'rate': 1.52, 'change': '+0.4%'},
-    {'code': 'CAD', 'name': 'Canadian Dollar', 'rate': 1.35, 'change': '+0.2%'},
-    {'code': 'CHF', 'name': 'Swiss Franc', 'rate': 0.885, 'change': '-0.2%'},
-    {'code': 'CNY', 'name': 'Chinese Yuan', 'rate': 7.24, 'change': '+0.1%'},
-    {'code': 'INR', 'name': 'Indian Rupee', 'rate': 83.45, 'change': '-0.3%'},
-    {'code': 'MXN', 'name': 'Mexican Peso', 'rate': 17.05, 'change': '+0.5%'},
-    {'code': 'PKR', 'name': 'Pakistani Rupee', 'rate': 278.50, 'change': '+0.1%'},
-  ];
+  List<Map<String, dynamic>> _currencyRates = [];
+  bool _isLoading = true;
+  String? _errorMessage;
+  final CurrencyService _currencyService = CurrencyService();
 
   late List<Map<String, dynamic>> _filteredRates;
 
@@ -31,7 +24,24 @@ class _CurrencyRateScreenState extends State<CurrencyRateScreen> {
   void initState() {
     super.initState();
     _searchController = TextEditingController();
-    _filteredRates = _currencyRates;
+    _filteredRates = [];
+    _fetchRates();
+  }
+
+  Future<void> _fetchRates() async {
+    try {
+      final rates = await _currencyService.fetchRates();
+      setState(() {
+        _currencyRates = rates;
+        _filteredRates = rates;
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _errorMessage = e.toString();
+        _isLoading = false;
+      });
+    }
   }
 
   @override
@@ -117,7 +127,29 @@ class _CurrencyRateScreenState extends State<CurrencyRateScreen> {
                   ),
                 ),
                 Expanded(
-                  child: _filteredRates.isEmpty
+                  child: _isLoading
+                      ? Center(child: CircularProgressIndicator(color: themeProvider.getAccentColor()))
+                      : _errorMessage != null
+                          ? Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    'Failed to load rates',
+                                    style: TextStyle(color: themeProvider.getErrorColor()),
+                                  ),
+                                  const SizedBox(height: 8),
+                                  ElevatedButton(
+                                    onPressed: _fetchRates,
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: themeProvider.getAccentColor(),
+                                    ),
+                                    child: const Text('Retry'),
+                                  ),
+                                ],
+                              ),
+                            )
+                          : _filteredRates.isEmpty
                       ? Center(
                           child: Text(
                             'No currencies found',
@@ -133,32 +165,55 @@ class _CurrencyRateScreenState extends State<CurrencyRateScreen> {
                           itemCount: _filteredRates.length,
                           itemBuilder: (context, index) {
                             final rate = _filteredRates[index];
-                            final isPositive =
-                                rate['change'].toString().startsWith('+');
+                            // Use a simple circle avatar with currency code as fallback for flag
                             return GestureDetector(
                               onTap: () {
-                                ScaffoldMessenger.of(context)
-                                    .showSnackBar(
-                                  SnackBar(
-                                    content: Text(
-                                        '${rate['code']}: ${rate['rate']} ${rate['change']}'),
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => CurrencyDetailsScreen(
+                                      currencyCode: rate['code'],
+                                      currencyName: rate['name'],
+                                      currentRate: rate['rate'],
+                                    ),
                                   ),
                                 );
                               },
                               child: Container(
-                                margin: const EdgeInsets.only(bottom: 12),
-                                padding: const EdgeInsets.all(16),
-                                decoration: BoxDecoration(
-                                  color: themeProvider.getCardBackgroundColor(),
-                                  borderRadius: BorderRadius.circular(12),
-                                  border: Border.all(color: themeProvider.getBorderColor()),
-                                ),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
+                              margin: const EdgeInsets.only(bottom: 12),
+                              padding: const EdgeInsets.all(16),
+                              decoration: BoxDecoration(
+                                color: themeProvider.getCardBackgroundColor(),
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(color: themeProvider.getBorderColor()),
+                              ),
+                              child: Row(
+                                children: [
+                                  Container(
+                                    width: 48,
+                                    height: 48,
+                                    decoration: BoxDecoration(
+                                      color: themeProvider.getAccentColor().withOpacity(0.2),
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: Center(
+                                      child: Text(
+                                        rate['code'][0],
+                                        style: TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold,
+                                          color: themeProvider.getAccentColor(),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 16),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
                                         Text(
-                                          rate['rate'].toString(),
+                                          rate['code'],
                                           style: TextStyle(
                                             fontSize: 16,
                                             fontWeight: FontWeight.bold,
@@ -166,35 +221,41 @@ class _CurrencyRateScreenState extends State<CurrencyRateScreen> {
                                           ),
                                         ),
                                         const SizedBox(height: 4),
-                                        Container(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 8, vertical: 2),
-                                          decoration: BoxDecoration(
-                                            color: isPositive
-                                                ? Colors.green.withOpacity(0.3)
-                                                : Colors.red.withOpacity(0.3),
-                                            borderRadius:
-                                                BorderRadius.circular(4),
-                                            border: Border.all(
-                                              color: isPositive
-                                                  ? Colors.greenAccent
-                                                  : Colors.redAccent,
-                                            ),
+                                        Text(
+                                          rate['name'],
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            color: themeProvider.getSecondaryTextColor(),
                                           ),
-                                          child: Text(
-                                            rate['change'],
-                                            style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: isPositive
-                                                ? Colors.greenAccent
-                                                : Colors.redAccent,
-                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                    children: [
+                                      Text(
+                                        rate['rate'].toStringAsFixed(4),
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                          color: themeProvider.getTextColor(),
+                                        ),
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        '1 USD =',
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          color: themeProvider.getSecondaryTextColor(),
                                         ),
                                       ),
                                     ],
                                   ),
-                                ),
-                              );
+                                ],
+                              ),
+                            ),
+                          );
                           },
                         ),
                 ),

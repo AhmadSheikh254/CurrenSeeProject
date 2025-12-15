@@ -1,9 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/theme_provider.dart';
+import '../providers/history_provider.dart';
+import '../providers/alert_provider.dart';
+import '../providers/preferences_provider.dart';
 import 'profile_screen.dart';
+import 'news_screen.dart';
 import 'settings_screen.dart';
 import 'currency_rate_screen.dart';
+import 'history_screen.dart';
+import '../models/conversion.dart';
+import '../services/currency_service.dart';
 
 class HomeScreen extends StatefulWidget {
   final bool isGuest;
@@ -20,20 +27,34 @@ class _HomeScreenState extends State<HomeScreen> {
   final TextEditingController _resultController = TextEditingController();
   String _fromCurrency = 'USD';
   String _toCurrency = 'EUR';
+  final CurrencyService _currencyService = CurrencyService();
+  bool _isConverting = false;
 
   final List<Map<String, dynamic>> _currencyRates = [
     {'code': 'USD', 'name': 'US Dollar', 'rate': 1.0, 'symbol': '\$'},
-    {'code': 'EUR', 'name': 'Euro', 'rate': 0.925, 'symbol': '€'},
-    {'code': 'GBP', 'name': 'British Pound', 'rate': 0.795, 'symbol': '£'},
-    {'code': 'JPY', 'name': 'Japanese Yen', 'rate': 145.50, 'symbol': '¥'},
-    {'code': 'AUD', 'name': 'Australian Dollar', 'rate': 1.52, 'symbol': 'A\$'},
-    {'code': 'CAD', 'name': 'Canadian Dollar', 'rate': 1.35, 'symbol': 'C\$'},
-    {'code': 'CHF', 'name': 'Swiss Franc', 'rate': 0.885, 'symbol': 'Fr'},
-    {'code': 'CNY', 'name': 'Chinese Yuan', 'rate': 7.24, 'symbol': '¥'},
-    {'code': 'INR', 'name': 'Indian Rupee', 'rate': 83.45, 'symbol': '₹'},
-    {'code': 'MXN', 'name': 'Mexican Peso', 'rate': 17.05, 'symbol': '\$'},
-    {'code': 'PKR', 'name': 'Pakistani Rupee', 'rate': 278.50, 'symbol': 'Rs'},
+    {'code': 'EUR', 'name': 'Euro', 'rate': 0.95, 'symbol': '€'},
+    {'code': 'GBP', 'name': 'British Pound', 'rate': 0.78, 'symbol': '£'},
+    {'code': 'JPY', 'name': 'Japanese Yen', 'rate': 155.0, 'symbol': '¥'},
+    {'code': 'AUD', 'name': 'Australian Dollar', 'rate': 1.58, 'symbol': 'A\$'},
+    {'code': 'CAD', 'name': 'Canadian Dollar', 'rate': 1.37, 'symbol': 'C\$'},
+    {'code': 'CHF', 'name': 'Swiss Franc', 'rate': 0.88, 'symbol': 'Fr'},
+    {'code': 'CNY', 'name': 'Chinese Yuan', 'rate': 7.25, 'symbol': '¥'},
+    {'code': 'INR', 'name': 'Indian Rupee', 'rate': 84.50, 'symbol': '₹'},
+    {'code': 'MXN', 'name': 'Mexican Peso', 'rate': 18.00, 'symbol': '\$'},
+    {'code': 'PKR', 'name': 'Pakistani Rupee', 'rate': 280.50, 'symbol': 'Rs'},
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    // Initialize from currency with user preference
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final prefs = Provider.of<PreferencesProvider>(context, listen: false);
+      setState(() {
+        _fromCurrency = prefs.defaultBaseCurrency;
+      });
+    });
+  }
 
   @override
   void dispose() {
@@ -42,20 +63,95 @@ class _HomeScreenState extends State<HomeScreen> {
     super.dispose();
   }
 
-  void _convertCurrency() {
+  Future<void> _convertCurrency() async {
     if (_amountController.text.isEmpty) {
       _resultController.clear();
       return;
     }
 
-    double amount = double.tryParse(_amountController.text) ?? 0.0;
-    double fromRate = _currencyRates.firstWhere((c) => c['code'] == _fromCurrency)['rate'];
-    double toRate = _currencyRates.firstWhere((c) => c['code'] == _toCurrency)['rate'];
+    setState(() {
+      _isConverting = true;
+    });
 
-    double result = amount * (toRate / fromRate);
+    try {
+      double amount = double.tryParse(_amountController.text) ?? 0.0;
+      double result = await _currencyService.convertCurrency(_fromCurrency, _toCurrency, amount);
+      
+      if (!mounted) return;
+
+      setState(() {
+        _resultController.text = result.toStringAsFixed(2);
+        _isConverting = false;
+      });
+
+      // Check for alerts
+      if (!mounted) return;
+      final prefs = Provider.of<PreferencesProvider>(context, listen: false);
+      
+      if (prefs.notificationsEnabled) {
+        final rate = result / amount;
+        final alertProvider = Provider.of<AlertProvider>(context, listen: false);
+        final triggeredAlerts = alertProvider.checkAlerts(rate, _fromCurrency, _toCurrency);
+
+        if (triggeredAlerts.isNotEmpty) {
+          for (var alert in triggeredAlerts) {
+            showDialog(
+              context: context,
+              builder: (context) => AlertDialog(
+                title: const Row(
+                  children: [
+                    Icon(Icons.notifications_active, color: Colors.amber),
+                    SizedBox(width: 8),
+                    Text('Rate Alert Triggered!'),
+                  ],
+                ),
+                content: Text(
+                  'The rate for ${_fromCurrency}/${_toCurrency} is now ${rate.toStringAsFixed(4)}, which is ${alert.isAbove ? 'above' : 'below'} your target of ${alert.targetRate}.',
+                ),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: const Text('OK'),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      alertProvider.toggleAlert(alert.id); // Turn off alert
+                      Navigator.pop(context);
+                    },
+                    child: const Text('Turn Off Alert'),
+                  ),
+                ],
+              ),
+            );
+          }
+        }
+      }
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _isConverting = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Conversion failed: ${e.toString()}')),
+      );
+    }
+  }
+
+  void _saveConversion() {
+    if (_amountController.text.isEmpty || _resultController.text.isEmpty) return;
     
-    // Format to 2 decimal places
-    _resultController.text = result.toStringAsFixed(2);
+    double amount = double.tryParse(_amountController.text) ?? 0.0;
+    double result = double.tryParse(_resultController.text) ?? 0.0;
+
+    final conversion = Conversion(
+      fromCurrency: _fromCurrency,
+      toCurrency: _toCurrency,
+      amount: amount,
+      result: result,
+      date: DateTime.now(),
+    );
+
+    Provider.of<HistoryProvider>(context, listen: false).addConversion(conversion);
   }
 
   @override
@@ -65,6 +161,7 @@ class _HomeScreenState extends State<HomeScreen> {
         final screens = [
           _buildHomeContent(context),
           const CurrencyRateScreen(),
+          const HistoryScreen(),
           const ProfileScreen(),
           const SettingsScreen(),
         ];
@@ -90,6 +187,10 @@ class _HomeScreenState extends State<HomeScreen> {
           BottomNavigationBarItem(
             icon: Icon(Icons.currency_exchange),
             label: 'Rates',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.history),
+            label: 'History',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),
@@ -344,7 +445,10 @@ class _HomeScreenState extends State<HomeScreen> {
                         SizedBox(
                           width: double.infinity,
                           child: ElevatedButton(
-                            onPressed: _convertCurrency,
+                            onPressed: _isConverting ? null : () async {
+                              await _convertCurrency();
+                              _saveConversion();
+                            },
                             style: ElevatedButton.styleFrom(
                               backgroundColor: themeProvider.getAccentColor(),
                               padding: const EdgeInsets.symmetric(vertical: 12),
@@ -352,14 +456,24 @@ class _HomeScreenState extends State<HomeScreen> {
                                 borderRadius: BorderRadius.circular(8),
                               ),
                             ),
-                            child: Text(
-                              'Convert',
-                              style: TextStyle(
-                                color: themeProvider.isDarkMode ? Colors.black : Colors.white,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
-                              ),
-                            ),
+                            child: _isConverting
+                                ? SizedBox(
+                                    height: 20,
+                                    width: 20,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                      valueColor: AlwaysStoppedAnimation<Color>(
+                                          themeProvider.isDarkMode ? Colors.black : Colors.white),
+                                    ),
+                                  )
+                                : Text(
+                                    'Convert',
+                                    style: TextStyle(
+                                      color: themeProvider.isDarkMode ? Colors.black : Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16,
+                                    ),
+                                  ),
                           ),
                         ),
                       ],
@@ -367,20 +481,123 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   const SizedBox(height: 32),
                   // Recent Conversions
-                  const Text(
-                    'Recent Conversions',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text(
+                        'Recent Conversions',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          setState(() {
+                            _selectedIndex = 2; // Switch to History tab
+                          });
+                        },
+                        child: Text(
+                          'See All',
+                          style: TextStyle(color: themeProvider.getAccentColor()),
+                        ),
+                      ),
+                    ],
                   ),
                   const SizedBox(height: 16),
-                  _buildConversionCardContent(themeProvider, 'USD to EUR', '100 USD', '92.50 EUR'),
-                  const SizedBox(height: 12),
-                  _buildConversionCardContent(themeProvider, 'GBP to INR', '50 GBP', '5,250 INR'),
-                  const SizedBox(height: 12),
-                  _buildConversionCardContent(themeProvider, 'JPY to USD', '10,000 JPY', '67.50 USD'),
+                  Consumer<HistoryProvider>(
+                    builder: (context, historyProvider, child) {
+                      final recentConversions = historyProvider.conversions.take(5).toList();
+                      
+                      if (recentConversions.isEmpty) {
+                        return const Text(
+                          'No recent conversions',
+                          style: TextStyle(color: Colors.white70),
+                        );
+                      }
+                      
+                      return Column(
+                        children: recentConversions.map((conversion) => Padding(
+                          padding: const EdgeInsets.only(bottom: 12.0),
+                          child: _buildConversionCardContent(
+                            themeProvider,
+                            '${conversion.fromCurrency} to ${conversion.toCurrency}',
+                            '${conversion.amount.toStringAsFixed(2)} ${conversion.fromCurrency}',
+                            '${conversion.result.toStringAsFixed(2)} ${conversion.toCurrency}',
+                          ),
+                        )).toList(),
+                      );
+                    },
+                  ),
+                  const SizedBox(height: 32),
+                  // Market News Section
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const NewsScreen()),
+                      );
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [
+                            themeProvider.getAccentColor().withOpacity(0.8),
+                            themeProvider.getAccentColor(),
+                          ],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                        borderRadius: BorderRadius.circular(16),
+                        boxShadow: [
+                          BoxShadow(
+                            color: themeProvider.getAccentColor().withOpacity(0.3),
+                            blurRadius: 8,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                      child: Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.2),
+                              shape: BoxShape.circle,
+                            ),
+                            child: const Icon(Icons.newspaper, color: Colors.white, size: 28),
+                          ),
+                          const SizedBox(width: 16),
+                          const Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Market News',
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                                SizedBox(height: 4),
+                                Text(
+                                  'Stay updated with latest trends',
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.white70,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const Icon(Icons.arrow_forward_ios, color: Colors.white, size: 16),
+                        ],
+                      ),
+                    ),
+                  ),
                   const SizedBox(height: 24),
                 ],
               ),

@@ -76,4 +76,9 @@ class ThemeProvider extends ChangeNotifier {
   Color getBottomNavUnselectedColor() {
     return _isDarkMode ? Colors.white54 : Color(0xFF888888);
   }
+
+  // Get error color
+  Color getErrorColor() {
+    return Colors.redAccent;
+  }
 }

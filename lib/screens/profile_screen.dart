@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:provider/provider.dart';
 import '../providers/theme_provider.dart';
+import '../providers/auth_provider.dart';
+import 'alerts_screen.dart';
+import 'support_screen.dart';
+import 'feedback_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -9,53 +14,27 @@ class ProfileScreen extends StatefulWidget {
   State<ProfileScreen> createState() => _ProfileScreenState();
 }
 
-
 class _ProfileScreenState extends State<ProfileScreen> {
-
-  Widget _buildProfileField(ThemeProvider themeProvider, String label, String value) {
-    return Container(
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: themeProvider.getCardBackgroundColor(),
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: themeProvider.getBorderColor()),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: 12,
-              color: themeProvider.getSecondaryTextColor(),
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            value,
-            style: TextStyle(
-              fontSize: 16,
-              color: themeProvider.getTextColor(),
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildStatCard(ThemeProvider themeProvider, String label, String value) {
+  Widget _buildStatCard(ThemeProvider themeProvider, String label, String value, IconData icon) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: themeProvider.getCardBackgroundColor(),
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(16),
         border: Border.all(color: themeProvider.getBorderColor()),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
+          Icon(icon, color: themeProvider.getAccentColor(), size: 28),
+          const SizedBox(height: 8),
           Text(
             value,
             style: TextStyle(
@@ -77,188 +56,407 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
+  Widget _buildMenuOption(
+    ThemeProvider themeProvider, {
+    required IconData icon,
+    required String title,
+    required String subtitle,
+    required VoidCallback onTap,
+    bool isDestructive = false,
+  }) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      decoration: BoxDecoration(
+        color: themeProvider.getCardBackgroundColor(),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: themeProvider.getBorderColor()),
+      ),
+      child: ListTile(
+        onTap: onTap,
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+        leading: Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: isDestructive
+                ? Colors.red.withOpacity(0.1)
+                : themeProvider.getAccentColor().withOpacity(0.1),
+            shape: BoxShape.circle,
+          ),
+          child: Icon(
+            icon,
+            color: isDestructive ? Colors.red : themeProvider.getAccentColor(),
+            size: 20,
+          ),
+        ),
+        title: Text(
+          title,
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: isDestructive ? Colors.red : themeProvider.getTextColor(),
+          ),
+        ),
+        subtitle: Text(
+          subtitle,
+          style: TextStyle(
+            fontSize: 12,
+            color: themeProvider.getSecondaryTextColor(),
+          ),
+        ),
+        trailing: Icon(
+          Icons.arrow_forward_ios,
+          size: 16,
+          color: themeProvider.getSecondaryTextColor(),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Consumer<ThemeProvider>(
       builder: (context, themeProvider, child) {
         final colors = themeProvider.getGradientColors();
-        
+
         return Container(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: colors,
-        ),
-      ),
-      child: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 24.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'My Profile',
-                style: TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
-                  color: themeProvider.getTextColor(),
-                ),
-              ),
-              const SizedBox(height: 32),
-              // Profile Avatar
-              Center(
-                child: Column(
-                  children: [
-                    Container(
-                      width: 100,
-                      height: 100,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: themeProvider.getCardBackgroundColor(),
-                        border: Border.all(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: colors,
+            ),
+          ),
+          child: SafeArea(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(24.0),
+              child: Column(
+                children: [
+                  // Header
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Profile',
+                        style: TextStyle(
+                          fontSize: 28,
+                          fontWeight: FontWeight.bold,
                           color: themeProvider.getTextColor(),
-                          width: 3,
                         ),
                       ),
-                      child: Icon(
-                        Icons.person,
-                        size: 50,
-                        color: themeProvider.getTextColor(),
+                      Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: themeProvider.getCardBackgroundColor(),
+                          shape: BoxShape.circle,
+                          border: Border.all(color: themeProvider.getBorderColor()),
+                        ),
+                        child: Icon(
+                          Icons.notifications_outlined,
+                          color: themeProvider.getTextColor(),
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 16),
-                    Text(
-                      'John Doe',
-                      style: TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
-                        color: themeProvider.getTextColor(),
+                    ],
+                  ),
+                  const SizedBox(height: 32),
+                  
+                  // Profile Card
+                  Consumer<AuthProvider>(
+                    builder: (context, authProvider, child) {
+                      final user = authProvider.user;
+                      return Container(
+                        padding: const EdgeInsets.all(20),
+                        decoration: BoxDecoration(
+                          color: themeProvider.getCardBackgroundColor(),
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(color: themeProvider.getBorderColor()),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.1),
+                              blurRadius: 20,
+                              offset: const Offset(0, 10),
+                            ),
+                          ],
+                        ),
+                        child: Row(
+                          children: [
+                            Container(
+                              width: 70,
+                              height: 70,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                  color: themeProvider.getAccentColor(),
+                                  width: 3,
+                                ),
+                                image: DecorationImage(
+                                  image: NetworkImage(user?.photoUrl ?? 'https://i.pravatar.cc/150?img=11'),
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 16),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    children: [
+                                      Text(
+                                        user?.name ?? 'Guest User',
+                                        style: TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold,
+                                          color: themeProvider.getTextColor(),
+                                        ),
+                                      ),
+                                      const SizedBox(width: 8),
+                                      if (user != null)
+                                        Container(
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 8,
+                                            vertical: 2,
+                                          ),
+                                          decoration: BoxDecoration(
+                                            color: themeProvider.getAccentColor().withOpacity(0.2),
+                                            borderRadius: BorderRadius.circular(12),
+                                            border: Border.all(
+                                              color: themeProvider.getAccentColor(),
+                                              width: 1,
+                                            ),
+                                          ),
+                                          child: Text(
+                                            'PRO',
+                                            style: TextStyle(
+                                              fontSize: 10,
+                                              fontWeight: FontWeight.bold,
+                                              color: themeProvider.getAccentColor(),
+                                            ),
+                                          ),
+                                        ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    user?.email ?? 'Sign in to see details',
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      color: themeProvider.getSecondaryTextColor(),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            IconButton(
+                              onPressed: () {},
+                              icon: Icon(
+                                Icons.edit_outlined,
+                                color: themeProvider.getAccentColor(),
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                  const SizedBox(height: 24),
+
+                  // Stats Grid
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _buildStatCard(
+                          themeProvider,
+                          'Conversions',
+                          '1,254',
+                          Icons.swap_horiz,
+                          () {},
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      'john.doe@example.com',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: themeProvider.getSecondaryTextColor(),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: _buildStatCard(
+                          themeProvider,
+                          'Saved',
+                          '12',
+                          Icons.bookmark_outline,
+                          () {},
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 32),
-              // Profile Information Section
-              Text(
-                'Personal Information',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: themeProvider.getTextColor(),
-                ),
-              ),
-              const SizedBox(height: 16),
-              _buildProfileField(themeProvider, 'Full Name', 'John Doe'),
-              const SizedBox(height: 12),
-              _buildProfileField(themeProvider, 'Email', 'john.doe@example.com'),
-              const SizedBox(height: 12),
-              _buildProfileField(themeProvider, 'Phone', '+1 (555) 123-4567'),
-              const SizedBox(height: 12),
-              _buildProfileField(themeProvider, 'Country', 'United States'),
-              const SizedBox(height: 32),
-              // Account Statistics
-              Text(
-                'Account Statistics',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: themeProvider.getTextColor(),
-                ),
-              ),
-              const SizedBox(height: 16),
-              Row(
-                children: [
-                  Expanded(
-                    child: _buildStatCard(themeProvider, 'Conversions', '156'),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: _buildStatCard(
+                          themeProvider,
+                          'Alerts',
+                          '5',
+                          Icons.notifications_active_outlined,
+                          () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => const AlertsScreen()),
+                            );
+                          },
+                        ),
+                      ),
+                    ],
                   ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: _buildStatCard(themeProvider, 'Saved Pairs', '8'),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 12),
-              Row(
-                children: [
-                  Expanded(
-                    child: _buildStatCard(themeProvider, 'Total Amount', '\$45,230'),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: _buildStatCard(themeProvider, 'Member Since', '2024'),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 32),
-              // Action Buttons
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Edit profile feature coming soon')),
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: themeProvider.getAccentColor(),
-                    padding: const EdgeInsets.symmetric(vertical: 14),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
-                  child: Text(
-                    'Edit Profile',
+                  const SizedBox(height: 32),
+
+                  // Menu Section
+                  Text(
+                    'General',
                     style: TextStyle(
-                      color: themeProvider.isDarkMode ? Colors.black : Colors.white,
-                      fontWeight: FontWeight.bold,
                       fontSize: 16,
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 12),
-              SizedBox(
-                width: double.infinity,
-                child: OutlinedButton(
-                  onPressed: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Verification feature coming soon')),
-                    );
-                  },
-                  style: OutlinedButton.styleFrom(
-                    side: BorderSide(color: themeProvider.getTextColor(), width: 2),
-                    padding: const EdgeInsets.symmetric(vertical: 14),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
-                  child: Text(
-                    'Verify Account',
-                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
                       color: themeProvider.getTextColor(),
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
                     ),
                   ),
-                ),
+                  const SizedBox(height: 16),
+                  _buildMenuOption(
+                    themeProvider,
+                    icon: Icons.person_outline,
+                    title: 'Personal Info',
+                    subtitle: 'Edit your name, email, and address',
+                    onTap: () {},
+                  ),
+                  _buildMenuOption(
+                    themeProvider,
+                    icon: Icons.security,
+                    title: 'Security',
+                    subtitle: 'Change password and 2FA',
+                    onTap: () {},
+                  ),
+                  _buildMenuOption(
+                    themeProvider,
+                    icon: Icons.language,
+                    title: 'Language',
+                    subtitle: 'English (US)',
+                    onTap: () {},
+                  ),
+                  
+                  const SizedBox(height: 24),
+                  Text(
+                    'Support',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: themeProvider.getTextColor(),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  _buildMenuOption(
+                    themeProvider,
+                    icon: Icons.feedback_outlined,
+                    title: 'Feedback',
+                    subtitle: 'Send us your feedback or report issues',
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const FeedbackScreen()),
+                      );
+                    },
+                  ),
+                  _buildMenuOption(
+                    themeProvider,
+                    icon: Icons.logout,
+                    title: 'Log Out',
+                    subtitle: 'Sign out of your account',
+                    onTap: () async {
+                      final authProvider = Provider.of<AuthProvider>(context, listen: false);
+                      await authProvider.logout();
+                      if (context.mounted) {
+                        Navigator.of(context).pushNamedAndRemoveUntil('/login', (route) => false);
+                      }
+                    },
+                    isDestructive: true,
+                  ),
+                ],
               ),
-              const SizedBox(height: 24),
-            ],
+            ),
           ),
+        );
+      },
+    );
+  }
+
+  Widget _buildStatCard(ThemeProvider themeProvider, String title, String value, IconData icon, VoidCallback onTap) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: themeProvider.getCardBackgroundColor(),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: themeProvider.getBorderColor()),
+        ),
+        child: Column(
+          children: [
+            Icon(icon, color: themeProvider.getAccentColor(), size: 28),
+            const SizedBox(height: 8),
+            Text(
+              value,
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: themeProvider.getTextColor(),
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              title,
+              style: TextStyle(
+                fontSize: 12,
+                color: themeProvider.getSecondaryTextColor(),
+              ),
+            ),
+          ],
         ),
       ),
     );
-      },
+  }
+
+  Widget _buildMenuOption(
+    ThemeProvider themeProvider, {
+    required IconData icon,
+    required String title,
+    required String subtitle,
+    required VoidCallback onTap,
+    bool isDestructive = false,
+  }) {
+    return ListTile(
+      onTap: onTap,
+      contentPadding: EdgeInsets.zero,
+      leading: Container(
+        padding: const EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          color: isDestructive
+              ? Colors.red.withOpacity(0.1)
+              : themeProvider.getAccentColor().withOpacity(0.1),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Icon(
+          icon,
+          color: isDestructive ? Colors.red : themeProvider.getAccentColor(),
+          size: 20,
+        ),
+      ),
+      title: Text(
+        title,
+        style: TextStyle(
+          fontWeight: FontWeight.bold,
+          color: isDestructive ? Colors.red : themeProvider.getTextColor(),
+        ),
+      ),
+      subtitle: Text(
+        subtitle,
+        style: TextStyle(
+          color: themeProvider.getSecondaryTextColor(),
+          fontSize: 12,
+        ),
+      ),
+      trailing: Icon(
+        Icons.chevron_right,
+        color: themeProvider.getSecondaryTextColor(),
+        size: 20,
+      ),
     );
   }
 }

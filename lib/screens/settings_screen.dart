@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/theme_provider.dart';
+import '../providers/preferences_provider.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -10,14 +11,12 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
-  bool _notificationsEnabled = true;
-  String _selectedCurrency = 'USD';
   String _selectedLanguage = 'English';
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<ThemeProvider>(
-      builder: (context, themeProvider, child) {
+    return Consumer2<ThemeProvider, PreferencesProvider>(
+      builder: (context, themeProvider, preferencesProvider, child) {
         final colors = themeProvider.getGradientColors();
 
         return Container(
@@ -63,11 +62,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     themeProvider,
                     'Push Notifications',
                     'Receive currency alerts',
-                    _notificationsEnabled,
+                    preferencesProvider.notificationsEnabled,
                     (value) {
-                      setState(() {
-                        _notificationsEnabled = value;
-                      });
+                      preferencesProvider.setNotificationsEnabled(value);
+                      if (value) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Notifications enabled')),
+                        );
+                      }
                     },
                   ),
                   const SizedBox(height: 32),
@@ -77,12 +79,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   _buildDropdownSetting(
                     themeProvider,
                     'Default Currency',
-                    _selectedCurrency,
+                    preferencesProvider.defaultBaseCurrency,
                     ['USD', 'EUR', 'GBP', 'JPY', 'INR'],
                     (value) {
-                      setState(() {
-                        _selectedCurrency = value;
-                      });
+                      preferencesProvider.setDefaultBaseCurrency(value);
                     },
                   ),
                   const SizedBox(height: 12),
