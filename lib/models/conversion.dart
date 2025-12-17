@@ -4,6 +4,7 @@ class Conversion {
   final double amount;
   final double result;
   final DateTime date;
+  final bool isSaved;
 
   Conversion({
     required this.fromCurrency,
@@ -11,6 +12,7 @@ class Conversion {
     required this.amount,
     required this.result,
     required this.date,
+    this.isSaved = false,
   });
 
   // Convert Conversion to JSON
@@ -20,6 +22,7 @@ class Conversion {
     'amount': amount,
     'result': result,
     'date': date.toIso8601String(),
+    'isSaved': isSaved,
   };
 
   // Create Conversion from JSON
@@ -29,5 +32,6 @@ class Conversion {
     amount: json['amount'],
     result: json['result'],
     date: DateTime.parse(json['date']),
+    isSaved: json['isSaved'] ?? false,
   );
 }

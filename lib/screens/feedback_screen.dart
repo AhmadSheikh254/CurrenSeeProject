@@ -137,7 +137,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                                 padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 12),
                               ),
                               onPressed: _submitFeedback,
-                              child: const Text('Submit'),
+                              child: const Text('Submit',style: TextStyle(color: Colors.black)),
                             ),
                           ),
                         ],

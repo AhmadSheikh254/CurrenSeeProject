@@ -7,12 +7,14 @@ class User {
   final String name;
   final String email;
   final String? photoUrl;
+  final String? phoneNumber;
 
   User({
     required this.id,
     required this.name,
     required this.email,
     this.photoUrl,
+    this.phoneNumber,
   });
 
   // Convert User to JSON
@@ -21,6 +23,7 @@ class User {
     'name': name,
     'email': email,
     'photoUrl': photoUrl,
+    'phoneNumber': phoneNumber,
   };
 
   // Create User from JSON
@@ -29,6 +32,7 @@ class User {
     name: json['name'],
     email: json['email'],
     photoUrl: json['photoUrl'],
+    phoneNumber: json['phoneNumber'],
   );
 }
 
@@ -189,7 +193,7 @@ class AuthProvider extends ChangeNotifier {
   }
 
   // Update user information
-  void updateUserInfo(String name, String email) async {
+  void updateUserInfo(String name, String email, {String? phoneNumber}) async {
     if (_user != null) {
       final oldEmail = _user!.email;
       
@@ -199,6 +203,7 @@ class AuthProvider extends ChangeNotifier {
         name: name,
         email: email,
         photoUrl: _user!.photoUrl,
+        phoneNumber: phoneNumber ?? _user!.phoneNumber,
       );
       
       // Update in the registered users map
@@ -226,6 +231,7 @@ class AuthProvider extends ChangeNotifier {
         name: _user!.name,
         email: _user!.email,
         photoUrl: photoUrl,
+        phoneNumber: _user!.phoneNumber,
       );
       
       // Update in the registered users map
@@ -235,5 +241,20 @@ class AuthProvider extends ChangeNotifier {
       await _saveUserData();
       notifyListeners();
     }
+  }
+
+  // Change Password
+  Future<bool> changePassword(String currentPassword, String newPassword) async {
+    if (_user == null) return false;
+    
+    final email = _user!.email;
+    // Check if the current password matches
+    if (_userPasswords[email] == currentPassword) {
+      // Update the password
+      _userPasswords[email] = newPassword;
+      await _saveRegisteredUsers();
+      return true;
+    }
+    return false;
   }
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/theme_provider.dart';
 import '../providers/preferences_provider.dart';
+import '../providers/auth_provider.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -106,11 +107,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     'Change Password',
                     'Update your password',
                     () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Change password feature coming soon'),
-                        ),
-                      );
+                      _showChangePasswordDialog(context, themeProvider);
                     },
                   ),
                   const SizedBox(height: 12),
@@ -175,11 +172,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           borderRadius: BorderRadius.circular(8),
                         ),
                       ),
-                      icon: const Icon(Icons.logout, color: Colors.white),
+                      icon: const Icon(Icons.logout, color: Colors.black),
                       label: const Text(
                         'Logout',
                         style: TextStyle(
-                          color: Colors.white,
+                          color: Colors.black,
                           fontWeight: FontWeight.bold,
                           fontSize: 16,
                         ),
@@ -348,6 +345,148 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ],
         ),
       ),
+    );
+  }
+
+  void _showChangePasswordDialog(BuildContext context, ThemeProvider themeProvider) {
+    final currentPasswordController = TextEditingController();
+    final newPasswordController = TextEditingController();
+    final confirmPasswordController = TextEditingController();
+    final formKey = GlobalKey<FormState>();
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          backgroundColor: themeProvider.getCardBackgroundColor(),
+          title: Text(
+            'Change Password',
+            style: TextStyle(
+              color: themeProvider.getTextColor(),
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          content: Form(
+            key: formKey,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextFormField(
+                  controller: currentPasswordController,
+                  obscureText: true,
+                  style: TextStyle(color: themeProvider.getTextColor()),
+                  decoration: InputDecoration(
+                    labelText: 'Current Password',
+                    labelStyle: TextStyle(color: themeProvider.getSecondaryTextColor()),
+                    enabledBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: themeProvider.getBorderColor()),
+                    ),
+                    focusedBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: themeProvider.getAccentColor()),
+                    ),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter current password';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 16),
+                TextFormField(
+                  controller: newPasswordController,
+                  obscureText: true,
+                  style: TextStyle(color: themeProvider.getTextColor()),
+                  decoration: InputDecoration(
+                    labelText: 'New Password',
+                    labelStyle: TextStyle(color: themeProvider.getSecondaryTextColor()),
+                    enabledBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: themeProvider.getBorderColor()),
+                    ),
+                    focusedBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: themeProvider.getAccentColor()),
+                    ),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter new password';
+                    }
+                    if (value.length < 6) {
+                      return 'Password must be at least 6 characters';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 16),
+                TextFormField(
+                  controller: confirmPasswordController,
+                  obscureText: true,
+                  style: TextStyle(color: themeProvider.getTextColor()),
+                  decoration: InputDecoration(
+                    labelText: 'Confirm New Password',
+                    labelStyle: TextStyle(color: themeProvider.getSecondaryTextColor()),
+                    enabledBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: themeProvider.getBorderColor()),
+                    ),
+                    focusedBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: themeProvider.getAccentColor()),
+                    ),
+                  ),
+                  validator: (value) {
+                    if (value != newPasswordController.text) {
+                      return 'Passwords do not match';
+                    }
+                    return null;
+                  },
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text(
+                'Cancel',
+                style: TextStyle(color: themeProvider.getTextColor()),
+              ),
+            ),
+            TextButton(
+              onPressed: () async {
+                if (formKey.currentState!.validate()) {
+                  final authProvider = Provider.of<AuthProvider>(context, listen: false);
+                  final success = await authProvider.changePassword(
+                    currentPasswordController.text,
+                    newPasswordController.text,
+                  );
+                  
+                  if (context.mounted) {
+                    Navigator.pop(context);
+                    if (success) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Password changed successfully')),
+                      );
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Incorrect current password'),
+                          backgroundColor: Colors.red,
+                        ),
+                      );
+                    }
+                  }
+                }
+              },
+              child: Text(
+                'Update',
+                style: TextStyle(
+                  color: themeProvider.getAccentColor(),
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 

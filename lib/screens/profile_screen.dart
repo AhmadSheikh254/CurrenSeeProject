@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/theme_provider.dart';
 import '../providers/auth_provider.dart';
+import '../providers/history_provider.dart';
+import '../providers/alert_provider.dart';
 import 'alerts_screen.dart';
 import 'support_screen.dart';
 import 'feedback_screen.dart';
@@ -182,43 +184,51 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   const SizedBox(height: 24),
 
                   // Stats Grid
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _buildStatCard(
-                          themeProvider,
-                          'Conversions',
-                          '1,254',
-                          Icons.swap_horiz,
-                          () {},
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: _buildStatCard(
-                          themeProvider,
-                          'Saved',
-                          '12',
-                          Icons.bookmark_outline,
-                          () {},
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: _buildStatCard(
-                          themeProvider,
-                          'Alerts',
-                          '5',
-                          Icons.notifications_active_outlined,
-                          () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => const AlertsScreen()),
-                            );
-                          },
-                        ),
-                      ),
-                    ],
+                  Consumer2<HistoryProvider, AlertProvider>(
+                    builder: (context, historyProvider, alertProvider, child) {
+                      return Row(
+                        children: [
+                          Expanded(
+                            child: _buildStatCard(
+                              themeProvider,
+                              'Conversions',
+                              historyProvider.conversions.length.toString(),
+                              Icons.swap_horiz,
+                              () {
+                                // Navigate to history tab (index 2)
+                                // This assumes the parent is HomeScreen and we can switch tabs
+                                // For now, we'll just show a snackbar or do nothing as History is on main screen
+                              },
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: _buildStatCard(
+                              themeProvider,
+                              'Saved',
+                              historyProvider.savedCount.toString(),
+                              Icons.bookmark_outline,
+                              () {},
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: _buildStatCard(
+                              themeProvider,
+                              'Alerts',
+                              alertProvider.alerts.length.toString(),
+                              Icons.notifications_active_outlined,
+                              () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (context) => const AlertsScreen()),
+                                );
+                              },
+                            ),
+                          ),
+                        ],
+                      );
+                    },
                   ),
                   const SizedBox(height: 32),
 

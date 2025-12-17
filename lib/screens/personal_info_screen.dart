@@ -28,7 +28,7 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
     final user = Provider.of<AuthProvider>(context, listen: false).user;
     _nameController = TextEditingController(text: user?.name ?? '');
     _emailController = TextEditingController(text: user?.email ?? '');
-    _phoneController = TextEditingController(text: '');
+    _phoneController = TextEditingController(text: user?.phoneNumber ?? '');
   }
 
   @override
@@ -131,7 +131,11 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
   void _saveChanges() {
     if (_formKey.currentState!.validate()) {
       final authProvider = Provider.of<AuthProvider>(context, listen: false);
-      authProvider.updateUserInfo(_nameController.text, _emailController.text);
+      authProvider.updateUserInfo(
+        _nameController.text, 
+        _emailController.text,
+        phoneNumber: _phoneController.text.isNotEmpty ? _phoneController.text : null,
+      );
       
       setState(() {
         _isEditing = false;

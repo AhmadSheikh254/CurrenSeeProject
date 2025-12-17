@@ -146,23 +146,36 @@ class HistoryScreen extends StatelessWidget {
                                       ),
                                     ],
                                   ),
-                                  Column(
-                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                  Row(
                                     children: [
-                                      Text(
-                                        conversion.result.toStringAsFixed(2),
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 18,
-                                          color: themeProvider.getAccentColor(),
-                                        ),
+                                      Column(
+                                        crossAxisAlignment: CrossAxisAlignment.end,
+                                        children: [
+                                          Text(
+                                            conversion.result.toStringAsFixed(2),
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 18,
+                                              color: themeProvider.getAccentColor(),
+                                            ),
+                                          ),
+                                          Text(
+                                            '${conversion.amount.toStringAsFixed(2)} ${conversion.fromCurrency}',
+                                            style: TextStyle(
+                                              fontSize: 12,
+                                              color: themeProvider.getSecondaryTextColor(),
+                                            ),
+                                          ),
+                                        ],
                                       ),
-                                      Text(
-                                        '${conversion.amount.toStringAsFixed(2)} ${conversion.fromCurrency}',
-                                        style: TextStyle(
-                                          fontSize: 12,
-                                          color: themeProvider.getSecondaryTextColor(),
+                                      IconButton(
+                                        icon: Icon(
+                                          conversion.isSaved ? Icons.bookmark : Icons.bookmark_border,
+                                          color: conversion.isSaved ? themeProvider.getAccentColor() : themeProvider.getSecondaryTextColor(),
                                         ),
+                                        onPressed: () {
+                                          historyProvider.toggleSaved(index);
+                                        },
                                       ),
                                     ],
                                   ),

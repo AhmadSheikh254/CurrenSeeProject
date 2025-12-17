@@ -241,28 +241,33 @@ class _AlertsScreenState extends State<AlertsScreen> {
                   ),
                 ),
                 const SizedBox(height: 16),
-                Row(
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text('Alert when rate is:', style: TextStyle(color: themeProvider.getTextColor())),
-                    const SizedBox(width: 8),
-                    ChoiceChip(
-                      label: const Text('Above'),
-                      selected: isAbove,
-                      onSelected: (selected) {
-                        setState(() => isAbove = true);
-                      },
-                      selectedColor: Colors.green.withOpacity(0.2),
-                      labelStyle: TextStyle(color: isAbove ? Colors.green : themeProvider.getSecondaryTextColor()),
-                    ),
-                    const SizedBox(width: 8),
-                    ChoiceChip(
-                      label: const Text('Below'),
-                      selected: !isAbove,
-                      onSelected: (selected) {
-                        setState(() => isAbove = false);
-                      },
-                      selectedColor: Colors.red.withOpacity(0.2),
-                      labelStyle: TextStyle(color: !isAbove ? Colors.red : themeProvider.getSecondaryTextColor()),
+                    const SizedBox(height: 8),
+                    Row(
+                      children: [
+                        ChoiceChip(
+                          label: const Text('Above'),
+                          selected: isAbove,
+                          onSelected: (selected) {
+                            setState(() => isAbove = true);
+                          },
+                          selectedColor: Colors.green.withOpacity(0.2),
+                          labelStyle: TextStyle(color: isAbove ? Colors.green : themeProvider.getSecondaryTextColor()),
+                        ),
+                        const SizedBox(width: 8),
+                        ChoiceChip(
+                          label: const Text('Below'),
+                          selected: !isAbove,
+                          onSelected: (selected) {
+                            setState(() => isAbove = false);
+                          },
+                          selectedColor: Colors.red.withOpacity(0.2),
+                          labelStyle: TextStyle(color: !isAbove ? Colors.red : themeProvider.getSecondaryTextColor()),
+                        ),
+                      ],
                     ),
                   ],
                 ),
@@ -288,7 +293,7 @@ class _AlertsScreenState extends State<AlertsScreen> {
                   }
                 },
                 style: ElevatedButton.styleFrom(backgroundColor: themeProvider.getAccentColor()),
-                child: const Text('Set Alert'),
+                child: const Text('Set Alert' , style: TextStyle(color: Colors.black)),
               ),
             ],
           );

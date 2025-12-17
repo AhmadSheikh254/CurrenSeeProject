@@ -46,4 +46,24 @@ class HistoryProvider extends ChangeNotifier {
     notifyListeners();
     await _saveHistory();
   }
+
+  // Toggle saved status of a conversion
+  void toggleSaved(int index) async {
+    if (index >= 0 && index < _conversions.length) {
+      final old = _conversions[index];
+      _conversions[index] = Conversion(
+        fromCurrency: old.fromCurrency,
+        toCurrency: old.toCurrency,
+        amount: old.amount,
+        result: old.result,
+        date: old.date,
+        isSaved: !old.isSaved,
+      );
+      notifyListeners();
+      await _saveHistory();
+    }
+  }
+
+  // Get number of saved conversions
+  int get savedCount => _conversions.where((c) => c.isSaved).length;
 }
