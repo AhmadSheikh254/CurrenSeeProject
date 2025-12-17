@@ -5,34 +5,44 @@ import '../models/conversion.dart';
 
 class HistoryProvider extends ChangeNotifier {
   final List<Conversion> _conversions = [];
+  String? _userId;
 
   List<Conversion> get conversions => List.unmodifiable(_conversions);
 
   // Initialize and load saved history
-  Future<void> init() async {
+  Future<void> init([String? userId]) async {
+    _userId = userId;
+    await _loadHistory();
+  }
+  
+  // Update current user and reload history
+  Future<void> updateUserId(String? userId) async {
+    _userId = userId;
     await _loadHistory();
   }
 
   // Load saved conversion history
   Future<void> _loadHistory() async {
     final prefs = await SharedPreferences.getInstance();
-    final historyJson = prefs.getString('conversion_history');
+    final key = _userId != null ? 'conversion_history_$_userId' : 'conversion_history_guest';
+    final historyJson = prefs.getString(key);
     
+    _conversions.clear();
     if (historyJson != null) {
       final List<dynamic> historyList = json.decode(historyJson);
-      _conversions.clear();
       _conversions.addAll(
         historyList.map((item) => Conversion.fromJson(item)).toList()
       );
-      notifyListeners();
     }
+    notifyListeners();
   }
 
   // Save conversion history
   Future<void> _saveHistory() async {
     final prefs = await SharedPreferences.getInstance();
+    final key = _userId != null ? 'conversion_history_$_userId' : 'conversion_history_guest';
     final historyList = _conversions.map((c) => c.toJson()).toList();
-    await prefs.setString('conversion_history', json.encode(historyList));
+    await prefs.setString(key, json.encode(historyList));
   }
 
   void addConversion(Conversion conversion) async {

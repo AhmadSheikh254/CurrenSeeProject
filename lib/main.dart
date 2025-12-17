@@ -20,7 +20,7 @@ void main() async {
   
   // Load saved data
   await authProvider.init();
-  await historyProvider.init();
+  await historyProvider.init(authProvider.user?.id);
   
   runApp(
     MultiProvider(

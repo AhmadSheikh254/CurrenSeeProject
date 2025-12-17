@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:provider/provider.dart';
 import '../providers/theme_provider.dart';
 import '../providers/auth_provider.dart';
+import '../providers/history_provider.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -47,6 +48,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
     if (success) {
       if (!mounted) return;
+      final historyProvider = Provider.of<HistoryProvider>(context, listen: false);
+      await historyProvider.updateUserId(authProvider.user?.id);
       Navigator.of(context).pushReplacementNamed('/home');
     } else {
       if (!mounted) return;
@@ -64,6 +67,8 @@ class _LoginScreenState extends State<LoginScreen> {
         
         return Scaffold(
       body: Container(
+        height: double.infinity,
+        width: double.infinity,
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topLeft,
@@ -216,6 +221,8 @@ class _LoginScreenState extends State<LoginScreen> {
                   width: double.infinity,
                   child: OutlinedButton(
                     onPressed: () {
+                      final historyProvider = Provider.of<HistoryProvider>(context, listen: false);
+                      historyProvider.updateUserId(null);
                       Navigator.of(context).pushReplacementNamed('/home_guest');
                     },
                     style: OutlinedButton.styleFrom(

@@ -164,18 +164,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 ],
                               ),
                             ),
-                            IconButton(
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(builder: (context) => const PersonalInfoScreen()),
-                                );
-                              },
-                              icon: Icon(
-                                Icons.edit_outlined,
-                                color: themeProvider.getAccentColor(),
+                            if (user != null)
+                              IconButton(
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(builder: (context) => const PersonalInfoScreen()),
+                                  );
+                                },
+                                icon: Icon(
+                                  Icons.edit_outlined,
+                                  color: themeProvider.getAccentColor(),
+                                ),
                               ),
-                            ),
                           ],
                         ),
                       );
@@ -242,24 +243,46 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                   ),
                   const SizedBox(height: 16),
-                  _buildMenuOption(
-                    themeProvider,
-                    icon: Icons.person_outline,
-                    title: 'Personal Info',
-                    subtitle: 'Edit your name, email, and address',
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => const PersonalInfoScreen()),
+                  Consumer<AuthProvider>(
+                    builder: (context, authProvider, child) {
+                      final isGuest = authProvider.user == null;
+                      
+                      if (isGuest) {
+                        return _buildMenuOption(
+                          themeProvider,
+                          icon: Icons.login,
+                          title: 'Sign In / Sign Up',
+                          subtitle: 'Create an account to save data',
+                          onTap: () {
+                            Navigator.of(context).pushNamedAndRemoveUntil('/login', (route) => false);
+                          },
+                        );
+                      }
+                      
+                      return Column(
+                        children: [
+                          _buildMenuOption(
+                            themeProvider,
+                            icon: Icons.person_outline,
+                            title: 'Personal Info',
+                            subtitle: 'Edit your name, email, and address',
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => const PersonalInfoScreen()),
+                              );
+                            },
+                          ),
+                          _buildMenuOption(
+                            themeProvider,
+                            icon: Icons.security,
+                            title: 'Security',
+                            subtitle: 'Change password and 2FA',
+                            onTap: () {},
+                          ),
+                        ],
                       );
                     },
-                  ),
-                  _buildMenuOption(
-                    themeProvider,
-                    icon: Icons.security,
-                    title: 'Security',
-                    subtitle: 'Change password and 2FA',
-                    onTap: () {},
                   ),
                   _buildMenuOption(
                     themeProvider,
@@ -298,7 +321,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     subtitle: 'Sign out of your account',
                     onTap: () async {
                       final authProvider = Provider.of<AuthProvider>(context, listen: false);
+                      final historyProvider = Provider.of<HistoryProvider>(context, listen: false);
                       await authProvider.logout();
+                      await historyProvider.updateUserId(null);
                       if (context.mounted) {
                         Navigator.of(context).pushNamedAndRemoveUntil('/login', (route) => false);
                       }
