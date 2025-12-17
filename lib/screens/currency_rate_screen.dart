@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/theme_provider.dart';
 import '../services/currency_service.dart';
+import '../widgets/animations.dart';
 import 'currency_details_screen.dart';
 
 class CurrencyRateScreen extends StatefulWidget {
@@ -166,19 +167,21 @@ class _CurrencyRateScreenState extends State<CurrencyRateScreen> {
                           itemBuilder: (context, index) {
                             final rate = _filteredRates[index];
                             // Use a simple circle avatar with currency code as fallback for flag
-                            return GestureDetector(
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => CurrencyDetailsScreen(
-                                      currencyCode: rate['code'],
-                                      currencyName: rate['name'],
-                                      currentRate: rate['rate'],
+                            return FadeInSlide(
+                              delay: index < 15 ? index * 0.05 : 0.0,
+                              child: ScaleButton(
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => CurrencyDetailsScreen(
+                                        currencyCode: rate['code'],
+                                        currencyName: rate['name'],
+                                        currentRate: rate['rate'],
+                                      ),
                                     ),
-                                  ),
-                                );
-                              },
+                                  );
+                                },
                               child: Container(
                               margin: const EdgeInsets.only(bottom: 12),
                               padding: const EdgeInsets.all(16),
@@ -254,8 +257,9 @@ class _CurrencyRateScreenState extends State<CurrencyRateScreen> {
                                   ),
                                 ],
                               ),
-                            ),
-                          );
+                                ),
+                              ),
+                            );
                           },
                         ),
                 ),

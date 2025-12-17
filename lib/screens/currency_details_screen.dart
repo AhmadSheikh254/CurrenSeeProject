@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:fl_chart/fl_chart.dart';
 import '../providers/theme_provider.dart';
+import '../widgets/animations.dart';
 
 class CurrencyDetailsScreen extends StatelessWidget {
   final String currencyCode;
@@ -63,91 +64,101 @@ class CurrencyDetailsScreen extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           // Header
-                          Center(
-                            child: Column(
-                              children: [
-                                Container(
-                                  width: 80,
-                                  height: 80,
-                                  decoration: BoxDecoration(
-                                    color: themeProvider.getAccentColor().withOpacity(0.2),
-                                    shape: BoxShape.circle,
-                                    border: Border.all(
-                                      color: themeProvider.getAccentColor(),
-                                      width: 2,
-                                    ),
-                                  ),
-                                  child: Center(
-                                    child: Text(
-                                      currencyCode[0],
-                                      style: TextStyle(
-                                        fontSize: 32,
-                                        fontWeight: FontWeight.bold,
+                          FadeInSlide(
+                            delay: 0.0,
+                            child: Center(
+                              child: Column(
+                                children: [
+                                  Container(
+                                    width: 80,
+                                    height: 80,
+                                    decoration: BoxDecoration(
+                                      color: themeProvider.getAccentColor().withOpacity(0.2),
+                                      shape: BoxShape.circle,
+                                      border: Border.all(
                                         color: themeProvider.getAccentColor(),
+                                        width: 2,
+                                      ),
+                                    ),
+                                    child: Center(
+                                      child: Text(
+                                        currencyCode[0],
+                                        style: TextStyle(
+                                          fontSize: 32,
+                                          fontWeight: FontWeight.bold,
+                                          color: themeProvider.getAccentColor(),
+                                        ),
                                       ),
                                     ),
                                   ),
-                                ),
-                                const SizedBox(height: 16),
-                                Text(
-                                  currencyName,
-                                  style: TextStyle(
-                                    fontSize: 24,
-                                    fontWeight: FontWeight.bold,
-                                    color: themeProvider.getTextColor(),
+                                  const SizedBox(height: 16),
+                                  Text(
+                                    currencyName,
+                                    style: TextStyle(
+                                      fontSize: 24,
+                                      fontWeight: FontWeight.bold,
+                                      color: themeProvider.getTextColor(),
+                                    ),
                                   ),
-                                ),
-                                Text(
-                                  currencyCode,
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    color: themeProvider.getSecondaryTextColor(),
+                                  Text(
+                                    currencyCode,
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      color: themeProvider.getSecondaryTextColor(),
+                                    ),
                                   ),
-                                ),
-                                const SizedBox(height: 24),
-                                Text(
-                                  '1 USD = $currentRate $currencyCode',
-                                  style: TextStyle(
-                                    fontSize: 28,
-                                    fontWeight: FontWeight.bold,
-                                    color: themeProvider.getTextColor(),
+                                  const SizedBox(height: 24),
+                                  Text(
+                                    '1 USD = $currentRate $currencyCode',
+                                    style: TextStyle(
+                                      fontSize: 28,
+                                      fontWeight: FontWeight.bold,
+                                      color: themeProvider.getTextColor(),
+                                    ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                           ),
                           const SizedBox(height: 40),
                           
                           // Chart Section
-                          Text(
-                            'Historical Trend (Last 7 Days)',
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: themeProvider.getTextColor(),
+                          FadeInSlide(
+                            delay: 0.1,
+                            child: Text(
+                              'Historical Trend (Last 7 Days)',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: themeProvider.getTextColor(),
+                              ),
                             ),
                           ),
                           const SizedBox(height: 24),
-                          Container(
-                            height: 250,
-                            padding: const EdgeInsets.all(16),
-                            decoration: BoxDecoration(
-                              color: themeProvider.getCardBackgroundColor(),
-                              borderRadius: BorderRadius.circular(20),
-                              border: Border.all(color: themeProvider.getBorderColor()),
-                            ),
-                            child: LineChart(
-                              _buildChartData(themeProvider),
+                          FadeInSlide(
+                            delay: 0.2,
+                            child: Container(
+                              height: 250,
+                              padding: const EdgeInsets.all(16),
+                              decoration: BoxDecoration(
+                                color: themeProvider.getCardBackgroundColor(),
+                                borderRadius: BorderRadius.circular(20),
+                                border: Border.all(color: themeProvider.getBorderColor()),
+                              ),
+                              child: LineChart(
+                                _buildChartData(themeProvider),
+                              ),
                             ),
                           ),
                           
                           const SizedBox(height: 32),
                           
                           // Additional Info
-                          _buildInfoRow(themeProvider, 'Open', '${(currentRate * 0.99).toStringAsFixed(4)}'),
-                          _buildInfoRow(themeProvider, 'High', '${(currentRate * 1.02).toStringAsFixed(4)}'),
-                          _buildInfoRow(themeProvider, 'Low', '${(currentRate * 0.98).toStringAsFixed(4)}'),
-                          _buildInfoRow(themeProvider, 'Close', '${currentRate.toStringAsFixed(4)}'),
+                          // Additional Info
+                          FadeInSlide(delay: 0.3, child: _buildInfoRow(themeProvider, 'Open', '${(currentRate * 0.99).toStringAsFixed(4)}')),
+                          FadeInSlide(delay: 0.4, child: _buildInfoRow(themeProvider, 'High', '${(currentRate * 1.02).toStringAsFixed(4)}')),
+                          FadeInSlide(delay: 0.5, child: _buildInfoRow(themeProvider, 'Low', '${(currentRate * 0.98).toStringAsFixed(4)}')),
+                          FadeInSlide(delay: 0.6, child: _buildInfoRow(themeProvider, 'Close', '${currentRate.toStringAsFixed(4)}')),
                         ],
                       ),
                     ),

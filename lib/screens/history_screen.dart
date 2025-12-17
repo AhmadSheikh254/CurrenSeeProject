@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import '../providers/theme_provider.dart';
 import '../providers/history_provider.dart';
+import '../widgets/animations.dart';
 
 class HistoryScreen extends StatelessWidget {
   const HistoryScreen({super.key});
@@ -94,92 +95,98 @@ class HistoryScreen extends StatelessWidget {
                           itemCount: conversions.length,
                           itemBuilder: (context, index) {
                             final conversion = conversions[index];
-                            return Container(
-                              margin: const EdgeInsets.only(bottom: 12),
-                              padding: const EdgeInsets.all(16),
-                              decoration: BoxDecoration(
-                                color: themeProvider.getCardBackgroundColor(),
-                                borderRadius: BorderRadius.circular(12),
-                                border: Border.all(color: themeProvider.getBorderColor()),
-                              ),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Row(
-                                        children: [
-                                          Text(
-                                            conversion.fromCurrency,
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 16,
-                                              color: themeProvider.getTextColor(),
+                            return FadeInSlide(
+                              delay: index < 10 ? index * 0.05 : 0.0,
+                              child: Container(
+                                margin: const EdgeInsets.only(bottom: 12),
+                                padding: const EdgeInsets.all(16),
+                                decoration: BoxDecoration(
+                                  color: themeProvider.getCardBackgroundColor(),
+                                  borderRadius: BorderRadius.circular(12),
+                                  border: Border.all(color: themeProvider.getBorderColor()),
+                                ),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            Text(
+                                              conversion.fromCurrency,
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 16,
+                                                color: themeProvider.getTextColor(),
+                                              ),
                                             ),
+                                            Padding(
+                                              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                                              child: Icon(
+                                                Icons.arrow_forward,
+                                                size: 16,
+                                                color: themeProvider.getSecondaryTextColor(),
+                                              ),
+                                            ),
+                                            Text(
+                                              conversion.toCurrency,
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 16,
+                                                color: themeProvider.getTextColor(),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        const SizedBox(height: 4),
+                                        Text(
+                                          DateFormat('MMM d, yyyy • h:mm a').format(conversion.date),
+                                          style: TextStyle(
+                                            fontSize: 12,
+                                            color: themeProvider.getSecondaryTextColor(),
                                           ),
-                                          Padding(
-                                            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                                        ),
+                                      ],
+                                    ),
+                                    Row(
+                                      children: [
+                                        Column(
+                                          crossAxisAlignment: CrossAxisAlignment.end,
+                                          children: [
+                                            Text(
+                                              conversion.result.toStringAsFixed(2),
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 18,
+                                                color: themeProvider.getAccentColor(),
+                                              ),
+                                            ),
+                                            Text(
+                                              '${conversion.amount.toStringAsFixed(2)} ${conversion.fromCurrency}',
+                                              style: TextStyle(
+                                                fontSize: 12,
+                                                color: themeProvider.getSecondaryTextColor(),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        ScaleButton(
+                                          onPressed: () {
+                                            historyProvider.toggleSaved(index);
+                                          },
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(8.0),
                                             child: Icon(
-                                              Icons.arrow_forward,
-                                              size: 16,
-                                              color: themeProvider.getSecondaryTextColor(),
+                                              conversion.isSaved ? Icons.bookmark : Icons.bookmark_border,
+                                              color: conversion.isSaved ? themeProvider.getAccentColor() : themeProvider.getSecondaryTextColor(),
                                             ),
                                           ),
-                                          Text(
-                                            conversion.toCurrency,
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 16,
-                                              color: themeProvider.getTextColor(),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      const SizedBox(height: 4),
-                                      Text(
-                                        DateFormat('MMM d, yyyy • h:mm a').format(conversion.date),
-                                        style: TextStyle(
-                                          fontSize: 12,
-                                          color: themeProvider.getSecondaryTextColor(),
                                         ),
-                                      ),
-                                    ],
-                                  ),
-                                  Row(
-                                    children: [
-                                      Column(
-                                        crossAxisAlignment: CrossAxisAlignment.end,
-                                        children: [
-                                          Text(
-                                            conversion.result.toStringAsFixed(2),
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 18,
-                                              color: themeProvider.getAccentColor(),
-                                            ),
-                                          ),
-                                          Text(
-                                            '${conversion.amount.toStringAsFixed(2)} ${conversion.fromCurrency}',
-                                            style: TextStyle(
-                                              fontSize: 12,
-                                              color: themeProvider.getSecondaryTextColor(),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      IconButton(
-                                        icon: Icon(
-                                          conversion.isSaved ? Icons.bookmark : Icons.bookmark_border,
-                                          color: conversion.isSaved ? themeProvider.getAccentColor() : themeProvider.getSecondaryTextColor(),
-                                        ),
-                                        onPressed: () {
-                                          historyProvider.toggleSaved(index);
-                                        },
-                                      ),
-                                    ],
-                                  ),
-                                ],
+                                      ],
+                                    ),
+                                  ],
+                                ),
                               ),
                             );
                           },

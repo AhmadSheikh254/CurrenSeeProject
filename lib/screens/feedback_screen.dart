@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../providers/theme_provider.dart';
 import '../providers/feedback_provider.dart';
 import '../models/feedback_entry.dart';
+import '../widgets/animations.dart';
 
 class FeedbackScreen extends StatefulWidget {
   const FeedbackScreen({super.key});
@@ -87,57 +88,69 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          TextField(
-                            controller: _titleController,
-                            decoration: InputDecoration(
-                              labelText: 'Title',
-                              labelStyle: TextStyle(color: themeProvider.getSecondaryTextColor()),
-                              enabledBorder: OutlineInputBorder(
-                                borderSide: BorderSide(color: themeProvider.getBorderColor()),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide(color: themeProvider.getAccentColor()),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: 16),
-                          TextField(
-                            controller: _descriptionController,
-                            maxLines: 5,
-                            decoration: InputDecoration(
-                              labelText: 'Description',
-                              labelStyle: TextStyle(color: themeProvider.getSecondaryTextColor()),
-                              enabledBorder: OutlineInputBorder(
-                                borderSide: BorderSide(color: themeProvider.getBorderColor()),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide(color: themeProvider.getAccentColor()),
+                          FadeInSlide(
+                            delay: 0.0,
+                            child: TextField(
+                              controller: _titleController,
+                              decoration: InputDecoration(
+                                labelText: 'Title',
+                                labelStyle: TextStyle(color: themeProvider.getSecondaryTextColor()),
+                                enabledBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(color: themeProvider.getBorderColor()),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(color: themeProvider.getAccentColor()),
+                                ),
                               ),
                             ),
                           ),
                           const SizedBox(height: 16),
-                          TextField(
-                            controller: _emailController,
-                            decoration: InputDecoration(
-                              labelText: 'Email (optional)',
-                              labelStyle: TextStyle(color: themeProvider.getSecondaryTextColor()),
-                              enabledBorder: OutlineInputBorder(
-                                borderSide: BorderSide(color: themeProvider.getBorderColor()),
+                          FadeInSlide(
+                            delay: 0.1,
+                            child: TextField(
+                              controller: _descriptionController,
+                              maxLines: 5,
+                              decoration: InputDecoration(
+                                labelText: 'Description',
+                                labelStyle: TextStyle(color: themeProvider.getSecondaryTextColor()),
+                                enabledBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(color: themeProvider.getBorderColor()),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(color: themeProvider.getAccentColor()),
+                                ),
                               ),
-                              focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide(color: themeProvider.getAccentColor()),
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          FadeInSlide(
+                            delay: 0.2,
+                            child: TextField(
+                              controller: _emailController,
+                              decoration: InputDecoration(
+                                labelText: 'Email (optional)',
+                                labelStyle: TextStyle(color: themeProvider.getSecondaryTextColor()),
+                                enabledBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(color: themeProvider.getBorderColor()),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(color: themeProvider.getAccentColor()),
+                                ),
                               ),
                             ),
                           ),
                           const SizedBox(height: 24),
-                          Center(
-                            child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: themeProvider.getAccentColor(),
-                                padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 12),
+                          FadeInSlide(
+                            delay: 0.3,
+                            child: Center(
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: themeProvider.getAccentColor(),
+                                  padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 12),
+                                ),
+                                onPressed: _submitFeedback,
+                                child: const Text('Submit',style: TextStyle(color: Colors.black)),
                               ),
-                              onPressed: _submitFeedback,
-                              child: const Text('Submit',style: TextStyle(color: Colors.black)),
                             ),
                           ),
                         ],

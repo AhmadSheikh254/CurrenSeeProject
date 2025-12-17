@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../providers/theme_provider.dart';
 import '../providers/alert_provider.dart';
 import '../models/rate_alert.dart';
+import '../widgets/animations.dart';
 
 class AlertsScreen extends StatefulWidget {
   const AlertsScreen({super.key});
@@ -52,9 +53,9 @@ class _AlertsScreenState extends State<AlertsScreen> {
                             ),
                           ],
                         ),
-                        IconButton(
-                          icon: Icon(Icons.add_circle_outline, color: themeProvider.getAccentColor(), size: 32),
+                        ScaleButton(
                           onPressed: () => _showAddAlertDialog(context, themeProvider, alertProvider),
+                          child: Icon(Icons.add_circle_outline, color: themeProvider.getAccentColor(), size: 32),
                         ),
                       ],
                     ),
@@ -94,71 +95,74 @@ class _AlertsScreenState extends State<AlertsScreen> {
                             itemCount: alerts.length,
                             itemBuilder: (context, index) {
                               final alert = alerts[index];
-                              return Dismissible(
-                                key: Key(alert.id),
-                                background: Container(
-                                  color: Colors.red,
-                                  alignment: Alignment.centerRight,
-                                  padding: const EdgeInsets.only(right: 20),
-                                  margin: const EdgeInsets.only(bottom: 12),
-                                  child: const Icon(Icons.delete, color: Colors.white),
-                                ),
-                                onDismissed: (direction) {
-                                  alertProvider.removeAlert(alert.id);
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(content: Text('Alert removed')),
-                                  );
-                                },
-                                child: Container(
-                                  margin: const EdgeInsets.only(bottom: 12),
-                                  padding: const EdgeInsets.all(16),
-                                  decoration: BoxDecoration(
-                                    color: themeProvider.getCardBackgroundColor(),
-                                    borderRadius: BorderRadius.circular(12),
-                                    border: Border.all(color: themeProvider.getBorderColor()),
+                              return FadeInSlide(
+                                delay: index * 0.1,
+                                child: Dismissible(
+                                  key: Key(alert.id),
+                                  background: Container(
+                                    color: Colors.red,
+                                    alignment: Alignment.centerRight,
+                                    padding: const EdgeInsets.only(right: 20),
+                                    margin: const EdgeInsets.only(bottom: 12),
+                                    child: const Icon(Icons.delete, color: Colors.white),
                                   ),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Row(
-                                            children: [
-                                              Text(
-                                                '${alert.fromCurrency}/${alert.toCurrency}',
-                                                style: TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 18,
-                                                  color: themeProvider.getTextColor(),
+                                  onDismissed: (direction) {
+                                    alertProvider.removeAlert(alert.id);
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(content: Text('Alert removed')),
+                                    );
+                                  },
+                                  child: Container(
+                                    margin: const EdgeInsets.only(bottom: 12),
+                                    padding: const EdgeInsets.all(16),
+                                    decoration: BoxDecoration(
+                                      color: themeProvider.getCardBackgroundColor(),
+                                      borderRadius: BorderRadius.circular(12),
+                                      border: Border.all(color: themeProvider.getBorderColor()),
+                                    ),
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Row(
+                                              children: [
+                                                Text(
+                                                  '${alert.fromCurrency}/${alert.toCurrency}',
+                                                  style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 18,
+                                                    color: themeProvider.getTextColor(),
+                                                  ),
                                                 ),
-                                              ),
-                                              const SizedBox(width: 8),
-                                              Icon(
-                                                alert.isAbove ? Icons.trending_up : Icons.trending_down,
-                                                color: alert.isAbove ? Colors.green : Colors.red,
-                                                size: 20,
-                                              ),
-                                            ],
-                                          ),
-                                          const SizedBox(height: 4),
-                                          Text(
-                                            'Target: ${alert.targetRate.toStringAsFixed(4)}',
-                                            style: TextStyle(
-                                              fontSize: 14,
-                                              color: themeProvider.getSecondaryTextColor(),
+                                                const SizedBox(width: 8),
+                                                Icon(
+                                                  alert.isAbove ? Icons.trending_up : Icons.trending_down,
+                                                  color: alert.isAbove ? Colors.green : Colors.red,
+                                                  size: 20,
+                                                ),
+                                              ],
                                             ),
-                                          ),
-                                        ],
-                                      ),
-                                      Switch(
-                                        value: alert.isActive,
-                                        onChanged: (value) {
-                                          alertProvider.toggleAlert(alert.id);
-                                        },
-                                        activeColor: themeProvider.getAccentColor(),
-                                      ),
-                                    ],
+                                            const SizedBox(height: 4),
+                                            Text(
+                                              'Target: ${alert.targetRate.toStringAsFixed(4)}',
+                                              style: TextStyle(
+                                                fontSize: 14,
+                                                color: themeProvider.getSecondaryTextColor(),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        Switch(
+                                          value: alert.isActive,
+                                          onChanged: (value) {
+                                            alertProvider.toggleAlert(alert.id);
+                                          },
+                                          activeColor: themeProvider.getAccentColor(),
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ),
                               );

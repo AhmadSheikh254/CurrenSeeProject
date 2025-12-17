@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import '../providers/theme_provider.dart';
 import '../models/news_article.dart';
 import '../services/news_service.dart';
+import '../widgets/animations.dart';
 import 'news_detail_screen.dart';
 
 class NewsScreen extends StatefulWidget {
@@ -92,108 +93,111 @@ class _NewsScreenState extends State<NewsScreen> {
                           itemCount: articles.length,
                           itemBuilder: (context, index) {
                             final article = articles[index];
-                            return GestureDetector(
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => NewsDetailScreen(article: article),
-                                  ),
-                                );
-                              },
-                              child: Container(
-                                margin: const EdgeInsets.only(bottom: 16),
-                                decoration: BoxDecoration(
-                                  color: themeProvider.getCardBackgroundColor(),
-                                  borderRadius: BorderRadius.circular(16),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black.withOpacity(0.1),
-                                      blurRadius: 8,
-                                      offset: const Offset(0, 4),
+                            return FadeInSlide(
+                              delay: index * 0.1,
+                              child: ScaleButton(
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => NewsDetailScreen(article: article),
                                     ),
-                                  ],
-                                ),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    ClipRRect(
-                                      borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
-                                      child: Image.network(
-                                        article.imageUrl,
-                                        height: 150,
-                                        width: double.infinity,
-                                        fit: BoxFit.cover,
-                                        errorBuilder: (context, error, stackTrace) {
-                                          return Container(
-                                            height: 150,
-                                            color: themeProvider.getAccentColor().withOpacity(0.2),
-                                            child: Center(
-                                              child: Icon(
-                                                Icons.image_not_supported,
-                                                size: 40,
-                                                color: themeProvider.getSecondaryTextColor(),
-                                              ),
-                                            ),
-                                          );
-                                        },
+                                  );
+                                },
+                                child: Container(
+                                  margin: const EdgeInsets.only(bottom: 16),
+                                  decoration: BoxDecoration(
+                                    color: themeProvider.getCardBackgroundColor(),
+                                    borderRadius: BorderRadius.circular(16),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withOpacity(0.1),
+                                        blurRadius: 8,
+                                        offset: const Offset(0, 4),
                                       ),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.all(16),
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Row(
-                                            children: [
-                                              Container(
-                                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                                                decoration: BoxDecoration(
-                                                  color: themeProvider.getAccentColor().withOpacity(0.1),
-                                                  borderRadius: BorderRadius.circular(4),
-                                                ),
-                                                child: Text(
-                                                  article.source,
-                                                  style: TextStyle(
-                                                    fontSize: 10,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: themeProvider.getAccentColor(),
-                                                  ),
-                                                ),
-                                              ),
-                                              const Spacer(),
-                                              Text(
-                                                DateFormat.yMMMd().format(article.publishedAt),
-                                                style: TextStyle(
-                                                  fontSize: 12,
+                                    ],
+                                  ),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      ClipRRect(
+                                        borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+                                        child: Image.network(
+                                          article.imageUrl,
+                                          height: 150,
+                                          width: double.infinity,
+                                          fit: BoxFit.cover,
+                                          errorBuilder: (context, error, stackTrace) {
+                                            return Container(
+                                              height: 150,
+                                              color: themeProvider.getAccentColor().withOpacity(0.2),
+                                              child: Center(
+                                                child: Icon(
+                                                  Icons.image_not_supported,
+                                                  size: 40,
                                                   color: themeProvider.getSecondaryTextColor(),
                                                 ),
                                               ),
-                                            ],
-                                          ),
-                                          const SizedBox(height: 8),
-                                          Text(
-                                            article.title,
-                                            style: TextStyle(
-                                              fontSize: 18,
-                                              fontWeight: FontWeight.bold,
-                                              color: themeProvider.getTextColor(),
-                                            ),
-                                          ),
-                                          const SizedBox(height: 8),
-                                          Text(
-                                            article.summary,
-                                            maxLines: 2,
-                                            overflow: TextOverflow.ellipsis,
-                                            style: TextStyle(
-                                              fontSize: 14,
-                                              color: themeProvider.getSecondaryTextColor(),
-                                            ),
-                                          ),
-                                        ],
+                                            );
+                                          },
+                                        ),
                                       ),
-                                    ),
-                                  ],
+                                      Padding(
+                                        padding: const EdgeInsets.all(16),
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Row(
+                                              children: [
+                                                Container(
+                                                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                                  decoration: BoxDecoration(
+                                                    color: themeProvider.getAccentColor().withOpacity(0.1),
+                                                    borderRadius: BorderRadius.circular(4),
+                                                  ),
+                                                  child: Text(
+                                                    article.source,
+                                                    style: TextStyle(
+                                                      fontSize: 10,
+                                                      fontWeight: FontWeight.bold,
+                                                      color: themeProvider.getAccentColor(),
+                                                    ),
+                                                  ),
+                                                ),
+                                                const Spacer(),
+                                                Text(
+                                                  DateFormat.yMMMd().format(article.publishedAt),
+                                                  style: TextStyle(
+                                                    fontSize: 12,
+                                                    color: themeProvider.getSecondaryTextColor(),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                            const SizedBox(height: 8),
+                                            Text(
+                                              article.title,
+                                              style: TextStyle(
+                                                fontSize: 18,
+                                                fontWeight: FontWeight.bold,
+                                                color: themeProvider.getTextColor(),
+                                              ),
+                                            ),
+                                            const SizedBox(height: 8),
+                                            Text(
+                                              article.summary,
+                                              maxLines: 2,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: TextStyle(
+                                                fontSize: 14,
+                                                color: themeProvider.getSecondaryTextColor(),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
                             );
