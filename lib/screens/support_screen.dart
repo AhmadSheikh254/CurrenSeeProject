@@ -57,11 +57,7 @@ class SupportScreen extends StatelessWidget {
                             delay: 0.1,
                             child: Container(
                               padding: const EdgeInsets.all(20),
-                              decoration: BoxDecoration(
-                                color: themeProvider.getCardBackgroundColor(),
-                                borderRadius: BorderRadius.circular(16),
-                                border: Border.all(color: themeProvider.getBorderColor()),
-                              ),
+                              decoration: themeProvider.getGlassDecoration(borderRadius: 16),
                               child: Column(
                                 children: [
                                   _buildContactOption(
@@ -162,22 +158,6 @@ class SupportScreen extends StatelessWidget {
   ) {
     return InkWell(
       onTap: onTap,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 12.0),
-        child: Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                color: themeProvider.getAccentColor().withOpacity(0.1),
-                shape: BoxShape.circle,
-              ),
-              child: Icon(icon, color: themeProvider.getAccentColor()),
-            ),
-            const SizedBox(width: 16),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
                 Text(
                   title,
                   style: TextStyle(
@@ -206,11 +186,7 @@ class SupportScreen extends StatelessWidget {
   Widget _buildFAQItem(ThemeProvider themeProvider, String question, String answer) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
-      decoration: BoxDecoration(
-        color: themeProvider.getCardBackgroundColor(),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: themeProvider.getBorderColor()),
-      ),
+      decoration: themeProvider.getGlassDecoration(borderRadius: 16),
       child: Builder(
         builder: (context) => Theme(
           data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
@@ -247,10 +223,9 @@ class SupportScreen extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 12),
       child: ListTile(
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        tileColor: themeProvider.getCardBackgroundColor(),
+        tileColor: Colors.transparent,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-          side: BorderSide(color: themeProvider.getBorderColor()),
+          borderRadius: BorderRadius.circular(16),
         ),
         leading: Icon(Icons.article_outlined, color: themeProvider.getAccentColor()),
         title: Text(
