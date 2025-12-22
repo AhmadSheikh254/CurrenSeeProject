@@ -219,10 +219,18 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
                                           height: 120,
                                           decoration: BoxDecoration(
                                             shape: BoxShape.circle,
-                                            border: Border.all(
-                                              color: themeProvider.getAccentColor(),
-                                              width: 3,
+                                            gradient: LinearGradient(
+                                              colors: [themeProvider.getAccentColor(), themeProvider.getSecondaryAccentColor()],
+                                              begin: Alignment.topLeft,
+                                              end: Alignment.bottomRight,
                                             ),
+                                            boxShadow: [
+                                              BoxShadow(
+                                                color: themeProvider.getAccentColor().withOpacity(0.3),
+                                                blurRadius: 15,
+                                                offset: const Offset(0, 8),
+                                              ),
+                                            ],
                                             image: DecorationImage(
                                               image: NetworkImage(photoUrl),
                                               fit: BoxFit.cover,
@@ -280,19 +288,19 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
                                       filled: true,
                                       fillColor: themeProvider.getCardBackgroundColor(),
                                       border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(12),
+                                        borderRadius: BorderRadius.circular(16),
                                         borderSide: BorderSide(color: themeProvider.getBorderColor()),
                                       ),
                                       enabledBorder: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(12),
+                                        borderRadius: BorderRadius.circular(16),
                                         borderSide: BorderSide(color: themeProvider.getBorderColor()),
                                       ),
                                       focusedBorder: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(12),
-                                        borderSide: BorderSide(color: themeProvider.getAccentColor(), width: 2),
+                                        borderRadius: BorderRadius.circular(16),
+                                        borderSide: BorderSide(color: themeProvider.getAccentColor(), width: 1.5),
                                       ),
                                       disabledBorder: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(12),
+                                        borderRadius: BorderRadius.circular(16),
                                         borderSide: BorderSide(color: themeProvider.getBorderColor()),
                                       ),
                                       prefixIcon: Icon(Icons.person, color: themeProvider.getAccentColor()),
@@ -417,47 +425,60 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
                                 child: Row(
                                   children: [
                                     Expanded(
-                                      child: ElevatedButton(
+                                      child: ScaleButton(
                                         onPressed: () {
                                           setState(() {
                                             _isEditing = false;
                                           });
                                         },
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor: themeProvider.getCardBackgroundColor(),
+                                        child: Container(
                                           padding: const EdgeInsets.symmetric(vertical: 16),
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(12),
-                                            side: BorderSide(color: themeProvider.getBorderColor()),
+                                          decoration: BoxDecoration(
+                                            color: themeProvider.getCardBackgroundColor(),
+                                            borderRadius: BorderRadius.circular(16),
+                                            border: Border.all(color: themeProvider.getBorderColor()),
                                           ),
-                                        ),
-                                        child: Text(
-                                          'Cancel',
-                                          style: TextStyle(
-                                            color: themeProvider.getTextColor(),
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.bold,
+                                          alignment: Alignment.center,
+                                          child: Text(
+                                            'Cancel',
+                                            style: TextStyle(
+                                              color: themeProvider.getTextColor(),
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold,
+                                            ),
                                           ),
                                         ),
                                       ),
                                     ),
                                     const SizedBox(width: 16),
                                     Expanded(
-                                      child: ElevatedButton(
+                                      child: ScaleButton(
                                         onPressed: _saveChanges,
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor: themeProvider.getAccentColor(),
+                                        child: Container(
                                           padding: const EdgeInsets.symmetric(vertical: 16),
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(12),
+                                          decoration: BoxDecoration(
+                                            gradient: LinearGradient(
+                                              colors: [themeProvider.getAccentColor(), themeProvider.getSecondaryAccentColor()],
+                                              begin: Alignment.topLeft,
+                                              end: Alignment.bottomRight,
+                                            ),
+                                            borderRadius: BorderRadius.circular(16),
+                                            boxShadow: [
+                                              BoxShadow(
+                                                color: themeProvider.getAccentColor().withOpacity(0.3),
+                                                blurRadius: 12,
+                                                offset: const Offset(0, 6),
+                                              ),
+                                            ],
                                           ),
-                                        ),
-                                        child: const Text(
-                                          'Save Changes',
-                                          style: TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.bold,
+                                          alignment: Alignment.center,
+                                          child: const Text(
+                                            'Save Changes',
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold,
+                                            ),
                                           ),
                                         ),
                                       ),
