@@ -5,7 +5,6 @@ import '../providers/auth_provider.dart';
 import '../providers/history_provider.dart';
 import '../providers/alert_provider.dart';
 import 'alerts_screen.dart';
-import 'support_screen.dart';
 import 'feedback_screen.dart';
 import 'personal_info_screen.dart';
 import '../widgets/animations.dart';

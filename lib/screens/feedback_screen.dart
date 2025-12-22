@@ -95,11 +95,19 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                               decoration: InputDecoration(
                                 labelText: 'Title',
                                 labelStyle: TextStyle(color: themeProvider.getSecondaryTextColor()),
+                                filled: true,
+                                fillColor: themeProvider.getCardBackgroundColor(),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(16),
+                                  borderSide: BorderSide(color: themeProvider.getBorderColor()),
+                                ),
                                 enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(16),
                                   borderSide: BorderSide(color: themeProvider.getBorderColor()),
                                 ),
                                 focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(color: themeProvider.getAccentColor()),
+                                  borderRadius: BorderRadius.circular(16),
+                                  borderSide: BorderSide(color: themeProvider.getAccentColor(), width: 1.5),
                                 ),
                               ),
                             ),
@@ -143,13 +151,34 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                           FadeInSlide(
                             delay: 0.3,
                             child: Center(
-                              child: ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: themeProvider.getAccentColor(),
-                                  padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 12),
-                                ),
+                              child: ScaleButton(
                                 onPressed: _submitFeedback,
-                                child: const Text('Submit',style: TextStyle(color: Colors.black)),
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 48, vertical: 16),
+                                  decoration: BoxDecoration(
+                                    gradient: LinearGradient(
+                                      colors: [themeProvider.getAccentColor(), themeProvider.getSecondaryAccentColor()],
+                                      begin: Alignment.topLeft,
+                                      end: Alignment.bottomRight,
+                                    ),
+                                    borderRadius: BorderRadius.circular(16),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: themeProvider.getAccentColor().withOpacity(0.3),
+                                        blurRadius: 12,
+                                        offset: const Offset(0, 6),
+                                      ),
+                                    ],
+                                  ),
+                                  child: const Text(
+                                    'Submit Feedback',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                ),
                               ),
                             ),
                           ),

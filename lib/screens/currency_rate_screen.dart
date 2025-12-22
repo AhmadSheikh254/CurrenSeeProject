@@ -109,8 +109,6 @@ class _CurrencyRateScreenState extends State<CurrencyRateScreen> {
                               Icon(Icons.search, color: themeProvider.getSecondaryTextColor()),
                           filled: true,
                           fillColor: themeProvider.getCardBackgroundColor(),
-                          filled: true,
-                          fillColor: themeProvider.getCardBackgroundColor(),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(16),
                             borderSide: BorderSide(color: themeProvider.getBorderColor()),

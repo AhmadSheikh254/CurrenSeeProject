@@ -337,11 +337,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   const SizedBox(width: 12),
                                   Container(
                                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                                    decoration: BoxDecoration(
-                                      color: themeProvider.getCardBackgroundColor().withOpacity(0.5),
-                                      borderRadius: BorderRadius.circular(12),
-                                      border: Border.all(color: themeProvider.getBorderColor()),
-                                    ),
+                                    decoration: themeProvider.getGlassDecoration(borderRadius: 12),
                                     child: DropdownButtonHideUnderline(
                                       child: DropdownButton<String>(
                                         value: _fromCurrency,
@@ -410,12 +406,16 @@ class _HomeScreenState extends State<HomeScreen> {
                                         hintText: '0.00',
                                         hintStyle: TextStyle(color: themeProvider.getSecondaryTextColor()),
                                         border: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(8),
+                                          borderRadius: BorderRadius.circular(16),
                                           borderSide: BorderSide(color: themeProvider.getBorderColor()),
                                         ),
                                         enabledBorder: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(8),
+                                          borderRadius: BorderRadius.circular(16),
                                           borderSide: BorderSide(color: themeProvider.getBorderColor()),
+                                        ),
+                                        focusedBorder: OutlineInputBorder(
+                                          borderRadius: BorderRadius.circular(16),
+                                          borderSide: BorderSide(color: themeProvider.getAccentColor(), width: 1.5),
                                         ),
                                       ),
                                     ),

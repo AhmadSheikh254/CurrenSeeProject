@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:provider/provider.dart';
 import '../providers/theme_provider.dart';
 import '../providers/auth_provider.dart';
 import '../providers/history_provider.dart';
@@ -120,16 +119,16 @@ class _LoginScreenState extends State<LoginScreen> {
                       filled: true,
                       fillColor: themeProvider.getCardBackgroundColor(),
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(16),
                         borderSide: BorderSide(color: themeProvider.getBorderColor()),
                       ),
                       enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(16),
                         borderSide: BorderSide(color: themeProvider.getBorderColor()),
                       ),
                       focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide(color: themeProvider.getAccentColor(), width: 2),
+                        borderRadius: BorderRadius.circular(16),
+                        borderSide: BorderSide(color: themeProvider.getAccentColor(), width: 1.5),
                       ),
                     ),
                   ),
@@ -160,16 +159,16 @@ class _LoginScreenState extends State<LoginScreen> {
                       filled: true,
                       fillColor: themeProvider.getCardBackgroundColor(),
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(16),
                         borderSide: BorderSide(color: themeProvider.getBorderColor()),
                       ),
                       enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(16),
                         borderSide: BorderSide(color: themeProvider.getBorderColor()),
                       ),
                       focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide(color: themeProvider.getAccentColor(), width: 2),
+                        borderRadius: BorderRadius.circular(16),
+                        borderSide: BorderSide(color: themeProvider.getAccentColor(), width: 1.5),
                       ),
                     ),
                   ),

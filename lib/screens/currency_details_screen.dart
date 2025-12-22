@@ -73,10 +73,14 @@ class CurrencyDetailsScreen extends StatelessWidget {
                                     width: 80,
                                     height: 80,
                                     decoration: BoxDecoration(
-                                      color: themeProvider.getAccentColor().withOpacity(0.2),
+                                      gradient: LinearGradient(
+                                        colors: [themeProvider.getAccentColor().withOpacity(0.2), themeProvider.getSecondaryAccentColor().withOpacity(0.2)],
+                                        begin: Alignment.topLeft,
+                                        end: Alignment.bottomRight,
+                                      ),
                                       shape: BoxShape.circle,
                                       border: Border.all(
-                                        color: themeProvider.getAccentColor(),
+                                        color: themeProvider.getAccentColor().withOpacity(0.5),
                                         width: 2,
                                       ),
                                     ),
@@ -140,11 +144,7 @@ class CurrencyDetailsScreen extends StatelessWidget {
                             child: Container(
                               height: 250,
                               padding: const EdgeInsets.all(16),
-                              decoration: BoxDecoration(
-                                color: themeProvider.getCardBackgroundColor(),
-                                borderRadius: BorderRadius.circular(20),
-                                border: Border.all(color: themeProvider.getBorderColor()),
-                              ),
+                              decoration: themeProvider.getGlassDecoration(borderRadius: 24),
                               child: LineChart(
                                 _buildChartData(themeProvider),
                               ),

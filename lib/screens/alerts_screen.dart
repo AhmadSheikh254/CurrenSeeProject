@@ -115,11 +115,7 @@ class _AlertsScreenState extends State<AlertsScreen> {
                                   child: Container(
                                     margin: const EdgeInsets.only(bottom: 12),
                                     padding: const EdgeInsets.all(16),
-                                    decoration: BoxDecoration(
-                                      color: themeProvider.getCardBackgroundColor(),
-                                      borderRadius: BorderRadius.circular(12),
-                                      border: Border.all(color: themeProvider.getBorderColor()),
-                                    ),
+                                    decoration: themeProvider.getGlassDecoration(borderRadius: 16),
                                     child: Row(
                                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                       children: [
@@ -236,11 +232,19 @@ class _AlertsScreenState extends State<AlertsScreen> {
                   decoration: InputDecoration(
                     labelText: 'Target Rate',
                     labelStyle: TextStyle(color: themeProvider.getSecondaryTextColor()),
+                    filled: true,
+                    fillColor: themeProvider.getCardBackgroundColor(),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(16),
+                      borderSide: BorderSide(color: themeProvider.getBorderColor()),
+                    ),
                     enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(16),
                       borderSide: BorderSide(color: themeProvider.getBorderColor()),
                     ),
                     focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: themeProvider.getAccentColor()),
+                      borderRadius: BorderRadius.circular(16),
+                      borderSide: BorderSide(color: themeProvider.getAccentColor(), width: 1.5),
                     ),
                   ),
                 ),
@@ -282,7 +286,7 @@ class _AlertsScreenState extends State<AlertsScreen> {
                 onPressed: () => Navigator.pop(context),
                 child: const Text('Cancel'),
               ),
-              ElevatedButton(
+              ScaleButton(
                 onPressed: () {
                   if (rateController.text.isNotEmpty) {
                     final alert = RateAlert(
@@ -296,8 +300,24 @@ class _AlertsScreenState extends State<AlertsScreen> {
                     Navigator.pop(context);
                   }
                 },
-                style: ElevatedButton.styleFrom(backgroundColor: themeProvider.getAccentColor()),
-                child: const Text('Set Alert' , style: TextStyle(color: Colors.black)),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [themeProvider.getAccentColor(), themeProvider.getSecondaryAccentColor()],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: const Text(
+                    'Set Alert',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
               ),
             ],
           );
