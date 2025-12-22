@@ -100,11 +100,7 @@ class HistoryScreen extends StatelessWidget {
                               child: Container(
                                 margin: const EdgeInsets.only(bottom: 12),
                                 padding: const EdgeInsets.all(16),
-                                decoration: BoxDecoration(
-                                  color: themeProvider.getCardBackgroundColor(),
-                                  borderRadius: BorderRadius.circular(12),
-                                  border: Border.all(color: themeProvider.getBorderColor()),
-                                ),
+                                decoration: themeProvider.getGlassDecoration(borderRadius: 16),
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
@@ -159,7 +155,7 @@ class HistoryScreen extends StatelessWidget {
                                               style: TextStyle(
                                                 fontWeight: FontWeight.bold,
                                                 fontSize: 18,
-                                                color: themeProvider.getAccentColor(),
+                                                color: themeProvider.getTextColor(),
                                               ),
                                             ),
                                             Text(

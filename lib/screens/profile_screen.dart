@@ -53,11 +53,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
                         Container(
                           padding: const EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            color: themeProvider.getCardBackgroundColor(),
-                            shape: BoxShape.circle,
-                            border: Border.all(color: themeProvider.getBorderColor()),
-                          ),
+                          decoration: themeProvider.getGlassDecoration(borderRadius: 50),
                           child: Icon(
                             Icons.notifications_outlined,
                             color: themeProvider.getTextColor(),
@@ -73,34 +69,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     builder: (context, authProvider, child) {
                       final user = authProvider.user;
                       
-                      // Print user information to console
-                      if (user != null) {
-                        print('=== LOGGED IN USER INFO ===');
-                        print('User ID: ${user.id}');
-                        print('Name: ${user.name}');
-                        print('Email: ${user.email}');
-                        print('Photo URL: ${user.photoUrl}');
-                        print('==========================');
-                      } else {
-                        print('No user logged in');
-                      }
-                      
                       return FadeInSlide(
                         delay: 0.1,
                         child: Container(
                           padding: const EdgeInsets.all(20),
-                          decoration: BoxDecoration(
-                            color: themeProvider.getCardBackgroundColor(),
-                            borderRadius: BorderRadius.circular(20),
-                            border: Border.all(color: themeProvider.getBorderColor()),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.1),
-                                blurRadius: 20,
-                                offset: const Offset(0, 10),
-                              ),
-                            ],
-                          ),
+                          decoration: themeProvider.getGlassDecoration(borderRadius: 20),
                           child: Row(
                             children: [
                               Container(
@@ -108,10 +81,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 height: 70,
                                 decoration: BoxDecoration(
                                   shape: BoxShape.circle,
-                                  border: Border.all(
-                                    color: themeProvider.getAccentColor(),
-                                    width: 3,
+                                  gradient: LinearGradient(
+                                    colors: [themeProvider.getAccentColor(), themeProvider.getSecondaryAccentColor()],
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
                                   ),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: themeProvider.getAccentColor().withOpacity(0.3),
+                                      blurRadius: 10,
+                                      offset: const Offset(0, 4),
+                                    ),
+                                  ],
                                   image: DecorationImage(
                                     image: NetworkImage(user?.photoUrl ?? 'https://i.pravatar.cc/150?img=11'),
                                     fit: BoxFit.cover,
@@ -148,12 +129,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                 width: 1,
                                               ),
                                             ),
-                                            child: Text(
+                                            child: const Text(
                                               'PRO',
                                               style: TextStyle(
                                                 fontSize: 10,
                                                 fontWeight: FontWeight.bold,
-                                                color: themeProvider.getAccentColor(),
+                                                color: Colors.white,
                                               ),
                                             ),
                                           ),
@@ -344,9 +325,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           subtitle: 'Sign out of your account',
                           onTap: () async {
                             final authProvider = Provider.of<AuthProvider>(context, listen: false);
-                            final historyProvider = Provider.of<HistoryProvider>(context, listen: false);
                             await authProvider.logout();
-                            await historyProvider.updateUserId(null);
                             if (context.mounted) {
                               Navigator.of(context).pushNamedAndRemoveUntil('/login', (route) => false);
                             }
@@ -369,11 +348,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       onPressed: onTap,
       child: Container(
         padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: themeProvider.getCardBackgroundColor(),
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: themeProvider.getBorderColor()),
-        ),
+        decoration: themeProvider.getGlassDecoration(borderRadius: 16),
         child: Column(
           children: [
             Icon(icon, color: themeProvider.getAccentColor(), size: 28),

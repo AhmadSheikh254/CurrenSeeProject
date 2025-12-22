@@ -82,8 +82,6 @@ class _SignupScreenState extends State<SignupScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Account created successfully')),
       );
-      final historyProvider = Provider.of<HistoryProvider>(context, listen: false);
-      await historyProvider.updateUserId(authProvider.user?.id);
       Navigator.of(context).pushReplacementNamed('/home');
     } else {
       if (!mounted) return;
@@ -183,16 +181,16 @@ class _SignupScreenState extends State<SignupScreen> {
                       filled: true,
                       fillColor: themeProvider.getCardBackgroundColor(),
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(16),
                         borderSide: BorderSide(color: themeProvider.getBorderColor()),
                       ),
                       enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(16),
                         borderSide: BorderSide(color: themeProvider.getBorderColor()),
                       ),
                       focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide(color: themeProvider.getAccentColor(), width: 2),
+                        borderRadius: BorderRadius.circular(16),
+                        borderSide: BorderSide(color: themeProvider.getAccentColor(), width: 1.5),
                       ),
                     ),
                   ),
@@ -223,16 +221,16 @@ class _SignupScreenState extends State<SignupScreen> {
                       filled: true,
                       fillColor: themeProvider.getCardBackgroundColor(),
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(16),
                         borderSide: BorderSide(color: themeProvider.getBorderColor()),
                       ),
                       enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(16),
                         borderSide: BorderSide(color: themeProvider.getBorderColor()),
                       ),
                       focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide(color: themeProvider.getAccentColor(), width: 2),
+                        borderRadius: BorderRadius.circular(16),
+                        borderSide: BorderSide(color: themeProvider.getAccentColor(), width: 1.5),
                       ),
                     ),
                   ),
@@ -322,34 +320,45 @@ class _SignupScreenState extends State<SignupScreen> {
                       delay: 0.6,
                       child: SizedBox(
                         width: double.infinity,
-                        child: ElevatedButton(
+                        child: ScaleButton(
                           onPressed: authProvider.isLoading ? null : _handleSignup,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: themeProvider.getAccentColor(),
+                          child: Container(
+                            width: double.infinity,
                             padding: const EdgeInsets.symmetric(vertical: 16),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            disabledBackgroundColor: themeProvider.getAccentColor().withOpacity(0.5),
-                          ),
-                          child: authProvider.isLoading
-                              ? SizedBox(
-                                  height: 20,
-                                  width: 20,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                    valueColor: AlwaysStoppedAnimation<Color>(
-                                        themeProvider.isDarkMode ? Colors.black : Colors.white),
-                                  ),
-                                )
-                              : Text(
-                                  'Create Account',
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                    color: themeProvider.isDarkMode ? Colors.black : Colors.white,
-                                  ),
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: [themeProvider.getAccentColor(), themeProvider.getSecondaryAccentColor()],
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                              ),
+                              borderRadius: BorderRadius.circular(16),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: themeProvider.getAccentColor().withOpacity(0.3),
+                                  blurRadius: 12,
+                                  offset: const Offset(0, 6),
                                 ),
+                              ],
+                            ),
+                            alignment: Alignment.center,
+                            child: authProvider.isLoading
+                                ? const SizedBox(
+                                    height: 20,
+                                    width: 20,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                    ),
+                                  )
+                                : const Text(
+                                    'Create Account',
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                          ),
                         ),
                       ),
                     );
@@ -374,9 +383,8 @@ class _SignupScreenState extends State<SignupScreen> {
                           child: Text(
                             'Sign In',
                             style: TextStyle(
-                              color: themeProvider.getTextColor(),
+                              color: themeProvider.getAccentColor(),
                               fontWeight: FontWeight.bold,
-                              decoration: TextDecoration.underline,
                             ),
                           ),
                         ),

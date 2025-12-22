@@ -109,18 +109,20 @@ class _CurrencyRateScreenState extends State<CurrencyRateScreen> {
                               Icon(Icons.search, color: themeProvider.getSecondaryTextColor()),
                           filled: true,
                           fillColor: themeProvider.getCardBackgroundColor(),
+                          filled: true,
+                          fillColor: themeProvider.getCardBackgroundColor(),
                           border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(16),
                             borderSide: BorderSide(color: themeProvider.getBorderColor()),
                           ),
                           enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(16),
                             borderSide: BorderSide(color: themeProvider.getBorderColor()),
                           ),
                           focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(16),
                             borderSide:
-                                BorderSide(color: themeProvider.getAccentColor(), width: 2),
+                                BorderSide(color: themeProvider.getAccentColor(), width: 1.5),
                           ),
                         ),
                       ),
@@ -185,18 +187,18 @@ class _CurrencyRateScreenState extends State<CurrencyRateScreen> {
                               child: Container(
                               margin: const EdgeInsets.only(bottom: 12),
                               padding: const EdgeInsets.all(16),
-                              decoration: BoxDecoration(
-                                color: themeProvider.getCardBackgroundColor(),
-                                borderRadius: BorderRadius.circular(12),
-                                border: Border.all(color: themeProvider.getBorderColor()),
-                              ),
+                              decoration: themeProvider.getGlassDecoration(borderRadius: 16),
                               child: Row(
                                 children: [
                                   Container(
                                     width: 48,
                                     height: 48,
                                     decoration: BoxDecoration(
-                                      color: themeProvider.getAccentColor().withOpacity(0.2),
+                                      gradient: LinearGradient(
+                                        colors: [themeProvider.getAccentColor().withOpacity(0.2), themeProvider.getSecondaryAccentColor().withOpacity(0.2)],
+                                        begin: Alignment.topLeft,
+                                        end: Alignment.bottomRight,
+                                      ),
                                       shape: BoxShape.circle,
                                     ),
                                     child: Center(

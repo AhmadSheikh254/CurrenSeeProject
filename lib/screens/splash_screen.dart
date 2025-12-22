@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/theme_provider.dart';
+import '../providers/auth_provider.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -37,7 +38,12 @@ class _SplashScreenState extends State<SplashScreen>
 
     Future.delayed(const Duration(seconds: 3), () {
       if (mounted) {
-        Navigator.of(context).pushReplacementNamed('/login');
+        final authProvider = Provider.of<AuthProvider>(context, listen: false); // Import AuthProvider if needed, but it's likely available via context if imported
+        if (authProvider.isAuthenticated) {
+           Navigator.of(context).pushReplacementNamed('/home');
+        } else {
+           Navigator.of(context).pushReplacementNamed('/login');
+        }
       }
     });
   }

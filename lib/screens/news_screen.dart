@@ -106,17 +106,7 @@ class _NewsScreenState extends State<NewsScreen> {
                                 },
                                 child: Container(
                                   margin: const EdgeInsets.only(bottom: 16),
-                                  decoration: BoxDecoration(
-                                    color: themeProvider.getCardBackgroundColor(),
-                                    borderRadius: BorderRadius.circular(16),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.black.withOpacity(0.1),
-                                        blurRadius: 8,
-                                        offset: const Offset(0, 4),
-                                      ),
-                                    ],
-                                  ),
+                                  decoration: themeProvider.getGlassDecoration(borderRadius: 16),
                                   child: Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
@@ -152,8 +142,9 @@ class _NewsScreenState extends State<NewsScreen> {
                                                 Container(
                                                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                                                   decoration: BoxDecoration(
-                                                    color: themeProvider.getAccentColor().withOpacity(0.1),
-                                                    borderRadius: BorderRadius.circular(4),
+                                                    color: themeProvider.getAccentColor().withOpacity(0.2),
+                                                    borderRadius: BorderRadius.circular(8),
+                                                    border: Border.all(color: themeProvider.getAccentColor().withOpacity(0.3)),
                                                   ),
                                                   child: Text(
                                                     article.source,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:convert';
+import 'package:firebase_auth/firebase_auth.dart' as fb_auth;
+import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_core/firebase_core.dart';
 
 class User {
   final String id;
@@ -28,9 +29,9 @@ class User {
 
   // Create User from JSON
   factory User.fromJson(Map<String, dynamic> json) => User(
-    id: json['id'],
-    name: json['name'],
-    email: json['email'],
+    id: json['id'] ?? '',
+    name: json['name'] ?? '',
+    email: json['email'] ?? '',
     photoUrl: json['photoUrl'],
     phoneNumber: json['phoneNumber'],
   );
@@ -39,142 +40,124 @@ class User {
 class AuthProvider extends ChangeNotifier {
   User? _user;
   bool _isLoading = false;
+  final fb_auth.FirebaseAuth _auth = fb_auth.FirebaseAuth.instance;
+  final FirebaseDatabase _database = FirebaseDatabase.instanceFor(
+    app: Firebase.app(),
+    databaseURL: 'https://currensee-ce2a8-default-rtdb.firebaseio.com/',
+  );
 
   User? get user => _user;
   bool get isLoading => _isLoading;
   bool get isAuthenticated => _user != null;
 
-  // Mock user database (in-memory storage)
-  static final Map<String, User> _registeredUsers = {};
-  static final Map<String, String> _userPasswords = {}; // Store passwords
-
-  // Initialize and load saved data
+  // Initialize and listen to auth state
   Future<void> init() async {
-    await _loadUserData();
-    await _loadRegisteredUsers();
+    _auth.authStateChanges().listen((fb_auth.User? firebaseUser) async {
+      if (firebaseUser != null) {
+        await _fetchUserData(firebaseUser);
+      } else {
+        _user = null;
+        notifyListeners();
+      }
+    });
   }
 
-  // Load saved user data
-  Future<void> _loadUserData() async {
-    final prefs = await SharedPreferences.getInstance();
-    final userJson = prefs.getString('current_user');
-    if (userJson != null) {
-      _user = User.fromJson(json.decode(userJson));
+  // Fetch user data from Realtime Database
+  Future<void> _fetchUserData(fb_auth.User firebaseUser) async {
+    try {
+      final snapshot = await _database.ref('users/${firebaseUser.uid}').get();
+      if (snapshot.exists) {
+        final data = Map<String, dynamic>.from(snapshot.value as Map);
+        _user = User.fromJson(data);
+      } else {
+        // User exists in Auth but not Database
+        final newUser = User(
+          id: firebaseUser.uid,
+          name: firebaseUser.displayName ?? firebaseUser.email?.split('@')[0] ?? 'User',
+          email: firebaseUser.email ?? '',
+          photoUrl: firebaseUser.photoURL ?? 'https://i.pravatar.cc/150?img=11',
+        );
+        
+        await _database.ref('users/${firebaseUser.uid}').set(newUser.toJson());
+        _user = newUser;
+      }
+      notifyListeners();
+    } catch (e) {
+      debugPrint("Error fetching user data: $e");
+      _user = User(
+          id: firebaseUser.uid,
+          name: firebaseUser.displayName ?? firebaseUser.email?.split('@')[0] ?? 'User',
+          email: firebaseUser.email ?? '',
+          photoUrl: firebaseUser.photoURL ?? 'https://i.pravatar.cc/150?img=11',
+      );
       notifyListeners();
     }
   }
 
-  // Save current user data
-  Future<void> _saveUserData() async {
-    final prefs = await SharedPreferences.getInstance();
-    if (_user != null) {
-      await prefs.setString('current_user', json.encode(_user!.toJson()));
-    } else {
-      await prefs.remove('current_user');
-    }
-  }
-
-  // Load registered users
-  Future<void> _loadRegisteredUsers() async {
-    final prefs = await SharedPreferences.getInstance();
-    final usersJson = prefs.getString('registered_users');
-    final passwordsJson = prefs.getString('user_passwords');
-    
-    if (usersJson != null) {
-      final Map<String, dynamic> usersMap = json.decode(usersJson);
-      _registeredUsers.clear();
-      usersMap.forEach((email, userData) {
-        _registeredUsers[email] = User.fromJson(userData);
-      });
-    }
-    
-    if (passwordsJson != null) {
-      final Map<String, dynamic> passwordsMap = json.decode(passwordsJson);
-      _userPasswords.clear();
-      passwordsMap.forEach((email, password) {
-        _userPasswords[email] = password;
-      });
-    }
-  }
-
-  // Save registered users
-  Future<void> _saveRegisteredUsers() async {
-    final prefs = await SharedPreferences.getInstance();
-    
-    final usersMap = <String, dynamic>{};
-    _registeredUsers.forEach((email, user) {
-      usersMap[email] = user.toJson();
-    });
-    await prefs.setString('registered_users', json.encode(usersMap));
-    
-    await prefs.setString('user_passwords', json.encode(_userPasswords));
-  }
-
-  // Mock Login
+  // Login
   Future<bool> login(String email, String password) async {
     _isLoading = true;
     notifyListeners();
 
-    // Simulate network delay
-    await Future.delayed(const Duration(seconds: 2));
-
-    if (email.isNotEmpty && password.length >= 6) {
-      // Check if user exists and password matches
-      if (_registeredUsers.containsKey(email) && _userPasswords[email] == password) {
-        _user = _registeredUsers[email];
-        await _saveUserData();
-        _isLoading = false;
-        notifyListeners();
-        return true;
-      } else if (!_registeredUsers.containsKey(email)) {
-        // Create a default user if not found (for backward compatibility)
-        _user = User(
-          id: email.hashCode.toString(),
-          name: email.split('@')[0],
-          email: email,
-          photoUrl: 'https://i.pravatar.cc/150?img=11',
-        );
-        _registeredUsers[email] = _user!;
-        _userPasswords[email] = password;
-        await _saveRegisteredUsers();
-        await _saveUserData();
-        _isLoading = false;
-        notifyListeners();
-        return true;
+    try {
+      fb_auth.UserCredential cred = await _auth.signInWithEmailAndPassword(email: email, password: password);
+      
+      if (cred.user != null) {
+        await _fetchUserData(cred.user!);
       }
+      
+      _isLoading = false;
+      notifyListeners();
+      return true;
+    } on fb_auth.FirebaseAuthException catch (e) {
+      _isLoading = false;
+      notifyListeners();
+      debugPrint("Login error: ${e.message}");
+      return false;
+    } catch (e) {
+      _isLoading = false;
+      notifyListeners();
+      debugPrint("Login error: $e");
+      return false;
     }
-    
-    _isLoading = false;
-    notifyListeners();
-    return false;
   }
 
-  // Mock Signup
+  // Signup
   Future<bool> signup(String name, String email, String password) async {
     _isLoading = true;
     notifyListeners();
 
-    // Simulate network delay
-    await Future.delayed(const Duration(seconds: 2));
-
-    if (name.isNotEmpty && email.isNotEmpty && password.length >= 6) {
-      // Create and store the new user
-      _user = User(
-        id: email.hashCode.toString(),
-        name: name,
-        email: email,
-        photoUrl: 'https://i.pravatar.cc/150?img=11',
+    try {
+      fb_auth.UserCredential cred = await _auth.createUserWithEmailAndPassword(
+        email: email, 
+        password: password
       );
-      _registeredUsers[email] = _user!;
-      _userPasswords[email] = password;
-      await _saveRegisteredUsers();
-      await _saveUserData();
+
+      if (cred.user != null) {
+        final newUser = User(
+          id: cred.user!.uid,
+          name: name,
+          email: email,
+          photoUrl: 'https://i.pravatar.cc/150?img=11',
+        );
+
+        await _database.ref('users/${cred.user!.uid}').set(newUser.toJson());
+        
+        _user = newUser;
+        _isLoading = false;
+        notifyListeners();
+        return true;
+      }
+      return false;
+    } on fb_auth.FirebaseAuthException catch (e) {
       _isLoading = false;
       notifyListeners();
-      return true;
-    } else {
+      debugPrint("Signup error: ${e.message}");
+      return false;
+    } catch (e) {
       _isLoading = false;
       notifyListeners();
+      debugPrint("Signup error: $e");
       return false;
     }
   }
@@ -183,78 +166,69 @@ class AuthProvider extends ChangeNotifier {
   Future<void> logout() async {
     _isLoading = true;
     notifyListeners();
-    
-    await Future.delayed(const Duration(milliseconds: 500));
-    
+    await _auth.signOut();
     _user = null;
-    await _saveUserData();
     _isLoading = false;
     notifyListeners();
   }
 
   // Update user information
-  void updateUserInfo(String name, String email, {String? phoneNumber}) async {
+  Future<void> updateUserInfo(String name, String email, {String? phoneNumber}) async {
     if (_user != null) {
-      final oldEmail = _user!.email;
-      
-      // Update the user object
-      _user = User(
-        id: _user!.id,
-        name: name,
-        email: email,
-        photoUrl: _user!.photoUrl,
-        phoneNumber: phoneNumber ?? _user!.phoneNumber,
-      );
-      
-      // Update in the registered users map
-      if (oldEmail != email) {
-        _registeredUsers.remove(oldEmail);
-        final password = _userPasswords[oldEmail];
-        if (password != null) {
-          _userPasswords.remove(oldEmail);
-          _userPasswords[email] = password;
-        }
+      try {
+        final updatedUser = User(
+          id: _user!.id,
+          name: name,
+          email: email,
+          photoUrl: _user!.photoUrl,
+          phoneNumber: phoneNumber ?? _user!.phoneNumber,
+        );
+
+        await _database.ref('users/${_user!.id}').update(updatedUser.toJson());
+        _user = updatedUser;
+        notifyListeners();
+      } catch (e) {
+        debugPrint("Error updating user info: $e");
       }
-      _registeredUsers[email] = _user!;
-      
-      await _saveRegisteredUsers();
-      await _saveUserData();
-      notifyListeners();
     }
   }
 
   // Update profile photo
-  void updatePhotoUrl(String photoUrl) async {
+  Future<void> updatePhotoUrl(String photoUrl) async {
     if (_user != null) {
-      _user = User(
-        id: _user!.id,
-        name: _user!.name,
-        email: _user!.email,
-        photoUrl: photoUrl,
-        phoneNumber: _user!.phoneNumber,
-      );
-      
-      // Update in the registered users map
-      _registeredUsers[_user!.email] = _user!;
-      
-      await _saveRegisteredUsers();
-      await _saveUserData();
-      notifyListeners();
+      try {
+        await _database.ref('users/${_user!.id}').update({'photoUrl': photoUrl});
+        
+        _user = User(
+          id: _user!.id,
+          name: _user!.name,
+          email: _user!.email,
+          photoUrl: photoUrl,
+          phoneNumber: _user!.phoneNumber,
+        );
+        notifyListeners();
+      } catch (e) {
+        debugPrint("Error updating photo: $e");
+      }
     }
   }
 
   // Change Password
   Future<bool> changePassword(String currentPassword, String newPassword) async {
-    if (_user == null) return false;
+    if (_auth.currentUser == null) return false;
     
-    final email = _user!.email;
-    // Check if the current password matches
-    if (_userPasswords[email] == currentPassword) {
-      // Update the password
-      _userPasswords[email] = newPassword;
-      await _saveRegisteredUsers();
-      return true;
+    try {
+      final email = _auth.currentUser!.email;
+      if (email != null) {
+        final cred = fb_auth.EmailAuthProvider.credential(email: email, password: currentPassword);
+        await _auth.currentUser!.reauthenticateWithCredential(cred);
+        await _auth.currentUser!.updatePassword(newPassword);
+        return true;
+      }
+      return false;
+    } catch (e) {
+      debugPrint("Error changing password: $e");
+      return false;
     }
-    return false;
   }
 }

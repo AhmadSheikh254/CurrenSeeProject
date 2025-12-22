@@ -261,8 +261,18 @@ class _HomeScreenState extends State<HomeScreen> {
                           height: 50,
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            color: Colors.white.withOpacity(0.2),
-                            border: Border.all(color: Colors.white, width: 2),
+                            gradient: LinearGradient(
+                              colors: [themeProvider.getAccentColor(), themeProvider.getSecondaryAccentColor()],
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: themeProvider.getAccentColor().withOpacity(0.3),
+                                blurRadius: 10,
+                                offset: const Offset(0, 4),
+                              ),
+                            ],
                           ),
                           child: Icon(
                             widget.isGuest ? Icons.person_outline : Icons.person,
@@ -291,11 +301,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         const SizedBox(height: 16),
                         Container(
                           padding: const EdgeInsets.all(20),
-                          decoration: BoxDecoration(
-                            color: themeProvider.getCardBackgroundColor(),
-                            borderRadius: BorderRadius.circular(16),
-                            border: Border.all(color: themeProvider.getBorderColor()),
-                          ),
+                          decoration: themeProvider.getGlassDecoration(),
                           child: Column(
                             children: [
                               // From Currency
@@ -321,9 +327,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                           borderSide: BorderSide(color: themeProvider.getBorderColor()),
                                         ),
                                         focusedBorder: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(8),
+                                          borderRadius: BorderRadius.circular(12),
                                           borderSide:
-                                              BorderSide(color: themeProvider.getAccentColor(), width: 2),
+                                              BorderSide(color: themeProvider.getAccentColor(), width: 1.5),
                                         ),
                                       ),
                                     ),
@@ -332,8 +338,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                   Container(
                                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                                     decoration: BoxDecoration(
-                                      color: themeProvider.getCardBackgroundColor(),
-                                      borderRadius: BorderRadius.circular(8),
+                                      color: themeProvider.getCardBackgroundColor().withOpacity(0.5),
+                                      borderRadius: BorderRadius.circular(12),
                                       border: Border.all(color: themeProvider.getBorderColor()),
                                     ),
                                     child: DropdownButtonHideUnderline(
@@ -379,8 +385,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                     padding: const EdgeInsets.all(8),
                                     decoration: BoxDecoration(
                                       shape: BoxShape.circle,
-                                      color: themeProvider.getCardBackgroundColor(),
-                                      border: Border.all(color: themeProvider.getBorderColor()),
+                                      color: themeProvider.getCardBackgroundColor().withOpacity(0.8),
+                                      border: Border.all(color: themeProvider.getBorderColor(), width: 1.5),
                                     ),
                                     child: Icon(
                                       Icons.swap_vert,
@@ -418,8 +424,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                   Container(
                                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                                     decoration: BoxDecoration(
-                                      color: themeProvider.getCardBackgroundColor(),
-                                      borderRadius: BorderRadius.circular(8),
+                                      color: themeProvider.getCardBackgroundColor().withOpacity(0.5),
+                                      borderRadius: BorderRadius.circular(12),
                                       border: Border.all(color: themeProvider.getBorderColor()),
                                     ),
                                     child: DropdownButtonHideUnderline(
@@ -462,8 +468,19 @@ class _HomeScreenState extends State<HomeScreen> {
                                     width: double.infinity,
                                     padding: const EdgeInsets.symmetric(vertical: 12),
                                     decoration: BoxDecoration(
-                                      color: themeProvider.getAccentColor(),
-                                      borderRadius: BorderRadius.circular(8),
+                                      gradient: LinearGradient(
+                                        colors: [themeProvider.getAccentColor(), themeProvider.getSecondaryAccentColor()],
+                                        begin: Alignment.topLeft,
+                                        end: Alignment.bottomRight,
+                                      ),
+                                      borderRadius: BorderRadius.circular(12),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: themeProvider.getAccentColor().withOpacity(0.3),
+                                          blurRadius: 12,
+                                          offset: const Offset(0, 6),
+                                        ),
+                                      ],
                                     ),
                                     alignment: Alignment.center,
                                     child: _isConverting
@@ -479,8 +496,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                         : Text(
                                             'Convert',
                                             style: TextStyle(
-                                              color: themeProvider.isDarkMode ? Colors.black : Colors.white,
-                                              fontWeight: FontWeight.bold,
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.w600,
                                               fontSize: 16,
                                             ),
                                           ),
@@ -576,9 +593,9 @@ class _HomeScreenState extends State<HomeScreen> {
                           borderRadius: BorderRadius.circular(16),
                           boxShadow: [
                             BoxShadow(
-                              color: themeProvider.getAccentColor().withOpacity(0.3),
-                              blurRadius: 8,
-                              offset: const Offset(0, 4),
+                              color: themeProvider.getAccentColor().withOpacity(0.2),
+                              blurRadius: 15,
+                              offset: const Offset(0, 8),
                             ),
                           ],
                         ),
@@ -635,11 +652,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _buildConversionCardContent(ThemeProvider themeProvider, String title, String from, String to) {
     return Container(
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: themeProvider.getCardBackgroundColor(),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: themeProvider.getBorderColor()),
-      ),
+      decoration: themeProvider.getGlassDecoration(borderRadius: 12),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [

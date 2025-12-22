@@ -49,8 +49,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
     if (success) {
       if (!mounted) return;
-      final historyProvider = Provider.of<HistoryProvider>(context, listen: false);
-      await historyProvider.updateUserId(authProvider.user?.id);
       Navigator.of(context).pushReplacementNamed('/home');
     } else {
       if (!mounted) return;
@@ -203,34 +201,45 @@ class _LoginScreenState extends State<LoginScreen> {
                       delay: 0.4,
                       child: SizedBox(
                         width: double.infinity,
-                        child: ElevatedButton(
+                        child: ScaleButton(
                           onPressed: authProvider.isLoading ? null : _handleLogin,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: themeProvider.getAccentColor(),
+                          child: Container(
+                            width: double.infinity,
                             padding: const EdgeInsets.symmetric(vertical: 16),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            disabledBackgroundColor: themeProvider.getAccentColor().withOpacity(0.5),
-                          ),
-                          child: authProvider.isLoading
-                              ? SizedBox(
-                                  height: 20,
-                                  width: 20,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                    valueColor: AlwaysStoppedAnimation<Color>(
-                                        themeProvider.isDarkMode ? Colors.black : Colors.white),
-                                  ),
-                                )
-                              : Text(
-                                  'Sign In',
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                    color: themeProvider.isDarkMode ? Colors.black : Colors.white,
-                                  ),
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: [themeProvider.getAccentColor(), themeProvider.getSecondaryAccentColor()],
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                              ),
+                              borderRadius: BorderRadius.circular(16),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: themeProvider.getAccentColor().withOpacity(0.3),
+                                  blurRadius: 12,
+                                  offset: const Offset(0, 6),
                                 ),
+                              ],
+                            ),
+                            alignment: Alignment.center,
+                            child: authProvider.isLoading
+                                ? const SizedBox(
+                                    height: 20,
+                                    width: 20,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                    ),
+                                  )
+                                : const Text(
+                                    'Sign In',
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                          ),
                         ),
                       ),
                     );
@@ -249,17 +258,18 @@ class _LoginScreenState extends State<LoginScreen> {
                         Navigator.of(context).pushReplacementNamed('/home_guest');
                       },
                       style: OutlinedButton.styleFrom(
-                        side: BorderSide(color: themeProvider.getTextColor(), width: 2),
-                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        side: BorderSide(color: themeProvider.getBorderColor(), width: 1.5),
+                        padding: const EdgeInsets.symmetric(vertical: 16),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: BorderRadius.circular(16),
                         ),
+                        backgroundColor: themeProvider.getCardBackgroundColor(),
                       ),
                       child: Text(
                         'Continue as Guest',
                         style: TextStyle(
                           fontSize: 16,
-                          fontWeight: FontWeight.bold,
+                          fontWeight: FontWeight.w600,
                           color: themeProvider.getTextColor(),
                         ),
                       ),
@@ -275,20 +285,20 @@ class _LoginScreenState extends State<LoginScreen> {
                       Expanded(
                         child: Container(
                           height: 1,
-                          color: Colors.white30,
+                          color: themeProvider.getBorderColor(),
                         ),
                       ),
-                      const Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 16),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
                         child: Text(
                           'Or',
-                          style: TextStyle(color: Colors.white70),
+                          style: TextStyle(color: themeProvider.getSecondaryTextColor()),
                         ),
                       ),
                       Expanded(
                         child: Container(
                           height: 1,
-                          color: Colors.white30,
+                          color: themeProvider.getBorderColor(),
                         ),
                       ),
                     ],
@@ -327,9 +337,8 @@ class _LoginScreenState extends State<LoginScreen> {
                           child: Text(
                             'Sign Up',
                             style: TextStyle(
-                              color: themeProvider.getTextColor(),
+                              color: themeProvider.getAccentColor(),
                               fontWeight: FontWeight.bold,
-                              decoration: TextDecoration.underline,
                             ),
                           ),
                         ),
@@ -355,19 +364,23 @@ class _LoginScreenState extends State<LoginScreen> {
         );
       },
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
         decoration: BoxDecoration(
           border: Border.all(color: themeProvider.getBorderColor()),
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(12),
           color: themeProvider.getCardBackgroundColor(),
         ),
         child: Row(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon, color: themeProvider.getTextColor(), size: 20),
-            const SizedBox(width: 8),
+            Icon(icon, color: themeProvider.getTextColor(), size: 24),
+            const SizedBox(width: 12),
             Text(
               label,
-              style: TextStyle(color: themeProvider.getTextColor()),
+              style: TextStyle(
+                color: themeProvider.getTextColor(),
+                fontWeight: FontWeight.w500,
+              ),
             ),
           ],
         ),

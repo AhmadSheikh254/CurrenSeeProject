@@ -1,4 +1,5 @@
 class Conversion {
+  final String? id;
   final String fromCurrency;
   final String toCurrency;
   final double amount;
@@ -7,6 +8,7 @@ class Conversion {
   final bool isSaved;
 
   Conversion({
+    this.id,
     required this.fromCurrency,
     required this.toCurrency,
     required this.amount,
@@ -17,6 +19,7 @@ class Conversion {
 
   // Convert Conversion to JSON
   Map<String, dynamic> toJson() => {
+    'id': id,
     'fromCurrency': fromCurrency,
     'toCurrency': toCurrency,
     'amount': amount,
@@ -27,6 +30,7 @@ class Conversion {
 
   // Create Conversion from JSON
   factory Conversion.fromJson(Map<String, dynamic> json) => Conversion(
+    id: json['id'],
     fromCurrency: json['fromCurrency'],
     toCurrency: json['toCurrency'],
     amount: json['amount'],

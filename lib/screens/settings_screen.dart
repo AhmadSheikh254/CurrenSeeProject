@@ -199,27 +199,46 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     delay: 0.5,
                     child: SizedBox(
                       width: double.infinity,
-                      child: ElevatedButton.icon(
-                        onPressed: () {
-                          _showLogoutDialog(context, themeProvider);
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: themeProvider.getAccentColor(),
-                          padding: const EdgeInsets.symmetric(vertical: 14),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
+                        child: ScaleButton(
+                          onPressed: () {
+                            _showLogoutDialog(context, themeProvider);
+                          },
+                          child: Container(
+                            width: double.infinity,
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: [themeProvider.getAccentColor(), themeProvider.getSecondaryAccentColor()],
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                              ),
+                              borderRadius: BorderRadius.circular(16),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: themeProvider.getAccentColor().withOpacity(0.3),
+                                  blurRadius: 12,
+                                  offset: const Offset(0, 6),
+                                ),
+                              ],
+                            ),
+                            alignment: Alignment.center,
+                            child: const Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(Icons.logout, color: Colors.white, size: 20),
+                                SizedBox(width: 12),
+                                Text(
+                                  'Logout',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
-                        icon: const Icon(Icons.logout, color: Colors.black),
-                        label: const Text(
-                          'Logout',
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
-                          ),
-                        ),
-                      ),
                     ),
                   ),
                   const SizedBox(height: 24),
@@ -252,11 +271,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   ) {
     return Container(
       padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: themeProvider.getCardBackgroundColor(),
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: themeProvider.getBorderColor()),
-      ),
+      decoration: themeProvider.getGlassDecoration(borderRadius: 16),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -298,11 +313,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   ) {
     return Container(
       padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: themeProvider.getCardBackgroundColor(),
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: themeProvider.getBorderColor()),
-      ),
+      decoration: themeProvider.getGlassDecoration(borderRadius: 16),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [

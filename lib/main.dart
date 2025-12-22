@@ -11,23 +11,36 @@ import 'screens/login_screen.dart';
 import 'screens/signup_screen.dart';
 import 'screens/home_screen.dart';
 
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   
   // Initialize providers
   final authProvider = AuthProvider();
-  final historyProvider = HistoryProvider();
   
   // Load saved data
   await authProvider.init();
-  await historyProvider.init(authProvider.user?.id);
   
   runApp(
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
         ChangeNotifierProvider.value(value: authProvider),
-        ChangeNotifierProvider.value(value: historyProvider),
+        ChangeNotifierProxyProvider<AuthProvider, HistoryProvider>(
+          create: (_) => HistoryProvider(),
+          update: (_, auth, history) {
+            final historyProvider = history ?? HistoryProvider();
+            if (historyProvider.userId != auth.user?.id) {
+              historyProvider.updateUserId(auth.user?.id);
+            }
+            return historyProvider;
+          },
+        ),
         ChangeNotifierProvider(create: (_) => AlertProvider()),
         ChangeNotifierProvider(create: (_) => PreferencesProvider()),
         ChangeNotifierProvider(create: (_) => FeedbackProvider()),
