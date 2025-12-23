@@ -164,8 +164,7 @@ class _CurrencyRateScreenState extends State<CurrencyRateScreen> {
                           ),
                         )
                       : ListView.builder(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 20.0, vertical: 12.0),
+                          padding: const EdgeInsets.fromLTRB(20, 12, 20, 120),
                           itemCount: _filteredRates.length,
                           itemBuilder: (context, index) {
                             final rate = _filteredRates[index];

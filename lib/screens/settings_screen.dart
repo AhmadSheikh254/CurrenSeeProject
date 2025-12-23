@@ -32,10 +32,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           child: SafeArea(
             bottom: false,
             child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 20.0,
-                vertical: 24.0,
-              ),
+              padding: const EdgeInsets.fromLTRB(20, 24, 20, 120),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [

@@ -554,12 +554,12 @@ class _HomeScreenState extends State<HomeScreen> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            const Text(
+                            Text(
                               'Recent Conversions',
                               style: TextStyle(
                                 fontSize: 20,
                                 fontWeight: FontWeight.bold,
-                                color: Colors.white,
+                                color: themeProvider.getTextColor(),
                               ),
                             ),
                             TextButton(
@@ -581,9 +581,9 @@ class _HomeScreenState extends State<HomeScreen> {
                             final recentConversions = historyProvider.conversions.take(5).toList();
                             
                             if (recentConversions.isEmpty) {
-                              return const Text(
+                              return Text(
                                 'No recent conversions',
-                                style: TextStyle(color: Colors.white70),
+                                style: TextStyle(color: themeProvider.getSecondaryTextColor()),
                               );
                             }
                             
@@ -674,7 +674,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 120),
                 ],
               ),
             ),
