@@ -85,98 +85,85 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                   Expanded(
                     child: SingleChildScrollView(
                       padding: const EdgeInsets.symmetric(horizontal: 20),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                      child: StaggeredList(
                         children: [
-                          FadeInSlide(
-                            delay: 0.0,
-                            child: TextField(
-                              controller: _titleController,
-                              decoration: InputDecoration(
-                                labelText: 'Title',
-                                labelStyle: TextStyle(color: themeProvider.getSecondaryTextColor()),
-                                filled: true,
-                                fillColor: themeProvider.getCardBackgroundColor(),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(16),
-                                  borderSide: BorderSide(color: themeProvider.getBorderColor()),
-                                ),
-                                enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(16),
-                                  borderSide: BorderSide(color: themeProvider.getBorderColor()),
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(16),
-                                  borderSide: BorderSide(color: themeProvider.getAccentColor(), width: 1.5),
-                                ),
+                          TextField(
+                            controller: _titleController,
+                            decoration: InputDecoration(
+                              labelText: 'Title',
+                              labelStyle: TextStyle(color: themeProvider.getSecondaryTextColor()),
+                              filled: true,
+                              fillColor: themeProvider.getCardBackgroundColor(),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(16),
+                                borderSide: BorderSide(color: themeProvider.getBorderColor()),
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(16),
+                                borderSide: BorderSide(color: themeProvider.getBorderColor()),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(16),
+                                borderSide: BorderSide(color: themeProvider.getAccentColor(), width: 1.5),
                               ),
                             ),
                           ),
                           const SizedBox(height: 16),
-                          FadeInSlide(
-                            delay: 0.1,
-                            child: TextField(
-                              controller: _descriptionController,
-                              maxLines: 5,
-                              decoration: InputDecoration(
-                                labelText: 'Description',
-                                labelStyle: TextStyle(color: themeProvider.getSecondaryTextColor()),
-                                enabledBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(color: themeProvider.getBorderColor()),
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(color: themeProvider.getAccentColor()),
-                                ),
+                          TextField(
+                            controller: _descriptionController,
+                            maxLines: 5,
+                            decoration: InputDecoration(
+                              labelText: 'Description',
+                              labelStyle: TextStyle(color: themeProvider.getSecondaryTextColor()),
+                              enabledBorder: OutlineInputBorder(
+                                borderSide: BorderSide(color: themeProvider.getBorderColor()),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderSide: BorderSide(color: themeProvider.getAccentColor()),
                               ),
                             ),
                           ),
                           const SizedBox(height: 16),
-                          FadeInSlide(
-                            delay: 0.2,
-                            child: TextField(
-                              controller: _emailController,
-                              decoration: InputDecoration(
-                                labelText: 'Email (optional)',
-                                labelStyle: TextStyle(color: themeProvider.getSecondaryTextColor()),
-                                enabledBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(color: themeProvider.getBorderColor()),
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(color: themeProvider.getAccentColor()),
-                                ),
+                          TextField(
+                            controller: _emailController,
+                            decoration: InputDecoration(
+                              labelText: 'Email (optional)',
+                              labelStyle: TextStyle(color: themeProvider.getSecondaryTextColor()),
+                              enabledBorder: OutlineInputBorder(
+                                borderSide: BorderSide(color: themeProvider.getBorderColor()),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderSide: BorderSide(color: themeProvider.getAccentColor()),
                               ),
                             ),
                           ),
                           const SizedBox(height: 24),
-                          FadeInSlide(
-                            delay: 0.3,
-                            child: Center(
-                              child: ScaleButton(
-                                onPressed: _submitFeedback,
-                                child: Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 48, vertical: 16),
-                                  decoration: BoxDecoration(
-                                    gradient: LinearGradient(
-                                      colors: [themeProvider.getAccentColor(), themeProvider.getSecondaryAccentColor()],
-                                      begin: Alignment.topLeft,
-                                      end: Alignment.bottomRight,
-                                    ),
-                                    borderRadius: BorderRadius.circular(16),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: themeProvider.getAccentColor().withOpacity(0.3),
-                                        blurRadius: 12,
-                                        offset: const Offset(0, 6),
-                                      ),
-                                    ],
+                          Center(
+                            child: ScaleButton(
+                              onPressed: _submitFeedback,
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 48, vertical: 16),
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                    colors: [themeProvider.getAccentColor(), themeProvider.getSecondaryAccentColor()],
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
                                   ),
-                                  child: const Text(
-                                    'Submit Feedback',
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16,
+                                  borderRadius: BorderRadius.circular(16),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: themeProvider.getAccentColor().withOpacity(0.3),
+                                      blurRadius: 12,
+                                      offset: const Offset(0, 6),
                                     ),
+                                  ],
+                                ),
+                                child: const Text(
+                                  'Submit Feedback',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
                                   ),
                                 ),
                               ),

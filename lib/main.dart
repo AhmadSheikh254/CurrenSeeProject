@@ -65,20 +65,32 @@ class MyApp extends StatelessWidget {
             theme: ThemeData(
               colorScheme: ColorScheme.fromSeed(
                 seedColor: accentColor,
-                primary: accentColor, // Explicitly set primary to ensure it's used
+                primary: accentColor,
               ),
               useMaterial3: true,
-              scaffoldBackgroundColor: colors.first, // Ensure background matches gradient start or solid
+              scaffoldBackgroundColor: colors.first,
+              pageTransitionsTheme: const PageTransitionsTheme(
+                builders: {
+                  TargetPlatform.android: FadeUpwardsPageTransitionsBuilder(),
+                  TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
+                },
+              ),
             ),
             darkTheme: ThemeData(
               colorScheme: ColorScheme.fromSeed(
                 seedColor: accentColor,
                 brightness: Brightness.dark,
                 primary: accentColor,
-                surface: colors.first, // Dark mode surface
+                surface: colors.first,
               ),
               useMaterial3: true,
               scaffoldBackgroundColor: colors.first,
+              pageTransitionsTheme: const PageTransitionsTheme(
+                builders: {
+                  TargetPlatform.android: FadeUpwardsPageTransitionsBuilder(),
+                  TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
+                },
+              ),
             ),
             themeMode: themeProvider.isDarkMode ? ThemeMode.dark : ThemeMode.light,
           home: const SplashScreen(),

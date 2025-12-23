@@ -80,6 +80,7 @@ class _CurrencyRateScreenState extends State<CurrencyRateScreen> {
             ),
           ),
           child: SafeArea(
+            bottom: false,
             child: Column(
               children: [
                 Padding(
@@ -97,30 +98,32 @@ class _CurrencyRateScreenState extends State<CurrencyRateScreen> {
                         ),
                       ),
                       const SizedBox(height: 16),
-                      // Search Field
-                      TextField(
-                        controller: _searchController,
-                        onChanged: _filterRates,
-                        style: TextStyle(color: themeProvider.getTextColor()),
-                        decoration: InputDecoration(
-                          hintText: 'Search currencies...',
-                          hintStyle: TextStyle(color: themeProvider.getSecondaryTextColor()),
-                          prefixIcon:
-                              Icon(Icons.search, color: themeProvider.getSecondaryTextColor()),
-                          filled: true,
-                          fillColor: themeProvider.getCardBackgroundColor(),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(16),
-                            borderSide: BorderSide(color: themeProvider.getBorderColor()),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(16),
-                            borderSide: BorderSide(color: themeProvider.getBorderColor()),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(16),
-                            borderSide:
-                                BorderSide(color: themeProvider.getAccentColor(), width: 1.5),
+                      ScaleIn(
+                        delay: 0.1,
+                        child: TextField(
+                          controller: _searchController,
+                          onChanged: _filterRates,
+                          style: TextStyle(color: themeProvider.getTextColor()),
+                          decoration: InputDecoration(
+                            hintText: 'Search currencies...',
+                            hintStyle: TextStyle(color: themeProvider.getSecondaryTextColor()),
+                            prefixIcon:
+                                Icon(Icons.search, color: themeProvider.getSecondaryTextColor()),
+                            filled: true,
+                            fillColor: themeProvider.getCardBackgroundColor(),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(16),
+                              borderSide: BorderSide(color: themeProvider.getBorderColor()),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(16),
+                              borderSide: BorderSide(color: themeProvider.getBorderColor()),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(16),
+                              borderSide:
+                                  BorderSide(color: themeProvider.getAccentColor(), width: 1.5),
+                            ),
                           ),
                         ),
                       ),
@@ -129,7 +132,7 @@ class _CurrencyRateScreenState extends State<CurrencyRateScreen> {
                 ),
                 Expanded(
                   child: _isLoading
-                      ? Center(child: CircularProgressIndicator(color: themeProvider.getAccentColor()))
+                      ? Center(child: CustomAnimatedLoader(color: themeProvider.getAccentColor()))
                       : _errorMessage != null
                           ? Center(
                               child: Column(

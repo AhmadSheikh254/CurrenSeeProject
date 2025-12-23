@@ -32,6 +32,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
           ),
           child: SafeArea(
+            bottom: false,
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(24.0),
               child: Column(
@@ -68,7 +69,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     builder: (context, authProvider, child) {
                       final user = authProvider.user;
                       
-                      return FadeInSlide(
+                      return ScaleIn(
                         delay: 0.1,
                         child: Container(
                           padding: const EdgeInsets.all(20),
@@ -174,7 +175,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   // Stats Grid
                   Consumer2<HistoryProvider, AlertProvider>(
                     builder: (context, historyProvider, alertProvider, child) {
-                      return FadeInSlide(
+                      return ScaleIn(
                         delay: 0.2,
                         child: Row(
                           children: [

@@ -30,6 +30,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
           ),
           child: SafeArea(
+            bottom: false,
             child: SingleChildScrollView(
               padding: const EdgeInsets.symmetric(
                 horizontal: 20.0,
@@ -38,7 +39,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  FadeInSlide(
+                  ScaleIn(
                     delay: 0.0,
                     child: Text(
                       'Settings',

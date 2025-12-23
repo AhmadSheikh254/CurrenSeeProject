@@ -80,7 +80,7 @@ class _LoginScreenState extends State<LoginScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                FadeInSlide(
+                ScaleIn(
                   delay: 0.0,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -222,14 +222,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                             alignment: Alignment.center,
                             child: authProvider.isLoading
-                                ? const SizedBox(
-                                    height: 20,
-                                    width: 20,
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 2,
-                                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                                    ),
-                                  )
+                                ? const CustomAnimatedLoader(size: 24)
                                 : const Text(
                                     'Sign In',
                                     style: TextStyle(

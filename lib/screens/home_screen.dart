@@ -168,42 +168,81 @@ class _HomeScreenState extends State<HomeScreen> {
         ];
         
         return Scaffold(
-      body: screens[_selectedIndex],
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex,
-        type: BottomNavigationBarType.fixed,
-        backgroundColor: themeProvider.getBottomNavColor(),
-        selectedItemColor: themeProvider.getBottomNavTextColor(),
-        unselectedItemColor: themeProvider.getBottomNavUnselectedColor(),
-        onTap: (index) {
-          setState(() {
-            _selectedIndex = index;
-          });
-        },
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
+          body: Stack(
+            children: [
+              screens[_selectedIndex],
+              Positioned(
+                left: 0,
+                right: 0,
+                bottom: 32,
+                child: Center(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    child: Container(
+                      height: 70,
+                      constraints: const BoxConstraints(maxWidth: 400),
+                      decoration: BoxDecoration(
+                        color: themeProvider.getBottomNavColor().withOpacity(0.9),
+                        borderRadius: BorderRadius.circular(35),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(themeProvider.isDarkMode ? 0.5 : 0.15),
+                            blurRadius: 25,
+                            offset: const Offset(0, 12),
+                          ),
+                        ],
+                        border: Border.all(
+                          color: themeProvider.getBorderColor().withOpacity(0.2),
+                          width: 1,
+                        ),
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(35),
+                        child: BottomNavigationBar(
+                          currentIndex: _selectedIndex,
+                          type: BottomNavigationBarType.fixed,
+                          backgroundColor: Colors.transparent,
+                          elevation: 0,
+                          selectedItemColor: themeProvider.getBottomNavTextColor(),
+                          unselectedItemColor: themeProvider.getBottomNavUnselectedColor(),
+                          showSelectedLabels: true,
+                          showUnselectedLabels: false,
+                          onTap: (index) {
+                            setState(() {
+                              _selectedIndex = index;
+                            });
+                          },
+                          items: const [
+                            BottomNavigationBarItem(
+                              icon: Icon(Icons.home_rounded),
+                              label: 'Home',
+                            ),
+                            BottomNavigationBarItem(
+                              icon: Icon(Icons.currency_exchange_rounded),
+                              label: 'Rates',
+                            ),
+                            BottomNavigationBarItem(
+                              icon: Icon(Icons.history_rounded),
+                              label: 'History',
+                            ),
+                            BottomNavigationBarItem(
+                              icon: Icon(Icons.person_rounded),
+                              label: 'Profile',
+                            ),
+                            BottomNavigationBarItem(
+                              icon: Icon(Icons.settings_rounded),
+                              label: 'Settings',
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.currency_exchange),
-            label: 'Rates',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.history),
-            label: 'History',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profile',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.settings),
-            label: 'Settings',
-          ),
-        ],
-      ),
-      );
+        );
       },
     );
   }
@@ -222,6 +261,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
           child: SafeArea(
+            bottom: false,
             child: SingleChildScrollView(
               padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 24.0),
               child: Column(
@@ -238,10 +278,10 @@ class _HomeScreenState extends State<HomeScreen> {
                           children: [
                             Text(
                               widget.isGuest ? 'Guest User' : 'Welcome Back!',
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 28,
                                 fontWeight: FontWeight.bold,
-                                color: Colors.white,
+                                color: themeProvider.getTextColor(),
                               ),
                             ),
                             const SizedBox(height: 4),
@@ -249,9 +289,9 @@ class _HomeScreenState extends State<HomeScreen> {
                               widget.isGuest
                                   ? 'Exploring CurrenSee'
                                   : 'Manage your currencies',
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 14,
-                                color: Colors.white70,
+                                color: themeProvider.getSecondaryTextColor(),
                               ),
                             ),
                           ],
@@ -484,14 +524,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                     ),
                                     alignment: Alignment.center,
                                     child: _isConverting
-                                        ? SizedBox(
-                                            height: 20,
-                                            width: 20,
-                                            child: CircularProgressIndicator(
-                                              strokeWidth: 2,
-                                              valueColor: AlwaysStoppedAnimation<Color>(
-                                                  themeProvider.isDarkMode ? Colors.black : Colors.white),
-                                            ),
+                                        ? CustomAnimatedLoader(
+                                            size: 20,
+                                            color: themeProvider.isDarkMode ? Colors.black : Colors.white,
                                           )
                                         : Text(
                                             'Convert',
@@ -552,7 +587,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               );
                             }
                             
-                            return Column(
+                            return StaggeredList(
                               children: recentConversions.map((conversion) => Padding(
                                 padding: const EdgeInsets.only(bottom: 12.0),
                                 child: _buildConversionCardContent(

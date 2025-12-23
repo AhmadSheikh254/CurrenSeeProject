@@ -63,31 +63,33 @@ class _AlertsScreenState extends State<AlertsScreen> {
                   Expanded(
                     child: alerts.isEmpty
                         ? Center(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(
-                                  Icons.notifications_off_outlined,
-                                  size: 64,
-                                  color: themeProvider.getSecondaryTextColor().withOpacity(0.5),
-                                ),
-                                const SizedBox(height: 16),
-                                Text(
-                                  'No active alerts',
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                    color: themeProvider.getSecondaryTextColor(),
+                            child: ScaleIn(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.notifications_off_outlined,
+                                    size: 64,
+                                    color: themeProvider.getSecondaryTextColor().withOpacity(0.5),
                                   ),
-                                ),
-                                const SizedBox(height: 8),
-                                Text(
-                                  'Tap + to create a new alert',
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    color: themeProvider.getSecondaryTextColor(),
+                                  const SizedBox(height: 16),
+                                  Text(
+                                    'No active alerts',
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      color: themeProvider.getSecondaryTextColor(),
+                                    ),
                                   ),
-                                ),
-                              ],
+                                  const SizedBox(height: 8),
+                                  Text(
+                                    'Tap + to create a new alert',
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      color: themeProvider.getSecondaryTextColor(),
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           )
                         : ListView.builder(

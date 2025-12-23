@@ -24,6 +24,7 @@ class HistoryScreen extends StatelessWidget {
             ),
           ),
           child: SafeArea(
+            bottom: false,
             child: Column(
               children: [
                 Padding(
@@ -71,23 +72,25 @@ class HistoryScreen extends StatelessWidget {
                 Expanded(
                   child: conversions.isEmpty
                       ? Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(
-                                Icons.history,
-                                size: 64,
-                                color: themeProvider.getSecondaryTextColor().withOpacity(0.5),
-                              ),
-                              const SizedBox(height: 16),
-                              Text(
-                                'No conversion history',
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  color: themeProvider.getSecondaryTextColor(),
+                          child: ScaleIn(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.history,
+                                  size: 64,
+                                  color: themeProvider.getSecondaryTextColor().withOpacity(0.5),
                                 ),
-                              ),
-                            ],
+                                const SizedBox(height: 16),
+                                Text(
+                                  'No conversion history',
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    color: themeProvider.getSecondaryTextColor(),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         )
                       : ListView.builder(

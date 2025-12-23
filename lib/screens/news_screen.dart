@@ -67,7 +67,7 @@ class _NewsScreenState extends State<NewsScreen> {
                       builder: (context, snapshot) {
                         if (snapshot.connectionState == ConnectionState.waiting) {
                           return Center(
-                            child: CircularProgressIndicator(
+                            child: CustomAnimatedLoader(
                               color: themeProvider.getAccentColor(),
                             ),
                           );

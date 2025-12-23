@@ -64,7 +64,7 @@ class CurrencyDetailsScreen extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           // Header
-                          FadeInSlide(
+                          ScaleIn(
                             delay: 0.0,
                             child: Center(
                               child: Column(
@@ -139,7 +139,7 @@ class CurrencyDetailsScreen extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(height: 24),
-                          FadeInSlide(
+                          ScaleIn(
                             delay: 0.2,
                             child: Container(
                               height: 250,

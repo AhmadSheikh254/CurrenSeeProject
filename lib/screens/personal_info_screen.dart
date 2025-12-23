@@ -204,7 +204,7 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             // Profile Picture
-                            FadeInSlide(
+                            ScaleIn(
                               delay: 0.0,
                               child: Center(
                                 child: Stack(

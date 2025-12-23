@@ -54,7 +54,7 @@ class NewsDetailScreen extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          FadeInSlide(
+                          ScaleIn(
                             delay: 0.0,
                             child: Image.network(
                               article.imageUrl,
