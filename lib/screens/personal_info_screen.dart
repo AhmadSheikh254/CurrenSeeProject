@@ -214,26 +214,29 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
                                         final photoUrl = authProvider.user?.photoUrl ?? 
                                                         'https://i.pravatar.cc/150?img=11';
                                         
-                                        return Container(
-                                          width: 120,
-                                          height: 120,
-                                          decoration: BoxDecoration(
-                                            shape: BoxShape.circle,
-                                            gradient: LinearGradient(
-                                              colors: [themeProvider.getAccentColor(), themeProvider.getSecondaryAccentColor()],
-                                              begin: Alignment.topLeft,
-                                              end: Alignment.bottomRight,
-                                            ),
-                                            boxShadow: [
-                                              BoxShadow(
-                                                color: themeProvider.getAccentColor().withOpacity(0.3),
-                                                blurRadius: 15,
-                                                offset: const Offset(0, 8),
+                                        return Hero(
+                                          tag: 'profile_avatar',
+                                          child: Container(
+                                            width: 120,
+                                            height: 120,
+                                            decoration: BoxDecoration(
+                                              shape: BoxShape.circle,
+                                              gradient: LinearGradient(
+                                                colors: [themeProvider.getAccentColor(), themeProvider.getSecondaryAccentColor()],
+                                                begin: Alignment.topLeft,
+                                                end: Alignment.bottomRight,
                                               ),
-                                            ],
-                                            image: DecorationImage(
-                                              image: NetworkImage(photoUrl),
-                                              fit: BoxFit.cover,
+                                              boxShadow: [
+                                                BoxShadow(
+                                                  color: themeProvider.getAccentColor().withOpacity(0.3),
+                                                  blurRadius: 15,
+                                                  offset: const Offset(0, 8),
+                                                ),
+                                              ],
+                                              image: DecorationImage(
+                                                image: NetworkImage(photoUrl),
+                                                fit: BoxFit.cover,
+                                              ),
                                             ),
                                           ),
                                         );

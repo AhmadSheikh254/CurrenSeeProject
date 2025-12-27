@@ -57,6 +57,21 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
+  Future<void> _handleGoogleLogin() async {
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final success = await authProvider.signInWithGoogle();
+
+    if (success) {
+      if (!mounted) return;
+      Navigator.of(context).pushReplacementNamed('/home');
+    } else {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Google Sign-In failed.')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Consumer<ThemeProvider>(
@@ -303,9 +318,23 @@ class _LoginScreenState extends State<LoginScreen> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      _buildSocialButton(themeProvider, Icons.g_mobiledata, 'Google'),
+                      _buildSocialButton(
+                        themeProvider, 
+                        Icons.g_mobiledata, 
+                        'Google',
+                        onTap: _handleGoogleLogin,
+                      ),
                       const SizedBox(width: 16),
-                      _buildSocialButton(themeProvider, Icons.facebook, 'Facebook'),
+                      _buildSocialButton(
+                        themeProvider, 
+                        Icons.facebook, 
+                        'Facebook',
+                        onTap: () {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('Facebook login coming soon')),
+                          );
+                        },
+                      ),
                     ],
                   ),
                 ),
@@ -348,13 +377,9 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  Widget _buildSocialButton(ThemeProvider themeProvider, IconData icon, String label) {
+  Widget _buildSocialButton(ThemeProvider themeProvider, IconData icon, String label, {required VoidCallback onTap}) {
     return ScaleButton(
-      onPressed: () {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('$label login coming soon')),
-        );
-      },
+      onPressed: onTap,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
         decoration: BoxDecoration(

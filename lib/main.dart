@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'widgets/page_transitions.dart';
 import 'providers/theme_provider.dart';
 import 'providers/auth_provider.dart';
 import 'providers/history_provider.dart';
@@ -71,8 +72,9 @@ class MyApp extends StatelessWidget {
               scaffoldBackgroundColor: colors.first,
               pageTransitionsTheme: const PageTransitionsTheme(
                 builders: {
-                  TargetPlatform.android: FadeUpwardsPageTransitionsBuilder(),
-                  TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
+                  TargetPlatform.android: CustomPageTransitionsBuilder(),
+                  TargetPlatform.iOS: CustomPageTransitionsBuilder(),
+                  TargetPlatform.windows: CustomPageTransitionsBuilder(),
                 },
               ),
             ),
@@ -87,8 +89,9 @@ class MyApp extends StatelessWidget {
               scaffoldBackgroundColor: colors.first,
               pageTransitionsTheme: const PageTransitionsTheme(
                 builders: {
-                  TargetPlatform.android: FadeUpwardsPageTransitionsBuilder(),
-                  TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
+                  TargetPlatform.android: CustomPageTransitionsBuilder(),
+                  TargetPlatform.iOS: CustomPageTransitionsBuilder(),
+                  TargetPlatform.windows: CustomPageTransitionsBuilder(),
                 },
               ),
             ),

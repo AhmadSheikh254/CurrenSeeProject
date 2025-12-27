@@ -76,26 +76,29 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           decoration: themeProvider.getGlassDecoration(borderRadius: 20),
                           child: Row(
                             children: [
-                              Container(
-                                width: 70,
-                                height: 70,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  gradient: LinearGradient(
-                                    colors: [themeProvider.getAccentColor(), themeProvider.getSecondaryAccentColor()],
-                                    begin: Alignment.topLeft,
-                                    end: Alignment.bottomRight,
-                                  ),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: themeProvider.getAccentColor().withOpacity(0.3),
-                                      blurRadius: 10,
-                                      offset: const Offset(0, 4),
+                              Hero(
+                                tag: 'profile_avatar',
+                                child: Container(
+                                  width: 70,
+                                  height: 70,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    gradient: LinearGradient(
+                                      colors: [themeProvider.getAccentColor(), themeProvider.getSecondaryAccentColor()],
+                                      begin: Alignment.topLeft,
+                                      end: Alignment.bottomRight,
                                     ),
-                                  ],
-                                  image: DecorationImage(
-                                    image: NetworkImage(user?.photoUrl ?? 'https://i.pravatar.cc/150?img=11'),
-                                    fit: BoxFit.cover,
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: themeProvider.getAccentColor().withOpacity(0.3),
+                                        blurRadius: 10,
+                                        offset: const Offset(0, 4),
+                                      ),
+                                    ],
+                                    image: DecorationImage(
+                                      image: NetworkImage(user?.photoUrl ?? 'https://i.pravatar.cc/150?img=11'),
+                                      fit: BoxFit.cover,
+                                    ),
                                   ),
                                 ),
                               ),

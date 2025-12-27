@@ -33,18 +33,26 @@ class NewsDetailScreen extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
                     child: Row(
                       children: [
-                        IconButton(
-                          icon: Icon(Icons.arrow_back, color: themeProvider.getTextColor()),
-                          onPressed: () => Navigator.pop(context),
+                        FadeInSlide(
+                          delay: 0.1,
+                          beginOffset: const Offset(-0.2, 0),
+                          child: IconButton(
+                            icon: Icon(Icons.arrow_back, color: themeProvider.getTextColor()),
+                            onPressed: () => Navigator.pop(context),
+                          ),
                         ),
                         const Spacer(),
-                        IconButton(
-                          icon: Icon(Icons.share, color: themeProvider.getTextColor()),
-                          onPressed: () {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('Sharing not implemented yet')),
-                            );
-                          },
+                        FadeInSlide(
+                          delay: 0.1,
+                          beginOffset: const Offset(0.2, 0),
+                          child: IconButton(
+                            icon: Icon(Icons.share, color: themeProvider.getTextColor()),
+                            onPressed: () {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(content: Text('Sharing not implemented yet')),
+                              );
+                            },
+                          ),
                         ),
                       ],
                     ),
@@ -54,8 +62,8 @@ class NewsDetailScreen extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          ScaleIn(
-                            delay: 0.0,
+                          Hero(
+                            tag: 'news_image_${article.imageUrl}',
                             child: Image.network(
                               article.imageUrl,
                               height: 250,

@@ -90,6 +90,21 @@ class _SignupScreenState extends State<SignupScreen> {
     }
   }
 
+  Future<void> _handleGoogleLogin() async {
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final success = await authProvider.signInWithGoogle();
+
+    if (success) {
+      if (!mounted) return;
+      Navigator.of(context).pushReplacementNamed('/home');
+    } else {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Google Sign-In failed.')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Consumer<ThemeProvider>(
@@ -357,6 +372,61 @@ class _SignupScreenState extends State<SignupScreen> {
                   },
                 ),
                 const SizedBox(height: 24),
+                // Divider
+                FadeInSlide(
+                  delay: 0.7,
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Container(
+                          height: 1,
+                          color: themeProvider.getBorderColor(),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: Text(
+                          'Or',
+                          style: TextStyle(color: themeProvider.getSecondaryTextColor()),
+                        ),
+                      ),
+                      Expanded(
+                        child: Container(
+                          height: 1,
+                          color: themeProvider.getBorderColor(),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 24),
+                // Social Login Buttons
+                FadeInSlide(
+                  delay: 0.8,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      _buildSocialButton(
+                        themeProvider, 
+                        Icons.g_mobiledata, 
+                        'Google',
+                        onTap: _handleGoogleLogin,
+                      ),
+                      const SizedBox(width: 16),
+                      _buildSocialButton(
+                        themeProvider, 
+                        Icons.facebook, 
+                        'Facebook',
+                        onTap: () {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('Facebook login coming soon')),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 24),
                 // Sign In Link
                 FadeInSlide(
                   delay: 0.7,
@@ -391,6 +461,33 @@ class _SignupScreenState extends State<SignupScreen> {
       ),
         );
       },
+    );
+  }
+  Widget _buildSocialButton(ThemeProvider themeProvider, IconData icon, String label, {required VoidCallback onTap}) {
+    return ScaleButton(
+      onPressed: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+        decoration: BoxDecoration(
+          border: Border.all(color: themeProvider.getBorderColor()),
+          borderRadius: BorderRadius.circular(12),
+          color: themeProvider.getCardBackgroundColor(),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, color: themeProvider.getTextColor(), size: 24),
+            const SizedBox(width: 12),
+            Text(
+              label,
+              style: TextStyle(
+                color: themeProvider.getTextColor(),
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

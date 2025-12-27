@@ -110,26 +110,29 @@ class _NewsScreenState extends State<NewsScreen> {
                                   child: Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                      ClipRRect(
-                                        borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
-                                        child: Image.network(
-                                          article.imageUrl,
-                                          height: 150,
-                                          width: double.infinity,
-                                          fit: BoxFit.cover,
-                                          errorBuilder: (context, error, stackTrace) {
-                                            return Container(
-                                              height: 150,
-                                              color: themeProvider.getAccentColor().withOpacity(0.2),
-                                              child: Center(
-                                                child: Icon(
-                                                  Icons.image_not_supported,
-                                                  size: 40,
-                                                  color: themeProvider.getSecondaryTextColor(),
+                                      Hero(
+                                        tag: 'news_image_${article.imageUrl}',
+                                        child: ClipRRect(
+                                          borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+                                          child: Image.network(
+                                            article.imageUrl,
+                                            height: 150,
+                                            width: double.infinity,
+                                            fit: BoxFit.cover,
+                                            errorBuilder: (context, error, stackTrace) {
+                                              return Container(
+                                                height: 150,
+                                                color: themeProvider.getAccentColor().withOpacity(0.2),
+                                                child: Center(
+                                                  child: Icon(
+                                                    Icons.image_not_supported,
+                                                    size: 40,
+                                                    color: themeProvider.getSecondaryTextColor(),
+                                                  ),
                                                 ),
-                                              ),
-                                            );
-                                          },
+                                              );
+                                            },
+                                          ),
                                         ),
                                       ),
                                       Padding(
