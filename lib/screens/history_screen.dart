@@ -114,109 +114,138 @@ class HistoryScreen extends StatelessWidget {
                             ),
                           ),
                         )
-                      : ListView.builder(
-                          padding: const EdgeInsets.fromLTRB(20, 0, 20, 120),
-                          itemCount: conversions.length,
-                          itemBuilder: (context, index) {
-                            final conversion = conversions[index];
-                            return FadeInSlide(
-                              delay: index < 10 ? index * 0.05 : 0.0,
-                              child: Container(
-                                margin: const EdgeInsets.only(bottom: 16),
-                                decoration: themeProvider.getGlassDecoration(borderRadius: 20),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(20),
-                                  child: Row(
-                                    children: [
-                                      Container(
-                                        padding: const EdgeInsets.all(12),
-                                        decoration: BoxDecoration(
-                                          color: themeProvider.getAccentColor().withOpacity(0.1),
-                                          borderRadius: BorderRadius.circular(12),
-                                        ),
-                                        child: Icon(
-                                          Icons.swap_horiz_rounded,
-                                          color: themeProvider.getAccentColor(),
-                                          size: 24,
-                                        ),
-                                      ),
-                                      const SizedBox(width: 16),
-                                      Expanded(
-                                        child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            Row(
-                                              children: [
-                                                Text(
-                                                  '${conversion.fromCurrency} → ${conversion.toCurrency}',
-                                                  style: TextStyle(
-                                                    fontWeight: FontWeight.bold,
-                                                    fontSize: 16,
-                                                    color: themeProvider.getTextColor(),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                            const SizedBox(height: 4),
-                                            Text(
-                                              DateFormat('MMM d, yyyy • h:mm a').format(conversion.date),
-                                              style: TextStyle(
-                                                fontSize: 12,
-                                                color: themeProvider.getSecondaryTextColor(),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      Column(
-                                        crossAxisAlignment: CrossAxisAlignment.end,
-                                        children: [
-                                          Text(
-                                            conversion.result.toStringAsFixed(2),
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 18,
-                                              color: themeProvider.getAccentColor(),
-                                            ),
-                                          ),
-                                          const SizedBox(height: 4),
-                                          Row(
-                                            children: [
-                                              Text(
-                                                '${conversion.amount.toStringAsFixed(2)} ${conversion.fromCurrency}',
-                                                style: TextStyle(
-                                                  fontSize: 12,
-                                                  color: themeProvider.getSecondaryTextColor(),
-                                                ),
-                                              ),
-                                              const SizedBox(width: 8),
-                                              ScaleButton(
-                                                onPressed: () {
-                                                  historyProvider.toggleSaved(index);
-                                                },
-                                                child: Icon(
-                                                  conversion.isSaved ? Icons.bookmark_rounded : Icons.bookmark_border_rounded,
-                                                  size: 18,
-                                                  color: conversion.isSaved ? themeProvider.getAccentColor() : themeProvider.getSecondaryTextColor(),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            );
-                          },
+                      : Container(
+                          margin: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+                          decoration: themeProvider.getGlassDecoration(borderRadius: 24),
+                          clipBehavior: Clip.hardEdge,
+                          child: ListView.builder(
+                            padding: EdgeInsets.zero,
+                            itemCount: conversions.length,
+                            itemBuilder: (context, index) {
+                              final conversion = conversions[index];
+                              final isLast = index == conversions.length - 1;
+                              
+                              return FadeInSlide(
+                                delay: index < 15 ? index * 0.05 : 0.0,
+                                child: _buildHistoryItem(themeProvider, historyProvider, conversion, index, isLast),
+                              );
+                            },
+                          ),
                         ),
                 ),
+
               ],
             ),
           ),
         );
       },
+    );
+  }
+  Widget _buildHistoryItem(
+    ThemeProvider themeProvider,
+    HistoryProvider historyProvider,
+    dynamic conversion,
+    int index,
+    bool isLast,
+  ) {
+    return Column(
+      children: [
+        Material(
+          color: Colors.transparent,
+          child: InkWell(
+            onTap: () {}, // Optional: Show details
+            child: Padding(
+              padding: const EdgeInsets.all(20),
+              child: Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: themeProvider.getAccentColor().withOpacity(0.1),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      Icons.swap_horiz_rounded,
+                      color: themeProvider.getAccentColor(),
+                      size: 24,
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          '${conversion.fromCurrency} → ${conversion.toCurrency}',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                            color: themeProvider.getTextColor(),
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          DateFormat('MMM d, yyyy • h:mm a').format(conversion.date),
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: themeProvider.getSecondaryTextColor(),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Text(
+                        conversion.result.toStringAsFixed(2),
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                          color: themeProvider.getAccentColor(),
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Row(
+                        children: [
+                          Text(
+                            '${conversion.amount.toStringAsFixed(2)} ${conversion.fromCurrency}',
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: themeProvider.getSecondaryTextColor(),
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          ScaleButton(
+                            onPressed: () {
+                              historyProvider.toggleSaved(index);
+                            },
+                            child: Icon(
+                              conversion.isSaved ? Icons.bookmark_rounded : Icons.bookmark_border_rounded,
+                              size: 18,
+                              color: conversion.isSaved
+                                  ? themeProvider.getAccentColor()
+                                  : themeProvider.getSecondaryTextColor(),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+        if (!isLast)
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Divider(
+              height: 1,
+              color: themeProvider.getBorderColor().withOpacity(0.3),
+            ),
+          ),
+      ],
     );
   }
 }

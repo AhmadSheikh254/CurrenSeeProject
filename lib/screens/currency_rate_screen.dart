@@ -89,40 +89,84 @@ class _CurrencyRateScreenState extends State<CurrencyRateScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        'Exchange Rates',
-                        style: TextStyle(
-                          fontSize: 28,
-                          fontWeight: FontWeight.bold,
-                          color: themeProvider.getTextColor(),
-                        ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'Exchange Rates',
+                            style: TextStyle(
+                              fontSize: 28,
+                              fontWeight: FontWeight.bold,
+                              color: themeProvider.getTextColor(),
+                            ),
+                          ),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                            decoration: BoxDecoration(
+                              color: Colors.green.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(20),
+                              border: Border.all(color: Colors.green.withOpacity(0.2)),
+                            ),
+                            child: Row(
+                              children: [
+                                Container(
+                                  width: 6,
+                                  height: 6,
+                                  decoration: const BoxDecoration(
+                                    color: Colors.green,
+                                    shape: BoxShape.circle,
+                                  ),
+                                ),
+                                const SizedBox(width: 6),
+                                const Text(
+                                  'Live',
+                                  style: TextStyle(
+                                    color: Colors.green,
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
                       const SizedBox(height: 16),
                       ScaleIn(
                         delay: 0.1,
-                        child: TextField(
-                          controller: _searchController,
-                          onChanged: _filterRates,
-                          style: TextStyle(color: themeProvider.getTextColor()),
-                          decoration: InputDecoration(
-                            hintText: 'Search currencies...',
-                            hintStyle: TextStyle(color: themeProvider.getSecondaryTextColor()),
-                            prefixIcon:
-                                Icon(Icons.search, color: themeProvider.getSecondaryTextColor()),
-                            filled: true,
-                            fillColor: themeProvider.getCardBackgroundColor(),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(16),
-                              borderSide: BorderSide(color: themeProvider.getBorderColor()),
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(16),
-                              borderSide: BorderSide(color: themeProvider.getBorderColor()),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(16),
-                              borderSide:
-                                  BorderSide(color: themeProvider.getAccentColor(), width: 1.5),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.05),
+                                blurRadius: 10,
+                                offset: const Offset(0, 4),
+                              ),
+                            ],
+                          ),
+                          child: TextField(
+                            controller: _searchController,
+                            onChanged: _filterRates,
+                            style: TextStyle(color: themeProvider.getTextColor()),
+                            decoration: InputDecoration(
+                              hintText: 'Search currencies...',
+                              hintStyle: TextStyle(color: themeProvider.getSecondaryTextColor()),
+                              prefixIcon: Icon(Icons.search_rounded, color: themeProvider.getAccentColor()),
+                              filled: true,
+                              fillColor: themeProvider.getCardBackgroundColor().withOpacity(0.8),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(20),
+                                borderSide: BorderSide.none,
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(20),
+                                borderSide: BorderSide.none,
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(20),
+                                borderSide: BorderSide(color: themeProvider.getAccentColor(), width: 1.5),
+                              ),
+                              contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
                             ),
                           ),
                         ),
@@ -145,7 +189,7 @@ class _CurrencyRateScreenState extends State<CurrencyRateScreen> {
                             _buildTrendingChip(themeProvider, 'USD', '1.0000', true),
                             _buildTrendingChip(themeProvider, 'EUR', '0.9542', false),
                             _buildTrendingChip(themeProvider, 'GBP', '0.7891', true),
-                            _buildTrendingChip(themeProvider, 'JPY', '155.42', true),
+                            // _buildTrendingChip(themeProvider, 'JPY', '155.42', true),
                           ],
                         ),
                       ),
@@ -185,106 +229,23 @@ class _CurrencyRateScreenState extends State<CurrencyRateScreen> {
                             ),
                           ),
                         )
-                      : ListView.builder(
-                          padding: const EdgeInsets.fromLTRB(20, 12, 20, 120),
-                          itemCount: _filteredRates.length,
-                          itemBuilder: (context, index) {
-                            final rate = _filteredRates[index];
-                            // Use a simple circle avatar with currency code as fallback for flag
-                            return FadeInSlide(
-                              delay: index < 15 ? index * 0.05 : 0.0,
-                              child: ScaleButton(
-                                onPressed: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => CurrencyDetailsScreen(
-                                        currencyCode: rate['code'],
-                                        currencyName: rate['name'],
-                                        currentRate: rate['rate'],
-                                      ),
-                                    ),
-                                  );
-                                },
-                              child: Container(
-                              margin: const EdgeInsets.only(bottom: 12),
-                              padding: const EdgeInsets.all(16),
-                              decoration: themeProvider.getGlassDecoration(borderRadius: 16),
-                              child: Row(
-                                children: [
-                                  Container(
-                                    width: 48,
-                                    height: 48,
-                                    decoration: BoxDecoration(
-                                      gradient: LinearGradient(
-                                        colors: [themeProvider.getAccentColor().withOpacity(0.2), themeProvider.getSecondaryAccentColor().withOpacity(0.2)],
-                                        begin: Alignment.topLeft,
-                                        end: Alignment.bottomRight,
-                                      ),
-                                      shape: BoxShape.circle,
-                                    ),
-                                    child: Center(
-                                      child: Text(
-                                        rate['code'][0],
-                                        style: TextStyle(
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.bold,
-                                          color: themeProvider.getAccentColor(),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  const SizedBox(width: 16),
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          rate['code'],
-                                          style: TextStyle(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.bold,
-                                            color: themeProvider.getTextColor(),
-                                          ),
-                                        ),
-                                        const SizedBox(height: 4),
-                                        Text(
-                                          rate['name'],
-                                          style: TextStyle(
-                                            fontSize: 14,
-                                            color: themeProvider.getSecondaryTextColor(),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  Column(
-                                    crossAxisAlignment: CrossAxisAlignment.end,
-                                    children: [
-                                      Text(
-                                        rate['rate'].toStringAsFixed(4),
-                                        style: TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold,
-                                          color: themeProvider.getTextColor(),
-                                        ),
-                                      ),
-                                      const SizedBox(height: 4),
-                                      Text(
-                                        '1 USD =',
-                                        style: TextStyle(
-                                          fontSize: 12,
-                                          color: themeProvider.getSecondaryTextColor(),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                                ),
-                              ),
-                            );
-                          },
+                      : Container(
+                          margin: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+                          decoration: themeProvider.getGlassDecoration(borderRadius: 24),
+                          clipBehavior: Clip.hardEdge,
+                          child: ListView.builder(
+                            padding: EdgeInsets.zero,
+                            itemCount: _filteredRates.length,
+                            itemBuilder: (context, index) {
+                              final rate = _filteredRates[index];
+                              final isLast = index == _filteredRates.length - 1;
+                              
+                              return FadeInSlide(
+                                delay: index < 15 ? index * 0.05 : 0.0,
+                                child: _buildRateItem(themeProvider, rate, isLast),
+                              );
+                            },
+                          ),
                         ),
                 ),
               ],
@@ -298,44 +259,175 @@ class _CurrencyRateScreenState extends State<CurrencyRateScreen> {
   Widget _buildTrendingChip(ThemeProvider themeProvider, String code, String rate, bool isUp) {
     return Container(
       margin: const EdgeInsets.only(right: 12),
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-      decoration: themeProvider.getGlassDecoration(borderRadius: 20),
+      padding: const EdgeInsets.all(4),
+      decoration: themeProvider.getGlassDecoration(borderRadius: 30),
       child: Row(
+        mainAxisSize: MainAxisSize.min,
         children: [
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: (isUp ? Colors.green : Colors.red).withOpacity(0.1),
+              color: themeProvider.getCardBackgroundColor(),
               shape: BoxShape.circle,
             ),
-            child: Icon(
-              isUp ? Icons.trending_up_rounded : Icons.trending_down_rounded,
-              color: isUp ? Colors.green : Colors.red,
-              size: 16,
+            child: Text(
+              code,
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 12,
+                color: themeProvider.getTextColor(),
+              ),
             ),
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: 8),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
             children: [
-              Text(
-                code,
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: themeProvider.getTextColor(),
-                ),
-              ),
               Text(
                 rate,
                 style: TextStyle(
-                  fontSize: 12,
-                  color: themeProvider.getSecondaryTextColor(),
+                  fontWeight: FontWeight.bold,
+                  fontSize: 13,
+                  color: themeProvider.getTextColor(),
                 ),
+              ),
+              Row(
+                children: [
+                  Icon(
+                    isUp ? Icons.arrow_drop_up_rounded : Icons.arrow_drop_down_rounded,
+                    color: isUp ? Colors.green : Colors.red,
+                    size: 16,
+                  ),
+                  Text(
+                    isUp ? '+0.4%' : '-0.2%', // Mock data for visual
+                    style: TextStyle(
+                      fontSize: 10,
+                      color: isUp ? Colors.green : Colors.red,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
+          const SizedBox(width: 12),
         ],
       ),
+    );
+  }
+  Widget _buildRateItem(ThemeProvider themeProvider, Map<String, dynamic> rate, bool isLast) {
+    return Column(
+      children: [
+        Material(
+          color: Colors.transparent,
+          child: InkWell(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => CurrencyDetailsScreen(
+                    currencyCode: rate['code'],
+                    currencyName: rate['name'],
+                    currentRate: rate['rate'],
+                  ),
+                ),
+              );
+            },
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+              child: Row(
+                children: [
+                  Container(
+                    width: 48,
+                    height: 48,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          themeProvider.getAccentColor().withOpacity(0.2),
+                          themeProvider.getSecondaryAccentColor().withOpacity(0.2)
+                        ],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Center(
+                      child: Text(
+                        rate['code'][0],
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: themeProvider.getAccentColor(),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          rate['code'],
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: themeProvider.getTextColor(),
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          rate['name'],
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: themeProvider.getSecondaryTextColor(),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Text(
+                        rate['rate'].toStringAsFixed(4),
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: themeProvider.getTextColor(),
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        '1 USD =',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: themeProvider.getSecondaryTextColor(),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(width: 12),
+                  Icon(
+                    Icons.chevron_right_rounded,
+                    color: themeProvider.getSecondaryTextColor(),
+                    size: 20,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+        if (!isLast)
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Divider(
+              height: 1,
+              color: themeProvider.getBorderColor().withOpacity(0.3),
+            ),
+          ),
+      ],
     );
   }
 }
