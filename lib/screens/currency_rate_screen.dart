@@ -127,6 +127,28 @@ class _CurrencyRateScreenState extends State<CurrencyRateScreen> {
                           ),
                         ),
                       ),
+                      const SizedBox(height: 24),
+                      Text(
+                        'Trending',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: themeProvider.getTextColor(),
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        physics: const BouncingScrollPhysics(),
+                        child: Row(
+                          children: [
+                            _buildTrendingChip(themeProvider, 'USD', '1.0000', true),
+                            _buildTrendingChip(themeProvider, 'EUR', '0.9542', false),
+                            _buildTrendingChip(themeProvider, 'GBP', '0.7891', true),
+                            _buildTrendingChip(themeProvider, 'JPY', '155.42', true),
+                          ],
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -272,6 +294,48 @@ class _CurrencyRateScreenState extends State<CurrencyRateScreen> {
       },
     );
   }
+
+  Widget _buildTrendingChip(ThemeProvider themeProvider, String code, String rate, bool isUp) {
+    return Container(
+      margin: const EdgeInsets.only(right: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+      decoration: themeProvider.getGlassDecoration(borderRadius: 20),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: (isUp ? Colors.green : Colors.red).withOpacity(0.1),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              isUp ? Icons.trending_up_rounded : Icons.trending_down_rounded,
+              color: isUp ? Colors.green : Colors.red,
+              size: 16,
+            ),
+          ),
+          const SizedBox(width: 12),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                code,
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: themeProvider.getTextColor(),
+                ),
+              ),
+              Text(
+                rate,
+                style: TextStyle(
+                  fontSize: 12,
+                  color: themeProvider.getSecondaryTextColor(),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
 }
-
-

@@ -142,6 +142,41 @@ class _NewsScreenState extends State<NewsScreen> {
                                           children: [
                                             Row(
                                               children: [
+                                                if (index == 0)
+                                                  Container(
+                                                    margin: const EdgeInsets.only(right: 8),
+                                                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                                                    decoration: BoxDecoration(
+                                                      gradient: const LinearGradient(
+                                                        colors: [Colors.orange, Colors.deepOrange],
+                                                        begin: Alignment.topLeft,
+                                                        end: Alignment.bottomRight,
+                                                      ),
+                                                      borderRadius: BorderRadius.circular(20),
+                                                      boxShadow: [
+                                                        BoxShadow(
+                                                          color: Colors.orange.withOpacity(0.3),
+                                                          blurRadius: 8,
+                                                          offset: const Offset(0, 2),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    child: const Row(
+                                                      mainAxisSize: MainAxisSize.min,
+                                                      children: [
+                                                        Icon(Icons.trending_up, size: 10, color: Colors.white),
+                                                        SizedBox(width: 4),
+                                                        Text(
+                                                          'Trending',
+                                                          style: TextStyle(
+                                                            fontSize: 10,
+                                                            fontWeight: FontWeight.bold,
+                                                            color: Colors.white,
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
                                                 Container(
                                                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                                                   decoration: BoxDecoration(
@@ -186,6 +221,25 @@ class _NewsScreenState extends State<NewsScreen> {
                                                 fontSize: 14,
                                                 color: themeProvider.getSecondaryTextColor(),
                                               ),
+                                            ),
+                                            const SizedBox(height: 12),
+                                            Row(
+                                              children: [
+                                                Text(
+                                                  'Read More',
+                                                  style: TextStyle(
+                                                    fontSize: 12,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: themeProvider.getAccentColor(),
+                                                  ),
+                                                ),
+                                                const SizedBox(width: 4),
+                                                Icon(
+                                                  Icons.arrow_forward_rounded,
+                                                  size: 14,
+                                                  color: themeProvider.getAccentColor(),
+                                                ),
+                                              ],
                                             ),
                                           ],
                                         ),

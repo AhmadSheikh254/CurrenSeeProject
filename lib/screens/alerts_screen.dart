@@ -67,25 +67,68 @@ class _AlertsScreenState extends State<AlertsScreen> {
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Icon(
-                                    Icons.notifications_off_outlined,
-                                    size: 64,
-                                    color: themeProvider.getSecondaryTextColor().withOpacity(0.5),
-                                  ),
-                                  const SizedBox(height: 16),
-                                  Text(
-                                    'No active alerts',
-                                    style: TextStyle(
-                                      fontSize: 18,
-                                      color: themeProvider.getSecondaryTextColor(),
+                                  Container(
+                                    padding: const EdgeInsets.all(32),
+                                    decoration: BoxDecoration(
+                                      color: themeProvider.getAccentColor().withOpacity(0.1),
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: Icon(
+                                      Icons.notifications_none_rounded,
+                                      size: 80,
+                                      color: themeProvider.getAccentColor().withOpacity(0.5),
                                     ),
                                   ),
-                                  const SizedBox(height: 8),
+                                  const SizedBox(height: 24),
                                   Text(
-                                    'Tap + to create a new alert',
+                                    'No Active Alerts',
                                     style: TextStyle(
-                                      fontSize: 14,
-                                      color: themeProvider.getSecondaryTextColor(),
+                                      fontSize: 22,
+                                      fontWeight: FontWeight.bold,
+                                      color: themeProvider.getTextColor(),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 12),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(horizontal: 40),
+                                    child: Text(
+                                      'Stay ahead of the market! Create an alert to get notified when rates hit your target.',
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        color: themeProvider.getSecondaryTextColor(),
+                                        height: 1.5,
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 32),
+                                  ScaleButton(
+                                    onPressed: () => _showAddAlertDialog(context, themeProvider, alertProvider),
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                                      decoration: BoxDecoration(
+                                        gradient: LinearGradient(
+                                          colors: [themeProvider.getAccentColor(), themeProvider.getSecondaryAccentColor()],
+                                          begin: Alignment.topLeft,
+                                          end: Alignment.bottomRight,
+                                        ),
+                                        borderRadius: BorderRadius.circular(30),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: themeProvider.getAccentColor().withOpacity(0.3),
+                                            blurRadius: 15,
+                                            offset: const Offset(0, 8),
+                                          ),
+                                        ],
+                                      ),
+                                      child: const Text(
+                                        'Create First Alert',
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16,
+                                        ),
+                                      ),
                                     ),
                                   ),
                                 ],
@@ -93,73 +136,93 @@ class _AlertsScreenState extends State<AlertsScreen> {
                             ),
                           )
                         : ListView.builder(
-                            padding: const EdgeInsets.symmetric(horizontal: 20),
+                            padding: const EdgeInsets.fromLTRB(20, 0, 20, 40),
                             itemCount: alerts.length,
                             itemBuilder: (context, index) {
                               final alert = alerts[index];
                               return FadeInSlide(
                                 delay: index * 0.1,
-                                child: Dismissible(
-                                  key: Key(alert.id),
-                                  background: Container(
-                                    color: Colors.red,
-                                    alignment: Alignment.centerRight,
-                                    padding: const EdgeInsets.only(right: 20),
-                                    margin: const EdgeInsets.only(bottom: 12),
-                                    child: const Icon(Icons.delete, color: Colors.white),
-                                  ),
-                                  onDismissed: (direction) {
-                                    alertProvider.removeAlert(alert.id);
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(content: Text('Alert removed')),
-                                    );
-                                  },
-                                  child: Container(
-                                    margin: const EdgeInsets.only(bottom: 12),
-                                    padding: const EdgeInsets.all(16),
-                                    decoration: themeProvider.getGlassDecoration(borderRadius: 16),
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                child: Container(
+                                  margin: const EdgeInsets.only(bottom: 16),
+                                  decoration: themeProvider.getGlassDecoration(borderRadius: 20),
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(20),
+                                    child: Dismissible(
+                                      key: Key(alert.id),
+                                      direction: DismissDirection.endToStart,
+                                      background: Container(
+                                        alignment: Alignment.centerRight,
+                                        padding: const EdgeInsets.only(right: 24),
+                                        decoration: BoxDecoration(
+                                          gradient: LinearGradient(
+                                            colors: [Colors.red.shade400, Colors.red.shade700],
+                                            begin: Alignment.centerLeft,
+                                            end: Alignment.centerRight,
+                                          ),
+                                        ),
+                                        child: const Icon(Icons.delete_outline_rounded, color: Colors.white, size: 28),
+                                      ),
+                                      onDismissed: (direction) {
+                                        alertProvider.removeAlert(alert.id);
+                                        ScaffoldMessenger.of(context).showSnackBar(
+                                          SnackBar(
+                                            content: const Text('Alert removed'),
+                                            behavior: SnackBarBehavior.floating,
+                                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                                            backgroundColor: themeProvider.isDarkMode ? Colors.grey[900] : Colors.black87,
+                                          ),
+                                        );
+                                      },
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(20),
+                                        child: Row(
                                           children: [
-                                            Row(
-                                              children: [
-                                                Text(
-                                                  '${alert.fromCurrency}/${alert.toCurrency}',
-                                                  style: TextStyle(
-                                                    fontWeight: FontWeight.bold,
-                                                    fontSize: 18,
-                                                    color: themeProvider.getTextColor(),
-                                                  ),
-                                                ),
-                                                const SizedBox(width: 8),
-                                                Icon(
-                                                  alert.isAbove ? Icons.trending_up : Icons.trending_down,
-                                                  color: alert.isAbove ? Colors.green : Colors.red,
-                                                  size: 20,
-                                                ),
-                                              ],
-                                            ),
-                                            const SizedBox(height: 4),
-                                            Text(
-                                              'Target: ${alert.targetRate.toStringAsFixed(4)}',
-                                              style: TextStyle(
-                                                fontSize: 14,
-                                                color: themeProvider.getSecondaryTextColor(),
+                                            Container(
+                                              padding: const EdgeInsets.all(12),
+                                              decoration: BoxDecoration(
+                                                color: (alert.isAbove ? Colors.green : Colors.red).withOpacity(0.1),
+                                                shape: BoxShape.circle,
                                               ),
+                                              child: Icon(
+                                                alert.isAbove ? Icons.trending_up_rounded : Icons.trending_down_rounded,
+                                                color: alert.isAbove ? Colors.green : Colors.red,
+                                                size: 24,
+                                              ),
+                                            ),
+                                            const SizedBox(width: 16),
+                                            Expanded(
+                                              child: Column(
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    '${alert.fromCurrency} to ${alert.toCurrency}',
+                                                    style: TextStyle(
+                                                      fontWeight: FontWeight.bold,
+                                                      fontSize: 18,
+                                                      color: themeProvider.getTextColor(),
+                                                    ),
+                                                  ),
+                                                  const SizedBox(height: 4),
+                                                  Text(
+                                                    'Notify when ${alert.isAbove ? 'above' : 'below'} ${alert.targetRate.toStringAsFixed(4)}',
+                                                    style: TextStyle(
+                                                      fontSize: 13,
+                                                      color: themeProvider.getSecondaryTextColor(),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                            Switch.adaptive(
+                                              value: alert.isActive,
+                                              onChanged: (value) {
+                                                alertProvider.toggleAlert(alert.id);
+                                              },
+                                              activeColor: themeProvider.getAccentColor(),
                                             ),
                                           ],
                                         ),
-                                        Switch(
-                                          value: alert.isActive,
-                                          onChanged: (value) {
-                                            alertProvider.toggleAlert(alert.id);
-                                          },
-                                          activeColor: themeProvider.getAccentColor(),
-                                        ),
-                                      ],
+                                      ),
                                     ),
                                   ),
                                 ),

@@ -29,7 +29,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               colors: colors,
             ),
           ),
-          child: SafeArea(
+            child: SafeArea(
             bottom: false,
             child: SingleChildScrollView(
               padding: const EdgeInsets.fromLTRB(20, 24, 20, 120),
@@ -51,144 +51,163 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   // App Preferences Section
                   FadeInSlide(
                     delay: 0.1,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        _buildSectionTitle(themeProvider, 'App Preferences'),
-                        const SizedBox(height: 12),
-                        _buildToggleSetting(
-                          themeProvider,
-                          'Dark Mode',
-                          'Use dark theme',
-                          themeProvider.isDarkMode,
-                          (value) {
-                            themeProvider.setDarkMode(value);
-                          },
-                        ),
-                        const SizedBox(height: 12),
-                        _buildToggleSetting(
-                          themeProvider,
-                          'Push Notifications',
-                          'Receive currency alerts',
-                          preferencesProvider.notificationsEnabled,
-                          (value) {
-                            preferencesProvider.setNotificationsEnabled(value);
-                            if (value) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(content: Text('Notifications enabled')),
-                              );
-                            }
-                          },
-                        ),
-                      ],
+                    child: Container(
+                      padding: const EdgeInsets.all(20),
+                      decoration: themeProvider.getGlassDecoration(borderRadius: 24),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          _buildSectionTitle(themeProvider, 'App Preferences', Icons.tune_rounded),
+                          const SizedBox(height: 20),
+                          _buildToggleSetting(
+                            themeProvider,
+                            'Dark Mode',
+                            'Use dark theme',
+                            themeProvider.isDarkMode,
+                            (value) {
+                              themeProvider.setDarkMode(value);
+                            },
+                          ),
+                          const SizedBox(height: 16),
+                          _buildToggleSetting(
+                            themeProvider,
+                            'Push Notifications',
+                            'Receive currency alerts',
+                            preferencesProvider.notificationsEnabled,
+                            (value) {
+                              preferencesProvider.setNotificationsEnabled(value);
+                              if (value) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(content: Text('Notifications enabled')),
+                                );
+                              }
+                            },
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                  const SizedBox(height: 32),
+                  const SizedBox(height: 24),
                   // Account Settings Section
                   FadeInSlide(
                     delay: 0.2,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        _buildSectionTitle(themeProvider, 'Account Settings'),
-                        const SizedBox(height: 12),
-                        _buildDropdownSetting(
-                          themeProvider,
-                          'Default Currency',
-                          preferencesProvider.defaultBaseCurrency,
-                          ['USD', 'EUR', 'GBP', 'JPY', 'INR'],
-                          (value) {
-                            preferencesProvider.setDefaultBaseCurrency(value);
-                          },
-                        ),
-                        const SizedBox(height: 12),
-                        _buildDropdownSetting(
-                          themeProvider,
-                          'Language',
-                          _selectedLanguage,
-                          ['English', 'Spanish', 'French', 'German', 'Chinese'],
-                          (value) {
-                            setState(() {
-                              _selectedLanguage = value;
-                            });
-                          },
-                        ),
-                      ],
+                    child: Container(
+                      padding: const EdgeInsets.all(20),
+                      decoration: themeProvider.getGlassDecoration(borderRadius: 24),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          _buildSectionTitle(themeProvider, 'Account Settings', Icons.person_outline_rounded),
+                          const SizedBox(height: 20),
+                          _buildDropdownSetting(
+                            themeProvider,
+                            'Default Currency',
+                            preferencesProvider.defaultBaseCurrency,
+                            ['USD', 'EUR', 'GBP', 'JPY', 'INR'],
+                            (value) {
+                              preferencesProvider.setDefaultBaseCurrency(value);
+                            },
+                          ),
+                          const SizedBox(height: 16),
+                          _buildDropdownSetting(
+                            themeProvider,
+                            'Language',
+                            _selectedLanguage,
+                            ['English', 'Spanish', 'French', 'German', 'Chinese'],
+                            (value) {
+                              setState(() {
+                                _selectedLanguage = value;
+                              });
+                            },
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                  const SizedBox(height: 32),
+                  const SizedBox(height: 24),
                   // Security Section
                   FadeInSlide(
                     delay: 0.3,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        _buildSectionTitle(themeProvider, 'Security'),
-                        const SizedBox(height: 12),
-                        _buildSettingsTile(
-                          themeProvider,
-                          'Change Password',
-                          'Update your password',
-                          () {
-                            _showChangePasswordDialog(context, themeProvider);
-                          },
-                        ),
-                        const SizedBox(height: 12),
-                        _buildSettingsTile(
-                          themeProvider,
-                          'Two-Factor Authentication',
-                          'Enable 2FA for security',
-                          () {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('2FA feature coming soon'),
-                              ),
-                            );
-                          },
-                        ),
-                      ],
+                    child: Container(
+                      padding: const EdgeInsets.all(20),
+                      decoration: themeProvider.getGlassDecoration(borderRadius: 24),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          _buildSectionTitle(themeProvider, 'Security', Icons.security_rounded),
+                          const SizedBox(height: 20),
+                          _buildSettingsTile(
+                            themeProvider,
+                            'Change Password',
+                            'Update your password',
+                            Icons.lock_outline_rounded,
+                            () {
+                              _showChangePasswordDialog(context, themeProvider);
+                            },
+                          ),
+                          const SizedBox(height: 16),
+                          _buildSettingsTile(
+                            themeProvider,
+                            'Two-Factor Authentication',
+                            'Enable 2FA for security',
+                            Icons.verified_user_outlined,
+                            () {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('2FA feature coming soon'),
+                                ),
+                              );
+                            },
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                  const SizedBox(height: 32),
+                  const SizedBox(height: 24),
                   // About Section
                   FadeInSlide(
                     delay: 0.4,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        _buildSectionTitle(themeProvider, 'About'),
-                        const SizedBox(height: 12),
-                        _buildSettingsTile(
-                          themeProvider,
-                          'Privacy Policy',
-                          'Read our privacy policy',
-                          () {
+                    child: Container(
+                      padding: const EdgeInsets.all(20),
+                      decoration: themeProvider.getGlassDecoration(borderRadius: 24),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          _buildSectionTitle(themeProvider, 'About', Icons.info_outline_rounded),
+                          const SizedBox(height: 20),
+                          _buildSettingsTile(
+                            themeProvider,
+                            'Privacy Policy',
+                            'Read our privacy policy',
+                            Icons.privacy_tip_outlined,
+                            () {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Opening privacy policy...'),
+                                ),
+                              );
+                            },
+                          ),
+                          const SizedBox(height: 16),
+                          _buildSettingsTile(themeProvider, 'Terms of Service', 'Read our terms', Icons.description_outlined, () {
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
-                                content: Text('Opening privacy policy...'),
+                                content: Text('Opening terms of service...'),
                               ),
                             );
-                          },
-                        ),
-                        const SizedBox(height: 12),
-                        _buildSettingsTile(themeProvider, 'Terms of Service', 'Read our terms', () {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Opening terms of service...'),
-                            ),
-                          );
-                        }),
-                        const SizedBox(height: 12),
-                        _buildSettingsTile(themeProvider, 'About CurrenSee', 'Version 1.0.0', () {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text(
-                                'CurrenSee v1.0.0 - Currency Conversion App',
+                          }),
+                          const SizedBox(height: 16),
+                          _buildSettingsTile(themeProvider, 'About CurrenSee', 'Version 1.0.0', Icons.apps_rounded, () {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text(
+                                  'CurrenSee v1.0.0 - Currency Conversion App',
+                                ),
                               ),
-                            ),
-                          );
-                        }),
-                      ],
+                            );
+                          }),
+                        ],
+                      ),
                     ),
                   ),
                   const SizedBox(height: 32),
@@ -206,14 +225,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             padding: const EdgeInsets.symmetric(vertical: 16),
                             decoration: BoxDecoration(
                               gradient: LinearGradient(
-                                colors: [themeProvider.getAccentColor(), themeProvider.getSecondaryAccentColor()],
+                                colors: [Colors.red.shade400, Colors.red.shade700],
                                 begin: Alignment.topLeft,
                                 end: Alignment.bottomRight,
                               ),
                               borderRadius: BorderRadius.circular(16),
                               boxShadow: [
                                 BoxShadow(
-                                  color: themeProvider.getAccentColor().withOpacity(0.3),
+                                  color: Colors.red.withOpacity(0.3),
                                   blurRadius: 12,
                                   offset: const Offset(0, 6),
                                 ),
@@ -223,7 +242,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             child: const Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Icon(Icons.logout, color: Colors.white, size: 20),
+                                Icon(Icons.logout_rounded, color: Colors.white, size: 20),
                                 SizedBox(width: 12),
                                 Text(
                                   'Logout',
@@ -249,14 +268,24 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  Widget _buildSectionTitle(ThemeProvider themeProvider, String title) {
-    return Text(
-      title,
-      style: TextStyle(
-        fontSize: 18,
-        fontWeight: FontWeight.bold,
-        color: themeProvider.getTextColor(),
-      ),
+  Widget _buildSectionTitle(ThemeProvider themeProvider, String title, IconData icon) {
+    return Row(
+      children: [
+        Icon(
+          icon,
+          color: themeProvider.getAccentColor(),
+          size: 24,
+        ),
+        const SizedBox(width: 12),
+        Text(
+          title,
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: themeProvider.getTextColor(),
+          ),
+        ),
+      ],
     );
   }
 
@@ -267,38 +296,33 @@ class _SettingsScreenState extends State<SettingsScreen> {
     bool value,
     Function(bool) onChanged,
   ) {
-    return Container(
-      padding: const EdgeInsets.all(14),
-      decoration: themeProvider.getGlassDecoration(borderRadius: 16),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                title,
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: themeProvider.getTextColor(),
-                ),
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              title,
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: themeProvider.getTextColor(),
               ),
-              const SizedBox(height: 4),
-              Text(
-                subtitle,
-                style: TextStyle(fontSize: 12, color: themeProvider.getSecondaryTextColor()),
-              ),
-            ],
-          ),
-          Switch(
-            value: value,
-            onChanged: onChanged,
-            activeColor: themeProvider.getAccentColor(),
-            activeTrackColor: themeProvider.getAccentColor().withOpacity(0.3),
-          ),
-        ],
-      ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              subtitle,
+              style: TextStyle(fontSize: 12, color: themeProvider.getSecondaryTextColor()),
+            ),
+          ],
+        ),
+        Switch.adaptive(
+          value: value,
+          onChanged: onChanged,
+          activeColor: themeProvider.getAccentColor(),
+        ),
+      ],
     );
   }
 
@@ -309,26 +333,25 @@ class _SettingsScreenState extends State<SettingsScreen> {
     List<String> options,
     Function(String) onChanged,
   ) {
-    return Container(
-      padding: const EdgeInsets.all(14),
-      decoration: themeProvider.getGlassDecoration(borderRadius: 16),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                title,
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: themeProvider.getTextColor(),
-                ),
-              ),
-            ],
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          title,
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+            color: themeProvider.getTextColor(),
           ),
-          DropdownButton<String>(
+        ),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+          decoration: BoxDecoration(
+            color: themeProvider.getCardBackgroundColor(),
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: themeProvider.getBorderColor()),
+          ),
+          child: DropdownButton<String>(
             value: currentValue,
             dropdownColor: themeProvider.getCardBackgroundColor(),
             items: options.map((option) {
@@ -336,7 +359,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 value: option,
                 child: Text(
                   option,
-                  style: TextStyle(color: themeProvider.getTextColor()),
+                  style: TextStyle(
+                    color: themeProvider.getTextColor(),
+                    fontSize: 14,
+                  ),
                 ),
               );
             }).toList(),
@@ -347,46 +373,61 @@ class _SettingsScreenState extends State<SettingsScreen> {
             },
             style: TextStyle(color: themeProvider.getTextColor()),
             underline: const SizedBox(),
-            icon: Icon(Icons.arrow_drop_down, color: themeProvider.getTextColor()),
+            icon: Icon(Icons.keyboard_arrow_down_rounded, color: themeProvider.getTextColor(), size: 20),
+            isDense: true,
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
-  Widget _buildSettingsTile(ThemeProvider themeProvider, String title, String subtitle, VoidCallback onTap) {
+  Widget _buildSettingsTile(ThemeProvider themeProvider, String title, String subtitle, IconData icon, VoidCallback onTap) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.all(14),
+        padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: themeProvider.getCardBackgroundColor(),
-          borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: themeProvider.getBorderColor()),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: themeProvider.getBorderColor().withOpacity(0.5)),
         ),
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: themeProvider.getTextColor(),
+            Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: themeProvider.getAccentColor().withOpacity(0.1),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                icon,
+                color: themeProvider.getAccentColor(),
+                size: 20,
+              ),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: themeProvider.getTextColor(),
+                    ),
                   ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  subtitle,
-                  style: TextStyle(fontSize: 12, color: themeProvider.getSecondaryTextColor()),
-                ),
-              ],
+                  const SizedBox(height: 4),
+                  Text(
+                    subtitle,
+                    style: TextStyle(fontSize: 12, color: themeProvider.getSecondaryTextColor()),
+                  ),
+                ],
+              ),
             ),
             Icon(
-              Icons.arrow_forward_ios,
+              Icons.arrow_forward_ios_rounded,
               color: themeProvider.getSecondaryTextColor(),
               size: 16,
             ),

@@ -70,8 +70,8 @@ class CurrencyDetailsScreen extends StatelessWidget {
                               child: Column(
                                 children: [
                                   Container(
-                                    width: 80,
-                                    height: 80,
+                                    width: 100,
+                                    height: 100,
                                     decoration: BoxDecoration(
                                       gradient: LinearGradient(
                                         colors: [themeProvider.getAccentColor().withOpacity(0.2), themeProvider.getSecondaryAccentColor().withOpacity(0.2)],
@@ -79,6 +79,13 @@ class CurrencyDetailsScreen extends StatelessWidget {
                                         end: Alignment.bottomRight,
                                       ),
                                       shape: BoxShape.circle,
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: themeProvider.getAccentColor().withOpacity(0.2),
+                                          blurRadius: 20,
+                                          spreadRadius: 5,
+                                        ),
+                                      ],
                                       border: Border.all(
                                         color: themeProvider.getAccentColor().withOpacity(0.5),
                                         width: 2,
@@ -88,36 +95,54 @@ class CurrencyDetailsScreen extends StatelessWidget {
                                       child: Text(
                                         currencyCode[0],
                                         style: TextStyle(
-                                          fontSize: 32,
+                                          fontSize: 40,
                                           fontWeight: FontWeight.bold,
                                           color: themeProvider.getAccentColor(),
                                         ),
                                       ),
                                     ),
                                   ),
-                                  const SizedBox(height: 16),
-                                  Text(
-                                    currencyName,
-                                    style: TextStyle(
-                                      fontSize: 24,
-                                      fontWeight: FontWeight.bold,
-                                      color: themeProvider.getTextColor(),
-                                    ),
-                                  ),
-                                  Text(
-                                    currencyCode,
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      color: themeProvider.getSecondaryTextColor(),
-                                    ),
-                                  ),
                                   const SizedBox(height: 24),
                                   Text(
-                                    '1 USD = $currentRate $currencyCode',
+                                    currencyName,
+                                    textAlign: TextAlign.center,
                                     style: TextStyle(
                                       fontSize: 28,
                                       fontWeight: FontWeight.bold,
                                       color: themeProvider.getTextColor(),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                                    decoration: BoxDecoration(
+                                      color: themeProvider.getCardBackgroundColor(),
+                                      borderRadius: BorderRadius.circular(20),
+                                      border: Border.all(color: themeProvider.getBorderColor()),
+                                    ),
+                                    child: Text(
+                                      currencyCode,
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold,
+                                        color: themeProvider.getSecondaryTextColor(),
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 32),
+                                  Text(
+                                    '1 USD = $currentRate $currencyCode',
+                                    style: TextStyle(
+                                      fontSize: 32,
+                                      fontWeight: FontWeight.bold,
+                                      color: themeProvider.getTextColor(),
+                                    ),
+                                  ),
+                                  Text(
+                                    'Current Exchange Rate',
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      color: themeProvider.getSecondaryTextColor(),
                                     ),
                                   ),
                                 ],
@@ -129,13 +154,19 @@ class CurrencyDetailsScreen extends StatelessWidget {
                           // Chart Section
                           FadeInSlide(
                             delay: 0.1,
-                            child: Text(
-                              'Historical Trend (Last 7 Days)',
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                color: themeProvider.getTextColor(),
-                              ),
+                            child: Row(
+                              children: [
+                                Icon(Icons.show_chart_rounded, color: themeProvider.getAccentColor()),
+                                const SizedBox(width: 8),
+                                Text(
+                                  'Historical Trend',
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                    color: themeProvider.getTextColor(),
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                           const SizedBox(height: 24),
@@ -143,7 +174,7 @@ class CurrencyDetailsScreen extends StatelessWidget {
                             delay: 0.2,
                             child: Container(
                               height: 250,
-                              padding: const EdgeInsets.all(16),
+                              padding: const EdgeInsets.all(20),
                               decoration: themeProvider.getGlassDecoration(borderRadius: 24),
                               child: LineChart(
                                 _buildChartData(themeProvider),
@@ -154,11 +185,24 @@ class CurrencyDetailsScreen extends StatelessWidget {
                           const SizedBox(height: 32),
                           
                           // Additional Info
-                          // Additional Info
-                          FadeInSlide(delay: 0.3, child: _buildInfoRow(themeProvider, 'Open', '${(currentRate * 0.99).toStringAsFixed(4)}')),
-                          FadeInSlide(delay: 0.4, child: _buildInfoRow(themeProvider, 'High', '${(currentRate * 1.02).toStringAsFixed(4)}')),
-                          FadeInSlide(delay: 0.5, child: _buildInfoRow(themeProvider, 'Low', '${(currentRate * 0.98).toStringAsFixed(4)}')),
-                          FadeInSlide(delay: 0.6, child: _buildInfoRow(themeProvider, 'Close', '${currentRate.toStringAsFixed(4)}')),
+                          FadeInSlide(
+                            delay: 0.3,
+                            child: Container(
+                              padding: const EdgeInsets.all(20),
+                              decoration: themeProvider.getGlassDecoration(borderRadius: 24),
+                              child: Column(
+                                children: [
+                                  _buildInfoRow(themeProvider, 'Open', '${(currentRate * 0.99).toStringAsFixed(4)}', Icons.lock_open_rounded),
+                                  const Divider(height: 24),
+                                  _buildInfoRow(themeProvider, 'High', '${(currentRate * 1.02).toStringAsFixed(4)}', Icons.arrow_upward_rounded),
+                                  const Divider(height: 24),
+                                  _buildInfoRow(themeProvider, 'Low', '${(currentRate * 0.98).toStringAsFixed(4)}', Icons.arrow_downward_rounded),
+                                  const Divider(height: 24),
+                                  _buildInfoRow(themeProvider, 'Close', '${currentRate.toStringAsFixed(4)}', Icons.lock_outline_rounded),
+                                ],
+                              ),
+                            ),
+                          ),
                         ],
                       ),
                     ),
@@ -172,18 +216,28 @@ class CurrencyDetailsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildInfoRow(ThemeProvider themeProvider, String label, String value) {
+  Widget _buildInfoRow(ThemeProvider themeProvider, String label, String value, IconData icon) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      padding: const EdgeInsets.symmetric(vertical: 4.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: 16,
-              color: themeProvider.getSecondaryTextColor(),
-            ),
+          Row(
+            children: [
+              Icon(
+                icon,
+                size: 18,
+                color: themeProvider.getSecondaryTextColor(),
+              ),
+              const SizedBox(width: 8),
+              Text(
+                label,
+                style: TextStyle(
+                  fontSize: 16,
+                  color: themeProvider.getSecondaryTextColor(),
+                ),
+              ),
+            ],
           ),
           Text(
             value,

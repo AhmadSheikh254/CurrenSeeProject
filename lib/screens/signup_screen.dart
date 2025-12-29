@@ -112,46 +112,97 @@ class _SignupScreenState extends State<SignupScreen> {
         final colors = themeProvider.getGradientColors();
         
         return Scaffold(
-      body: Container(
-        height: double.infinity,
-        width: double.infinity,
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: colors,
-          ),
-        ),
-        child: SafeArea(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 24.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                ScaleIn(
-                  delay: 0.0,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Create Account',
-                        style: TextStyle(
-                          fontSize: 32,
-                          fontWeight: FontWeight.bold,
-                          color: themeProvider.getTextColor(),
-                        ),
+          body: Stack(
+            children: [
+              // Background Decorative Elements
+              Positioned(
+                top: -100,
+                right: -100,
+                child: Container(
+                  width: 300,
+                  height: 300,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: themeProvider.getAccentColor().withOpacity(0.15),
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(150),
+                    child: BackdropFilter(
+                      filter: ColorFilter.mode(
+                        themeProvider.getAccentColor().withOpacity(0.1),
+                        BlendMode.srcATop,
                       ),
-                      const SizedBox(height: 8),
-                      Text(
-                        'Join CurrenSee and start converting currencies',
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: themeProvider.getSecondaryTextColor(),
-                        ),
-                      ),
-                    ],
+                      child: Container(),
+                    ),
                   ),
                 ),
+              ),
+              Positioned(
+                bottom: 100,
+                left: -50,
+                child: Container(
+                  width: 200,
+                  height: 200,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: themeProvider.getSecondaryAccentColor().withOpacity(0.1),
+                  ),
+                ),
+              ),
+              Container(
+                height: double.infinity,
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: colors,
+                  ),
+                ),
+                child: SafeArea(
+                  child: Center(
+                    child: SingleChildScrollView(
+                      padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 24.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          ScaleIn(
+                            delay: 0.0,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.all(16),
+                                  decoration: BoxDecoration(
+                                    color: themeProvider.getAccentColor().withOpacity(0.1),
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                  child: Icon(
+                                    Icons.person_add_rounded,
+                                    size: 48,
+                                    color: themeProvider.getAccentColor(),
+                                  ),
+                                ),
+                                const SizedBox(height: 24),
+                                Text(
+                                  'Create Account',
+                                  style: TextStyle(
+                                    fontSize: 32,
+                                    fontWeight: FontWeight.bold,
+                                    color: themeProvider.getTextColor(),
+                                  ),
+                                ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  'Join CurrenSee and start converting currencies',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    color: themeProvider.getSecondaryTextColor(),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
                 const SizedBox(height: 32),
                 // Full Name Field
                 FadeInSlide(
@@ -454,11 +505,14 @@ class _SignupScreenState extends State<SignupScreen> {
                     ),
                   ),
                 ),
-              ],
-            ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
-        ),
-      ),
         );
       },
     );

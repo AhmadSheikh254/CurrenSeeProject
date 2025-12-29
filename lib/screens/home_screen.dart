@@ -4,6 +4,7 @@ import '../providers/theme_provider.dart';
 import '../providers/history_provider.dart';
 import '../providers/alert_provider.dart';
 import '../providers/preferences_provider.dart';
+import '../providers/auth_provider.dart';
 import 'profile_screen.dart';
 import 'news_screen.dart';
 import 'settings_screen.dart';
@@ -12,6 +13,7 @@ import 'history_screen.dart';
 import '../models/conversion.dart';
 import '../services/currency_service.dart';
 import '../widgets/animations.dart';
+import 'alerts_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   final bool isGuest;
@@ -170,6 +172,41 @@ class _HomeScreenState extends State<HomeScreen> {
         return Scaffold(
           body: Stack(
             children: [
+              // Background Decorative Elements
+              Positioned(
+                top: -100,
+                right: -100,
+                child: Container(
+                  width: 300,
+                  height: 300,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: themeProvider.getAccentColor().withOpacity(0.15),
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(150),
+                    child: BackdropFilter(
+                      filter: ColorFilter.mode(
+                        themeProvider.getAccentColor().withOpacity(0.1),
+                        BlendMode.srcATop,
+                      ),
+                      child: Container(),
+                    ),
+                  ),
+                ),
+              ),
+              Positioned(
+                bottom: 100,
+                left: -50,
+                child: Container(
+                  width: 200,
+                  height: 200,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: themeProvider.getSecondaryAccentColor().withOpacity(0.1),
+                  ),
+                ),
+              ),
               screens[_selectedIndex],
               Positioned(
                 left: 0,
@@ -270,60 +307,91 @@ class _HomeScreenState extends State<HomeScreen> {
                   // Header
                   FadeInSlide(
                     delay: 0.0,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              widget.isGuest ? 'Guest User' : 'Welcome Back!',
-                              style: TextStyle(
-                                fontSize: 28,
-                                fontWeight: FontWeight.bold,
-                                color: themeProvider.getTextColor(),
+                    child: Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: themeProvider.getGlassDecoration(borderRadius: 24).copyWith(
+                        color: themeProvider.getCardBackgroundColor().withOpacity(0.4),
+                      ),
+                      child: Consumer<AuthProvider>(
+                        builder: (context, authProvider, child) {
+                          final user = authProvider.user;
+                          return Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    widget.isGuest ? 'Guest User' : 'Welcome, ${user?.name.split(' ')[0] ?? 'Back'}!',
+                                    style: TextStyle(
+                                      fontSize: 24,
+                                      fontWeight: FontWeight.bold,
+                                      color: themeProvider.getTextColor(),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Row(
+                                    children: [
+                                      Container(
+                                        width: 8,
+                                        height: 8,
+                                        decoration: const BoxDecoration(
+                                          color: Colors.green,
+                                          shape: BoxShape.circle,
+                                        ),
+                                      ),
+                                      const SizedBox(width: 6),
+                                      Text(
+                                        'Market Live • ${DateTime.now().hour}:${DateTime.now().minute.toString().padLeft(2, '0')}',
+                                        style: TextStyle(
+                                          fontSize: 11,
+                                          fontWeight: FontWeight.w500,
+                                          color: Colors.green.withOpacity(0.8),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
                               ),
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              widget.isGuest
-                                  ? 'Exploring CurrenSee'
-                                  : 'Manage your currencies',
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: themeProvider.getSecondaryTextColor(),
-                              ),
-                            ),
-                          ],
-                        ),
-                        Hero(
-                          tag: 'profile_avatar',
-                          child: Container(
-                            width: 50,
-                            height: 50,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              gradient: LinearGradient(
-                                colors: [themeProvider.getAccentColor(), themeProvider.getSecondaryAccentColor()],
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
-                              ),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: themeProvider.getAccentColor().withOpacity(0.3),
-                                  blurRadius: 10,
-                                  offset: const Offset(0, 4),
+                              Hero(
+                                tag: 'profile_avatar',
+                                child: Container(
+                                  width: 45,
+                                  height: 45,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    gradient: LinearGradient(
+                                      colors: [themeProvider.getAccentColor(), themeProvider.getSecondaryAccentColor()],
+                                      begin: Alignment.topLeft,
+                                      end: Alignment.bottomRight,
+                                    ),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: themeProvider.getAccentColor().withOpacity(0.3),
+                                        blurRadius: 10,
+                                        offset: const Offset(0, 4),
+                                      ),
+                                    ],
+                                    image: (!widget.isGuest && user?.photoUrl != null)
+                                        ? DecorationImage(
+                                            image: NetworkImage(user!.photoUrl!),
+                                            fit: BoxFit.cover,
+                                          )
+                                        : null,
+                                  ),
+                                  child: (widget.isGuest || user?.photoUrl == null)
+                                      ? Icon(
+                                          widget.isGuest ? Icons.person_outline : Icons.person,
+                                          color: Colors.white,
+                                          size: 22,
+                                        )
+                                      : null,
                                 ),
-                              ],
-                            ),
-                            child: Icon(
-                              widget.isGuest ? Icons.person_outline : Icons.person,
-                              color: Colors.white,
-                              size: 26,
-                            ),
-                          ),
-                        ),
-                      ],
+                              ),
+                            ],
+                          );
+                        },
+                      ),
                     ),
                   ),
                   const SizedBox(height: 32),
@@ -522,9 +590,16 @@ class _HomeScreenState extends State<HomeScreen> {
                                         borderRadius: BorderRadius.circular(12),
                                         boxShadow: [
                                           BoxShadow(
-                                            color: themeProvider.getAccentColor().withOpacity(0.3),
-                                            blurRadius: 12,
-                                            offset: const Offset(0, 6),
+                                            color: themeProvider.getAccentColor().withOpacity(0.4),
+                                            blurRadius: 15,
+                                            spreadRadius: 1,
+                                            offset: const Offset(0, 4),
+                                          ),
+                                          BoxShadow(
+                                            color: themeProvider.getSecondaryAccentColor().withOpacity(0.2),
+                                            blurRadius: 25,
+                                            spreadRadius: -2,
+                                            offset: const Offset(0, 8),
                                           ),
                                         ],
                                       ),
@@ -549,6 +624,59 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                           ),
                         ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  // Popular Pairs
+                  FadeInSlide(
+                    delay: 0.15,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 4),
+                          child: Text(
+                            'Popular Pairs',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: themeProvider.getTextColor(),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          physics: const BouncingScrollPhysics(),
+                          child: Row(
+                            children: [
+                              _buildPopularPair(themeProvider, 'USD/EUR', '0.95', '+0.2%'),
+                              _buildPopularPair(themeProvider, 'GBP/USD', '1.27', '-0.1%'),
+                              _buildPopularPair(themeProvider, 'USD/JPY', '155.4', '+0.5%'),
+                              // _buildPopularPair(themeProvider, 'AUD/USD', '0.65', '+0.3%'),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 32),
+                  // Quick Actions
+                  FadeInSlide(
+                    delay: 0.2,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        _buildQuickAction(themeProvider, Icons.notifications_active_outlined, 'Alerts', () {
+                          // Navigate to Alerts (index 1 is Rates, maybe add a dedicated screen or switch tab)
+                          // For now, let's assume there's an AlertsScreen or just show a message
+                        }),
+                        _buildQuickAction(themeProvider, Icons.analytics_outlined, 'Trends', () {
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => const NewsScreen()));
+                        }),
+                        _buildQuickAction(themeProvider, Icons.star_outline_rounded, 'Favorites', () {}),
+                        _buildQuickAction(themeProvider, Icons.share_outlined, 'Share', () {}),
                       ],
                     ),
                   ),
@@ -626,16 +754,16 @@ class _HomeScreenState extends State<HomeScreen> {
                         decoration: BoxDecoration(
                           gradient: LinearGradient(
                             colors: [
-                              themeProvider.getAccentColor().withOpacity(0.8),
                               themeProvider.getAccentColor(),
+                              themeProvider.getSecondaryAccentColor(),
                             ],
                             begin: Alignment.topLeft,
                             end: Alignment.bottomRight,
                           ),
-                          borderRadius: BorderRadius.circular(16),
+                          borderRadius: BorderRadius.circular(20),
                           boxShadow: [
                             BoxShadow(
-                              color: themeProvider.getAccentColor().withOpacity(0.2),
+                              color: themeProvider.getAccentColor().withOpacity(0.3),
                               blurRadius: 15,
                               offset: const Offset(0, 8),
                             ),
@@ -647,9 +775,9 @@ class _HomeScreenState extends State<HomeScreen> {
                               padding: const EdgeInsets.all(12),
                               decoration: BoxDecoration(
                                 color: Colors.white.withOpacity(0.2),
-                                shape: BoxShape.circle,
+                                borderRadius: BorderRadius.circular(12),
                               ),
-                              child: const Icon(Icons.newspaper, color: Colors.black, size: 28),
+                              child: const Icon(Icons.auto_graph_rounded, color: Colors.white, size: 28),
                             ),
                             const SizedBox(width: 16),
                             const Expanded(
@@ -657,25 +785,32 @@ class _HomeScreenState extends State<HomeScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    'Market News',
+                                    'Market Insights',
                                     style: TextStyle(
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold,
-                                      color: Colors.black,
+                                      color: Colors.white,
                                     ),
                                   ),
                                   SizedBox(height: 4),
                                   Text(
-                                    'Stay updated with latest trends',
+                                    'Check latest trends & news',
                                     style: TextStyle(
                                       fontSize: 12,
-                                      color: Colors.black,
+                                      color: Colors.white70,
                                     ),
                                   ),
                                 ],
                               ),
                             ),
-                            const Icon(Icons.arrow_forward_ios, color: Colors.black, size: 16),
+                            Container(
+                              padding: const EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                color: Colors.white.withOpacity(0.1),
+                                shape: BoxShape.circle,
+                              ),
+                              child: const Icon(Icons.arrow_forward_ios, color: Colors.white, size: 14),
+                            ),
                           ],
                         ),
                       ),
@@ -694,47 +829,151 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _buildConversionCardContent(ThemeProvider themeProvider, String title, String from, String to) {
     return Container(
       padding: const EdgeInsets.all(16),
-      decoration: themeProvider.getGlassDecoration(borderRadius: 12),
+      decoration: themeProvider.getGlassDecoration(borderRadius: 16),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                title,
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: themeProvider.getTextColor(),
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: themeProvider.getAccentColor().withOpacity(0.1),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(
+              Icons.currency_exchange_rounded,
+              color: themeProvider.getAccentColor(),
+              size: 20,
+            ),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.bold,
+                    color: themeProvider.getTextColor(),
+                  ),
                 ),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                from,
-                style: TextStyle(
-                  fontSize: 14,
-                  color: themeProvider.getSecondaryTextColor(),
+                const SizedBox(height: 4),
+                Text(
+                  from,
+                  style: TextStyle(
+                    fontSize: 13,
+                    color: themeProvider.getSecondaryTextColor(),
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
           Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              Icon(Icons.arrow_forward, color: themeProvider.getSecondaryTextColor()),
-              const SizedBox(height: 4),
               Text(
                 to,
                 style: TextStyle(
-                  fontSize: 14,
+                  fontSize: 15,
                   fontWeight: FontWeight.bold,
-                  color: themeProvider.getTextColor(),
+                  color: themeProvider.getAccentColor(),
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                'Completed',
+                style: TextStyle(
+                  fontSize: 11,
+                  color: Colors.green.withOpacity(0.8),
+                  fontWeight: FontWeight.w500,
                 ),
               ),
             ],
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildPopularPair(ThemeProvider themeProvider, String pair, String rate, String change) {
+    final isPositive = change.startsWith('+');
+    return Container(
+      margin: const EdgeInsets.only(right: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+      decoration: themeProvider.getGlassDecoration(borderRadius: 20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            pair,
+            style: TextStyle(
+              fontSize: 15,
+              fontWeight: FontWeight.bold,
+              color: themeProvider.getTextColor(),
+            ),
+          ),
+          const SizedBox(height: 10),
+          Row(
+            children: [
+              Text(
+                rate,
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: themeProvider.getTextColor(),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: (isPositive ? Colors.green : Colors.red).withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Text(
+                  change,
+                  style: TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.bold,
+                    color: isPositive ? Colors.green : Colors.red,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildQuickAction(ThemeProvider themeProvider, IconData icon, String label, VoidCallback onTap) {
+    return Expanded(
+      child: ScaleButton(
+        onPressed: onTap,
+        child: Column(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(14),
+              decoration: themeProvider.getGlassDecoration(borderRadius: 18),
+              child: Icon(
+                icon,
+                color: themeProvider.getAccentColor(),
+                size: 26,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
+                color: themeProvider.getSecondaryTextColor(),
+              ),
+              textAlign: TextAlign.center,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -121,24 +121,39 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                         if (user != null)
                                           Container(
                                             padding: const EdgeInsets.symmetric(
-                                              horizontal: 8,
-                                              vertical: 2,
+                                              horizontal: 10,
+                                              vertical: 4,
                                             ),
                                             decoration: BoxDecoration(
-                                              color: themeProvider.getAccentColor().withOpacity(0.2),
-                                              borderRadius: BorderRadius.circular(12),
-                                              border: Border.all(
-                                                color: themeProvider.getAccentColor(),
-                                                width: 1,
+                                              gradient: LinearGradient(
+                                                colors: [themeProvider.getAccentColor(), themeProvider.getSecondaryAccentColor()],
+                                                begin: Alignment.topLeft,
+                                                end: Alignment.bottomRight,
                                               ),
+                                              borderRadius: BorderRadius.circular(20),
+                                              boxShadow: [
+                                                BoxShadow(
+                                                  color: themeProvider.getAccentColor().withOpacity(0.3),
+                                                  blurRadius: 8,
+                                                  offset: const Offset(0, 2),
+                                                ),
+                                              ],
                                             ),
-                                            child: const Text(
-                                              'PRO',
-                                              style: TextStyle(
-                                                fontSize: 10,
-                                                fontWeight: FontWeight.bold,
-                                                color: Colors.white,
-                                              ),
+                                            child: const Row(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                Icon(Icons.star, color: Colors.white, size: 10),
+                                                SizedBox(width: 4),
+                                                Text(
+                                                  'PRO',
+                                                  style: TextStyle(
+                                                    fontSize: 10,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Colors.white,
+                                                    letterSpacing: 0.5,
+                                                  ),
+                                                ),
+                                              ],
                                             ),
                                           ),
                                       ],
@@ -233,108 +248,159 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          'General',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: themeProvider.getTextColor(),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 4, bottom: 12),
+                          child: Text(
+                            'General',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: themeProvider.getTextColor(),
+                            ),
                           ),
                         ),
-                        const SizedBox(height: 16),
-                        Consumer<AuthProvider>(
-                          builder: (context, authProvider, child) {
-                            final isGuest = authProvider.user == null;
-                            
-                            if (isGuest) {
-                              return _buildMenuOption(
-                                themeProvider,
-                                icon: Icons.login,
-                                title: 'Sign In / Sign Up',
-                                subtitle: 'Create an account to save data',
-                                onTap: () {
-                                  Navigator.of(context).pushNamedAndRemoveUntil('/login', (route) => false);
-                                },
-                              );
-                            }
-                            
-                            return Column(
-                              children: [
-                                _buildMenuOption(
-                                  themeProvider,
-                                  icon: Icons.person_outline,
-                                  title: 'Personal Info',
-                                  subtitle: 'Edit your name, email, and address',
-                                  onTap: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(builder: (context) => const PersonalInfoScreen()),
+                        Container(
+                          decoration: themeProvider.getGlassDecoration(borderRadius: 24),
+                          clipBehavior: Clip.hardEdge,
+                          child: Column(
+                            children: [
+                              Consumer<AuthProvider>(
+                                builder: (context, authProvider, child) {
+                                  final isGuest = authProvider.user == null;
+                                  
+                                  if (isGuest) {
+                                    return _buildMenuOption(
+                                      themeProvider,
+                                      icon: Icons.login,
+                                      title: 'Sign In / Sign Up',
+                                      subtitle: 'Create an account to save data',
+                                      onTap: () {
+                                        Navigator.of(context).pushNamedAndRemoveUntil('/login', (route) => false);
+                                      },
                                     );
-                                  },
-                                ),
-                                _buildMenuOption(
-                                  themeProvider,
-                                  icon: Icons.security,
-                                  title: 'Security',
-                                  subtitle: 'Change password and 2FA',
-                                  onTap: () {},
-                                ),
-                              ],
-                            );
-                          },
-                        ),
-                        _buildMenuOption(
-                          themeProvider,
-                          icon: Icons.language,
-                          title: 'Language',
-                          subtitle: 'English (US)',
-                          onTap: () {},
+                                  }
+                                  
+                                  return Column(
+                                    children: [
+                                      _buildMenuOption(
+                                        themeProvider,
+                                        icon: Icons.person_outline_rounded,
+                                        title: 'Personal Info',
+                                        subtitle: 'Edit your name, email, and address',
+                                        onTap: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(builder: (context) => const PersonalInfoScreen()),
+                                          );
+                                        },
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                                        child: Divider(height: 1, color: themeProvider.getBorderColor().withOpacity(0.3)),
+                                      ),
+                                      _buildMenuOption(
+                                        themeProvider,
+                                        icon: Icons.security_rounded,
+                                        title: 'Security',
+                                        subtitle: 'Change password and 2FA',
+                                        onTap: () {},
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                                        child: Divider(height: 1, color: themeProvider.getBorderColor().withOpacity(0.3)),
+                                      ),
+                                    ],
+                                  );
+                                },
+                              ),
+                              _buildMenuOption(
+                                themeProvider,
+                                icon: Icons.language_rounded,
+                                title: 'Language',
+                                subtitle: 'English (US)',
+                                onTap: () {},
+                              ),
+                            ],
+                          ),
                         ),
                       ],
                     ),
                   ),
                   
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 32),
                   FadeInSlide(
                     delay: 0.4,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          'Support',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: themeProvider.getTextColor(),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 4, bottom: 12),
+                          child: Text(
+                            'Support',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: themeProvider.getTextColor(),
+                            ),
                           ),
                         ),
-                        const SizedBox(height: 16),
-                        _buildMenuOption(
-                          themeProvider,
-                          icon: Icons.feedback_outlined,
-                          title: 'Feedback',
-                          subtitle: 'Send us your feedback or report issues',
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => const FeedbackScreen()),
-                            );
-                          },
-                        ),
-                        _buildMenuOption(
-                          themeProvider,
-                          icon: Icons.logout,
-                          title: 'Log Out',
-                          subtitle: 'Sign out of your account',
-                          onTap: () async {
-                            final authProvider = Provider.of<AuthProvider>(context, listen: false);
-                            await authProvider.logout();
-                            if (context.mounted) {
-                              Navigator.of(context).pushNamedAndRemoveUntil('/login', (route) => false);
-                            }
-                          },
+                        Container(
+                          decoration: themeProvider.getGlassDecoration(borderRadius: 24),
+                          clipBehavior: Clip.hardEdge,
+                          child: Column(
+                            children: [
+                              _buildMenuOption(
+                                themeProvider,
+                                icon: Icons.feedback_outlined,
+                                title: 'Feedback',
+                                subtitle: 'Send us your feedback or report issues',
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(builder: (context) => const FeedbackScreen()),
+                                  );
+                                },
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 20),
+                                child: Divider(height: 1, color: themeProvider.getBorderColor().withOpacity(0.3)),
+                              ),
+                              _buildMenuOption(
+                                themeProvider,
+                                icon: Icons.logout_rounded,
+                                title: 'Log Out',
+                                subtitle: 'Sign out of your account',
+                                isDestructive: true,
+                                onTap: () async {
+                                  final authProvider = Provider.of<AuthProvider>(context, listen: false);
+                                  await authProvider.logout();
+                                  if (context.mounted) {
+                                    Navigator.of(context).pushNamedAndRemoveUntil('/login', (route) => false);
+                                  }
+                                },
+                              ),
+                            ],
+                          ),
                         ),
                       ],
+                    ),
+                  ),
+                  const SizedBox(height: 48),
+                  FadeInSlide(
+                    delay: 0.5,
+                    child: Center(
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                        decoration: themeProvider.getGlassDecoration(borderRadius: 20),
+                        child: Text(
+                          'Version 1.0.0',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: themeProvider.getSecondaryTextColor(),
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
                     ),
                   ),
                 ],
@@ -350,16 +416,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return ScaleButton(
       onPressed: onTap,
       child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: themeProvider.getGlassDecoration(borderRadius: 16),
+        padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 12),
+        decoration: themeProvider.getGlassDecoration(borderRadius: 20),
         child: Column(
           children: [
-            Icon(icon, color: themeProvider.getAccentColor(), size: 28),
-            const SizedBox(height: 8),
+            Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: themeProvider.getAccentColor().withOpacity(0.1),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(icon, color: themeProvider.getAccentColor(), size: 22),
+            ),
+            const SizedBox(height: 12),
             Text(
               value,
               style: TextStyle(
-                fontSize: 20,
+                fontSize: 22,
                 fontWeight: FontWeight.bold,
                 color: themeProvider.getTextColor(),
               ),
@@ -368,7 +441,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
             Text(
               title,
               style: TextStyle(
-                fontSize: 12,
+                fontSize: 11,
+                fontWeight: FontWeight.w500,
                 color: themeProvider.getSecondaryTextColor(),
               ),
             ),
@@ -386,41 +460,60 @@ class _ProfileScreenState extends State<ProfileScreen> {
     required VoidCallback onTap,
     bool isDestructive = false,
   }) {
-    return ListTile(
-      onTap: onTap,
-      contentPadding: EdgeInsets.zero,
-      leading: Container(
-        padding: const EdgeInsets.all(10),
-        decoration: BoxDecoration(
-          color: isDestructive
-              ? Colors.red.withOpacity(0.1)
-              : themeProvider.getAccentColor().withOpacity(0.1),
-          borderRadius: BorderRadius.circular(10),
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: isDestructive
+                      ? Colors.red.withOpacity(0.1)
+                      : themeProvider.getAccentColor().withOpacity(0.1),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  icon,
+                  color: isDestructive ? Colors.red : themeProvider.getAccentColor(),
+                  size: 20,
+                ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: isDestructive ? Colors.red : themeProvider.getTextColor(),
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      subtitle,
+                      style: TextStyle(
+                        color: themeProvider.getSecondaryTextColor(),
+                        fontSize: 12,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Icon(
+                Icons.chevron_right_rounded,
+                color: themeProvider.getSecondaryTextColor(),
+                size: 20,
+              ),
+            ],
+          ),
         ),
-        child: Icon(
-          icon,
-          color: isDestructive ? Colors.red : themeProvider.getAccentColor(),
-          size: 20,
-        ),
-      ),
-      title: Text(
-        title,
-        style: TextStyle(
-          fontWeight: FontWeight.bold,
-          color: isDestructive ? Colors.red : themeProvider.getTextColor(),
-        ),
-      ),
-      subtitle: Text(
-        subtitle,
-        style: TextStyle(
-          color: themeProvider.getSecondaryTextColor(),
-          fontSize: 12,
-        ),
-      ),
-      trailing: Icon(
-        Icons.chevron_right,
-        color: themeProvider.getSecondaryTextColor(),
-        size: 20,
       ),
     );
   }

@@ -110,6 +110,20 @@ class NewsDetailScreen extends StatelessWidget {
                                         ),
                                       ),
                                       const Spacer(),
+                                      Icon(
+                                        Icons.access_time,
+                                        size: 14,
+                                        color: themeProvider.getSecondaryTextColor(),
+                                      ),
+                                      const SizedBox(width: 4),
+                                      Text(
+                                        '${(article.content.length / 200).ceil()} min read',
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          color: themeProvider.getSecondaryTextColor(),
+                                        ),
+                                      ),
+                                      const SizedBox(width: 12),
                                       Text(
                                         DateFormat.yMMMd().format(article.publishedAt),
                                         style: TextStyle(
