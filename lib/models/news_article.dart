@@ -6,6 +6,7 @@ class NewsArticle {
   final String source;
   final DateTime publishedAt;
   final String content;
+  final String category;
 
   NewsArticle({
     required this.id,
@@ -15,5 +16,6 @@ class NewsArticle {
     required this.source,
     required this.publishedAt,
     required this.content,
+    required this.category,
   });
 }

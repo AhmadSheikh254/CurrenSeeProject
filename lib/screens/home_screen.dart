@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:ui';
 import 'package:provider/provider.dart';
 import '../providers/theme_provider.dart';
 import '../providers/history_provider.dart';
@@ -32,6 +33,7 @@ class _HomeScreenState extends State<HomeScreen> {
   String _toCurrency = 'EUR';
   final CurrencyService _currencyService = CurrencyService();
   bool _isConverting = false;
+  bool _isSidebarExpanded = false;
 
   final List<Map<String, dynamic>> _currencyRates = [
     {'code': 'USD', 'name': 'US Dollar', 'rate': 1.0, 'symbol': '\$'},
@@ -207,72 +209,172 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
               ),
+              
+              // Main Content Area (Full Screen)
               screens[_selectedIndex],
+              
+              // Glassy Top Bar (Fixed)
               Positioned(
+                top: 0,
                 left: 0,
                 right: 0,
-                bottom: 32,
-                child: Center(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                child: ClipRect(
+                  child: BackdropFilter(
+                    filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
                     child: Container(
-                      height: 70,
-                      constraints: const BoxConstraints(maxWidth: 400),
+                      height: MediaQuery.of(context).padding.top + 60,
                       decoration: BoxDecoration(
-                        color: themeProvider.getBottomNavColor().withOpacity(0.9),
-                        borderRadius: BorderRadius.circular(35),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(themeProvider.isDarkMode ? 0.5 : 0.15),
-                            blurRadius: 25,
-                            offset: const Offset(0, 12),
+                        color: themeProvider.getCardBackgroundColor().withOpacity(0.2),
+                        border: Border(
+                          bottom: BorderSide(
+                            color: themeProvider.getBorderColor().withOpacity(0.1),
+                            width: 1,
                           ),
-                        ],
-                        border: Border.all(
-                          color: themeProvider.getBorderColor().withOpacity(0.2),
-                          width: 1,
                         ),
                       ),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(35),
-                        child: BottomNavigationBar(
-                          currentIndex: _selectedIndex,
-                          type: BottomNavigationBarType.fixed,
-                          backgroundColor: Colors.transparent,
-                          elevation: 0,
-                          selectedItemColor: themeProvider.getBottomNavTextColor(),
-                          unselectedItemColor: themeProvider.getBottomNavUnselectedColor(),
-                          showSelectedLabels: true,
-                          showUnselectedLabels: false,
-                          onTap: (index) {
-                            setState(() {
-                              _selectedIndex = index;
-                            });
-                          },
-                          items: const [
-                            BottomNavigationBarItem(
-                              icon: Icon(Icons.home_rounded),
-                              label: 'Home',
-                            ),
-                            BottomNavigationBarItem(
-                              icon: Icon(Icons.currency_exchange_rounded),
-                              label: 'Rates',
-                            ),
-                            BottomNavigationBarItem(
-                              icon: Icon(Icons.history_rounded),
-                              label: 'History',
-                            ),
-                            BottomNavigationBarItem(
-                              icon: Icon(Icons.person_rounded),
-                              label: 'Profile',
-                            ),
-                            BottomNavigationBarItem(
-                              icon: Icon(Icons.settings_rounded),
-                              label: 'Settings',
-                            ),
-                          ],
-                        ),
+                    ),
+                  ),
+                ),
+              ),
+              
+              // Floating Menu Button (Minimal & Top-Left)
+              AnimatedPositioned(
+                duration: const Duration(milliseconds: 300),
+                curve: Curves.easeInOut,
+                left: _isSidebarExpanded ? -60 : 16,
+                top: 12, 
+                child: SafeArea(
+                  child: ScaleButton(
+                    onPressed: () {
+                      setState(() {
+                        _isSidebarExpanded = true;
+                      });
+                    },
+                    child: Container(
+                      width: 40,
+                      height: 40,
+                      decoration: themeProvider.getGlassDecoration(borderRadius: 10).copyWith(
+                        color: themeProvider.getCardBackgroundColor().withOpacity(0.4),
                       ),
+                      child: Icon(
+                        Icons.menu_rounded,
+                        color: themeProvider.getTextColor(),
+                        size: 22,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+
+              // Sidebar Overlay (Drawer)
+              AnimatedPositioned(
+                duration: const Duration(milliseconds: 300),
+                curve: Curves.easeInOut,
+                left: _isSidebarExpanded ? 0 : -280,
+                top: 0,
+                bottom: 0,
+                child: Container(
+                  width: 280,
+                  decoration: BoxDecoration(
+                    color: themeProvider.getCardBackgroundColor().withOpacity(0.95),
+                    border: Border(
+                      right: BorderSide(
+                        color: themeProvider.getBorderColor().withOpacity(0.2),
+                        width: 1,
+                      ),
+                    ),
+                    boxShadow: [
+                      if (_isSidebarExpanded)
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.2),
+                          blurRadius: 20,
+                          offset: const Offset(5, 0),
+                        ),
+                    ],
+                  ),
+                  child: SafeArea(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(20),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Row(
+                                children: [
+                                  Container(
+                                    width: 40,
+                                    height: 40,
+                                    decoration: BoxDecoration(
+                                      gradient: LinearGradient(
+                                        colors: [themeProvider.getAccentColor(), themeProvider.getSecondaryAccentColor()],
+                                        begin: Alignment.topLeft,
+                                        end: Alignment.bottomRight,
+                                      ),
+                                      borderRadius: BorderRadius.circular(12),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: themeProvider.getAccentColor().withOpacity(0.3),
+                                          blurRadius: 8,
+                                          offset: const Offset(0, 4),
+                                        ),
+                                      ],
+                                    ),
+                                    child: const Icon(Icons.currency_exchange, color: Colors.white, size: 20),
+                                  ),
+                                  const SizedBox(width: 12),
+                                  Text(
+                                    'CurrenSee',
+                                    style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                      color: themeProvider.getTextColor(),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              IconButton(
+                                icon: Icon(Icons.close_rounded, color: themeProvider.getTextColor()),
+                                onPressed: () {
+                                  setState(() {
+                                    _isSidebarExpanded = false;
+                                  });
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+                        const Divider(height: 1),
+                        const SizedBox(height: 20),
+                        Expanded(
+                          child: SingleChildScrollView(
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            child: Column(
+                              children: [
+                                _buildDrawerItem(themeProvider, 0, Icons.dashboard_rounded, 'Home'),
+                                _buildDrawerItem(themeProvider, 1, Icons.candlestick_chart_rounded, 'Exchange Rates'),
+                                _buildDrawerItem(themeProvider, 2, Icons.receipt_long_rounded, 'History'),
+                                _buildDrawerItem(themeProvider, 3, Icons.account_circle_rounded, 'Profile'),
+                                const SizedBox(height: 20),
+                                Divider(color: themeProvider.getBorderColor().withOpacity(0.2)),
+                                const SizedBox(height: 20),
+                                _buildDrawerItem(themeProvider, 4, Icons.tune_rounded, 'Settings'),
+                              ],
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(20),
+                          child: Text(
+                            'v1.0.0',
+                            style: TextStyle(
+                              color: themeProvider.getSecondaryTextColor(),
+                              fontSize: 12,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
@@ -281,6 +383,37 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         );
       },
+    );
+  }
+
+  Widget _buildDrawerItem(ThemeProvider themeProvider, int index, IconData icon, String label) {
+    final isSelected = _selectedIndex == index;
+    return Container(
+      margin: const EdgeInsets.only(bottom: 8),
+      decoration: BoxDecoration(
+        color: isSelected ? themeProvider.getAccentColor().withOpacity(0.1) : Colors.transparent,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: ListTile(
+        leading: Icon(
+          icon,
+          color: isSelected ? themeProvider.getAccentColor() : themeProvider.getSecondaryTextColor(),
+        ),
+        title: Text(
+          label,
+          style: TextStyle(
+            color: isSelected ? themeProvider.getAccentColor() : themeProvider.getTextColor(),
+            fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+          ),
+        ),
+        onTap: () {
+          setState(() {
+            _selectedIndex = index;
+            _isSidebarExpanded = false; // Close drawer on selection
+          });
+        },
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      ),
     );
   }
 
@@ -297,10 +430,10 @@ class _HomeScreenState extends State<HomeScreen> {
               colors: colors,
             ),
           ),
-          child: SafeArea(
-            bottom: false,
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 24.0),
+            child: SafeArea(
+              bottom: false,
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.fromLTRB(20.0, 110.0, 20.0, 24.0), // Increased top padding for menu button and blurred bar
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -308,9 +441,13 @@ class _HomeScreenState extends State<HomeScreen> {
                   FadeInSlide(
                     delay: 0.0,
                     child: Container(
-                      padding: const EdgeInsets.all(16),
-                      decoration: themeProvider.getGlassDecoration(borderRadius: 24).copyWith(
-                        color: themeProvider.getCardBackgroundColor().withOpacity(0.4),
+                      padding: const EdgeInsets.all(20),
+                      decoration: themeProvider.getGlassDecoration(borderRadius: 28).copyWith(
+                        color: themeProvider.getCardBackgroundColor().withOpacity(0.35),
+                        border: Border.all(
+                          color: themeProvider.getBorderColor().withOpacity(0.15),
+                          width: 1.5,
+                        ),
                       ),
                       child: Consumer<AuthProvider>(
                         builder: (context, authProvider, child) {
@@ -318,74 +455,82 @@ class _HomeScreenState extends State<HomeScreen> {
                           return Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    widget.isGuest ? 'Guest User' : 'Welcome, ${user?.name.split(' ')[0] ?? 'Back'}!',
-                                    style: TextStyle(
-                                      fontSize: 24,
-                                      fontWeight: FontWeight.bold,
-                                      color: themeProvider.getTextColor(),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      widget.isGuest ? 'Guest User' : 'Welcome, ${user?.name.split(' ')[0] ?? 'Back'}!',
+                                      style: TextStyle(
+                                        fontSize: 26,
+                                        fontWeight: FontWeight.w800,
+                                        letterSpacing: -0.5,
+                                        color: themeProvider.getTextColor(),
+                                      ),
                                     ),
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Row(
-                                    children: [
-                                      Container(
-                                        width: 8,
-                                        height: 8,
-                                        decoration: const BoxDecoration(
-                                          color: Colors.green,
-                                          shape: BoxShape.circle,
+                                    const SizedBox(height: 6),
+                                    Row(
+                                      children: [
+                                        _buildPulsingDot(Colors.green),
+                                        const SizedBox(width: 8),
+                                        Text(
+                                          'Market Live • ${DateTime.now().hour}:${DateTime.now().minute.toString().padLeft(2, '0')}',
+                                          style: TextStyle(
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.w600,
+                                            color: Colors.green.withOpacity(0.9),
+                                            letterSpacing: 0.2,
+                                          ),
                                         ),
-                                      ),
-                                      const SizedBox(width: 6),
-                                      Text(
-                                        'Market Live • ${DateTime.now().hour}:${DateTime.now().minute.toString().padLeft(2, '0')}',
-                                        style: TextStyle(
-                                          fontSize: 11,
-                                          fontWeight: FontWeight.w500,
-                                          color: Colors.green.withOpacity(0.8),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
+                                      ],
+                                    ),
+                                  ],
+                                ),
                               ),
                               Hero(
                                 tag: 'profile_avatar',
                                 child: Container(
-                                  width: 45,
-                                  height: 45,
+                                  padding: const EdgeInsets.all(3),
                                   decoration: BoxDecoration(
                                     shape: BoxShape.circle,
                                     gradient: LinearGradient(
-                                      colors: [themeProvider.getAccentColor(), themeProvider.getSecondaryAccentColor()],
+                                      colors: [
+                                        themeProvider.getAccentColor(),
+                                        themeProvider.getSecondaryAccentColor(),
+                                      ],
                                       begin: Alignment.topLeft,
                                       end: Alignment.bottomRight,
                                     ),
                                     boxShadow: [
                                       BoxShadow(
-                                        color: themeProvider.getAccentColor().withOpacity(0.3),
-                                        blurRadius: 10,
+                                        color: themeProvider.getAccentColor().withOpacity(0.4),
+                                        blurRadius: 12,
+                                        spreadRadius: 2,
                                         offset: const Offset(0, 4),
                                       ),
                                     ],
-                                    image: (!widget.isGuest && user?.photoUrl != null)
-                                        ? DecorationImage(
-                                            image: NetworkImage(user!.photoUrl!),
-                                            fit: BoxFit.cover,
+                                  ),
+                                  child: Container(
+                                    width: 52,
+                                    height: 52,
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: themeProvider.getCardBackgroundColor(),
+                                      image: (!widget.isGuest && user?.photoUrl != null)
+                                          ? DecorationImage(
+                                              image: NetworkImage(user!.photoUrl!),
+                                              fit: BoxFit.cover,
+                                            )
+                                          : null,
+                                    ),
+                                    child: (widget.isGuest || user?.photoUrl == null)
+                                        ? Icon(
+                                            widget.isGuest ? Icons.person_outline : Icons.person,
+                                            color: themeProvider.getAccentColor(),
+                                            size: 26,
                                           )
                                         : null,
                                   ),
-                                  child: (widget.isGuest || user?.photoUrl == null)
-                                      ? Icon(
-                                          widget.isGuest ? Icons.person_outline : Icons.person,
-                                          color: Colors.white,
-                                          size: 22,
-                                        )
-                                      : null,
                                 ),
                               ),
                             ],
@@ -401,175 +546,145 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          'Quick Conversion',
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: themeProvider.getTextColor(),
-                          ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              'Quick Conversion',
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.w800,
+                                letterSpacing: -0.5,
+                                color: themeProvider.getTextColor(),
+                              ),
+                            ),
+                            Icon(Icons.auto_graph_rounded, color: themeProvider.getAccentColor().withOpacity(0.5), size: 20),
+                          ],
                         ),
                         const SizedBox(height: 16),
-                        FadeInSlide(
-                          delay: 0.1,
-                          beginOffset: const Offset(0, 0.1),
-                          child: Container(
-                            padding: const EdgeInsets.all(20),
-                            decoration: themeProvider.getGlassDecoration(),
-                            child: Column(
-                              children: [
-                                // From Currency
-                                Row(
+                        Container(
+                          padding: const EdgeInsets.all(20),
+                          decoration: themeProvider.getGlassDecoration(borderRadius: 28).copyWith(
+                            color: themeProvider.getCardBackgroundColor().withOpacity(0.3),
+                            border: Border.all(
+                              color: themeProvider.getBorderColor().withOpacity(0.1),
+                              width: 1,
+                            ),
+                          ),
+                          child: Column(
+                            children: [
+                              // From Currency
+                              Container(
+                                decoration: BoxDecoration(
+                                  color: themeProvider.getCardBackgroundColor().withOpacity(0.4),
+                                  borderRadius: BorderRadius.circular(20),
+                                  border: Border.all(color: themeProvider.getBorderColor().withOpacity(0.1)),
+                                ),
+                                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                                child: Row(
                                   children: [
                                     Expanded(
                                       child: TextField(
                                         controller: _amountController,
                                         onChanged: (value) => _convertCurrency(),
-                                        style: TextStyle(color: themeProvider.getTextColor()),
-                                        keyboardType: TextInputType.number,
+                                        style: TextStyle(
+                                          color: themeProvider.getTextColor(),
+                                          fontSize: 22,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                        keyboardType: const TextInputType.numberWithOptions(decimal: true),
                                         decoration: InputDecoration(
                                           labelText: 'Amount',
-                                          labelStyle: TextStyle(color: themeProvider.getSecondaryTextColor()),
-                                          hintText: 'Enter amount',
-                                          hintStyle: TextStyle(color: themeProvider.getSecondaryTextColor()),
-                                          border: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(8),
-                                            borderSide: BorderSide(color: themeProvider.getBorderColor()),
+                                          labelStyle: TextStyle(
+                                            color: themeProvider.getSecondaryTextColor(),
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.w600,
                                           ),
-                                          enabledBorder: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(8),
-                                            borderSide: BorderSide(color: themeProvider.getBorderColor()),
-                                          ),
-                                          focusedBorder: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(12),
-                                            borderSide:
-                                                BorderSide(color: themeProvider.getAccentColor(), width: 1.5),
-                                          ),
+                                          hintText: '0.00',
+                                          hintStyle: TextStyle(color: themeProvider.getSecondaryTextColor().withOpacity(0.5)),
+                                          border: InputBorder.none,
+                                          contentPadding: EdgeInsets.zero,
                                         ),
                                       ),
                                     ),
-                                    const SizedBox(width: 12),
-                                    Container(
-                                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                                      decoration: themeProvider.getGlassDecoration(borderRadius: 12),
-                                      child: DropdownButtonHideUnderline(
-                                        child: DropdownButton<String>(
-                                          value: _fromCurrency,
-                                          dropdownColor: themeProvider.getCardBackgroundColor(),
-                                          icon: Icon(Icons.arrow_drop_down, color: themeProvider.getTextColor()),
-                                          items: _currencyRates.map<DropdownMenuItem<String>>((currency) {
-                                            return DropdownMenuItem<String>(
-                                              value: currency['code'] as String,
-                                              child: Text(
-                                                currency['code'] as String,
-                                                style: TextStyle(
-                                                  color: themeProvider.getTextColor(),
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                              ),
-                                            );
-                                          }).toList(),
-                                          onChanged: (value) {
-                                            setState(() {
-                                              _fromCurrency = value!;
-                                              _convertCurrency();
-                                            });
-                                          },
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 12),
-                                Center(
-                                  child: ScaleButton(
-                                    onPressed: () {
+                                    _buildCurrencyPicker(themeProvider, _fromCurrency, (value) {
                                       setState(() {
-                                        final temp = _fromCurrency;
-                                        _fromCurrency = _toCurrency;
-                                        _toCurrency = temp;
+                                        _fromCurrency = value;
                                         _convertCurrency();
                                       });
-                                    },
-                                    child: Container(
-                                      padding: const EdgeInsets.all(8),
-                                      decoration: BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        color: themeProvider.getCardBackgroundColor().withOpacity(0.8),
-                                        border: Border.all(color: themeProvider.getBorderColor(), width: 1.5),
-                                      ),
-                                      child: Icon(
-                                        Icons.swap_vert,
-                                        color: themeProvider.getTextColor(),
-                                      ),
+                                    }),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(height: 12),
+                              Center(
+                                child: ScaleButton(
+                                  onPressed: () {
+                                    setState(() {
+                                      final temp = _fromCurrency;
+                                      _fromCurrency = _toCurrency;
+                                      _toCurrency = temp;
+                                      _convertCurrency();
+                                    });
+                                  },
+                                  child: Container(
+                                    padding: const EdgeInsets.all(10),
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: themeProvider.getAccentColor().withOpacity(0.15),
+                                      border: Border.all(color: themeProvider.getAccentColor().withOpacity(0.3), width: 1.5),
+                                    ),
+                                    child: Icon(
+                                      Icons.swap_vert_rounded,
+                                      color: themeProvider.getAccentColor(),
+                                      size: 24,
                                     ),
                                   ),
                                 ),
-                                const SizedBox(height: 12),
-                                // To Currency
-                                Row(
+                              ),
+                              const SizedBox(height: 12),
+                              // To Currency
+                              Container(
+                                decoration: BoxDecoration(
+                                  color: themeProvider.getCardBackgroundColor().withOpacity(0.4),
+                                  borderRadius: BorderRadius.circular(20),
+                                  border: Border.all(color: themeProvider.getBorderColor().withOpacity(0.1)),
+                                ),
+                                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                                child: Row(
                                   children: [
                                     Expanded(
                                       child: TextField(
                                         controller: _resultController,
-                                        style: TextStyle(color: themeProvider.getTextColor()),
+                                        style: TextStyle(
+                                          color: themeProvider.getTextColor(),
+                                          fontSize: 22,
+                                          fontWeight: FontWeight.bold,
+                                        ),
                                         readOnly: true,
                                         decoration: InputDecoration(
                                           labelText: 'Converted Amount',
-                                          labelStyle: TextStyle(color: themeProvider.getSecondaryTextColor()),
+                                          labelStyle: TextStyle(
+                                            color: themeProvider.getSecondaryTextColor(),
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.w600,
+                                          ),
                                           hintText: '0.00',
-                                          hintStyle: TextStyle(color: themeProvider.getSecondaryTextColor()),
-                                          border: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(16),
-                                            borderSide: BorderSide(color: themeProvider.getBorderColor()),
-                                          ),
-                                          enabledBorder: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(16),
-                                            borderSide: BorderSide(color: themeProvider.getBorderColor()),
-                                          ),
-                                          focusedBorder: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(16),
-                                            borderSide: BorderSide(color: themeProvider.getAccentColor(), width: 1.5),
-                                          ),
+                                          hintStyle: TextStyle(color: themeProvider.getSecondaryTextColor().withOpacity(0.5)),
+                                          border: InputBorder.none,
+                                          contentPadding: EdgeInsets.zero,
                                         ),
                                       ),
                                     ),
-                                    const SizedBox(width: 12),
-                                    Container(
-                                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                                      decoration: BoxDecoration(
-                                        color: themeProvider.getCardBackgroundColor().withOpacity(0.5),
-                                        borderRadius: BorderRadius.circular(12),
-                                        border: Border.all(color: themeProvider.getBorderColor()),
-                                      ),
-                                      child: DropdownButtonHideUnderline(
-                                        child: DropdownButton<String>(
-                                          value: _toCurrency,
-                                          dropdownColor: themeProvider.getCardBackgroundColor(),
-                                          icon: Icon(Icons.arrow_drop_down, color: themeProvider.getTextColor()),
-                                          items: _currencyRates.map<DropdownMenuItem<String>>((currency) {
-                                            return DropdownMenuItem<String>(
-                                              value: currency['code'] as String,
-                                              child: Text(
-                                                currency['code'] as String,
-                                                style: TextStyle(
-                                                  color: themeProvider.getTextColor(),
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                              ),
-                                            );
-                                          }).toList(),
-                                          onChanged: (value) {
-                                            setState(() {
-                                              _toCurrency = value!;
-                                              _convertCurrency();
-                                            });
-                                          },
-                                        ),
-                                      ),
-                                    ),
+                                    _buildCurrencyPicker(themeProvider, _toCurrency, (value) {
+                                      setState(() {
+                                        _toCurrency = value;
+                                        _convertCurrency();
+                                      });
+                                    }),
                                   ],
                                 ),
+                              ),
                                 const SizedBox(height: 16),
                                 SizedBox(
                                   width: double.infinity,
@@ -895,51 +1010,85 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+
+  Widget _buildCurrencyPicker(ThemeProvider themeProvider, String currentValue, Function(String) onChanged) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+      decoration: BoxDecoration(
+        color: themeProvider.getAccentColor().withOpacity(0.1),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: themeProvider.getAccentColor().withOpacity(0.2)),
+      ),
+      child: DropdownButtonHideUnderline(
+        child: DropdownButton<String>(
+          value: currentValue,
+          dropdownColor: themeProvider.getCardBackgroundColor(),
+          icon: Icon(Icons.keyboard_arrow_down_rounded, color: themeProvider.getAccentColor(), size: 20),
+          items: _currencyRates.map<DropdownMenuItem<String>>((currency) {
+            return DropdownMenuItem<String>(
+              value: currency['code'] as String,
+              child: Text(
+                currency['code'] as String,
+                style: TextStyle(
+                  color: themeProvider.getTextColor(),
+                  fontWeight: FontWeight.w800,
+                  fontSize: 14,
+                ),
+              ),
+            );
+          }).toList(),
+          onChanged: (value) => onChanged(value!),
+        ),
+      ),
+    );
+  }
+
   Widget _buildPopularPair(ThemeProvider themeProvider, String pair, String rate, String change) {
     final isPositive = change.startsWith('+');
     return Container(
-      margin: const EdgeInsets.only(right: 12),
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-      decoration: themeProvider.getGlassDecoration(borderRadius: 20),
+      margin: const EdgeInsets.only(right: 16),
+      padding: const EdgeInsets.all(16),
+      width: 140,
+      decoration: themeProvider.getGlassDecoration(borderRadius: 24).copyWith(
+        color: themeProvider.getCardBackgroundColor().withOpacity(0.3),
+        border: Border.all(color: themeProvider.getBorderColor().withOpacity(0.1)),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             pair,
             style: TextStyle(
-              fontSize: 15,
-              fontWeight: FontWeight.bold,
-              color: themeProvider.getTextColor(),
+              color: themeProvider.getSecondaryTextColor(),
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
             ),
           ),
-          const SizedBox(height: 10),
-          Row(
-            children: [
-              Text(
-                rate,
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: themeProvider.getTextColor(),
-                ),
+          const SizedBox(height: 8),
+          Text(
+            rate,
+            style: TextStyle(
+              color: themeProvider.getTextColor(),
+              fontSize: 20,
+              fontWeight: FontWeight.w800,
+              letterSpacing: -0.5,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+            decoration: BoxDecoration(
+              color: (isPositive ? Colors.green : Colors.red).withOpacity(0.1),
+              borderRadius: BorderRadius.circular(6),
+            ),
+            child: Text(
+              change,
+              style: TextStyle(
+                color: isPositive ? Colors.green : Colors.red,
+                fontSize: 10,
+                fontWeight: FontWeight.w800,
               ),
-              const SizedBox(width: 8),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                decoration: BoxDecoration(
-                  color: (isPositive ? Colors.green : Colors.red).withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Text(
-                  change,
-                  style: TextStyle(
-                    fontSize: 11,
-                    fontWeight: FontWeight.bold,
-                    color: isPositive ? Colors.green : Colors.red,
-                  ),
-                ),
-              ),
-            ],
+            ),
           ),
         ],
       ),
@@ -947,36 +1096,58 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildQuickAction(ThemeProvider themeProvider, IconData icon, String label, VoidCallback onTap) {
-    return Expanded(
-      child: ScaleButton(
-        onPressed: onTap,
-        child: Column(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(14),
-              decoration: themeProvider.getGlassDecoration(borderRadius: 18),
-              child: Icon(
-                icon,
-                color: themeProvider.getAccentColor(),
-                size: 26,
-              ),
+    return ScaleButton(
+      onPressed: onTap,
+      child: Column(
+        children: [
+          Container(
+            width: 60,
+            height: 60,
+            decoration: themeProvider.getGlassDecoration(borderRadius: 20).copyWith(
+              color: themeProvider.getCardBackgroundColor().withOpacity(0.3),
+              border: Border.all(color: themeProvider.getBorderColor().withOpacity(0.1)),
             ),
-            const SizedBox(height: 8),
-            Text(
-              label,
-              style: TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w500,
-                color: themeProvider.getSecondaryTextColor(),
-              ),
-              textAlign: TextAlign.center,
-              overflow: TextOverflow.ellipsis,
+            child: Icon(
+              icon,
+              color: themeProvider.getAccentColor(),
+              size: 28,
             ),
-          ],
-        ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w700,
+              color: themeProvider.getTextColor().withOpacity(0.8),
+            ),
+          ),
+        ],
       ),
     );
   }
 
-
+  Widget _buildPulsingDot(Color color) {
+    return TweenAnimationBuilder<double>(
+      tween: Tween(begin: 0.4, end: 1.0),
+      duration: const Duration(milliseconds: 1000),
+      builder: (context, value, child) {
+        return Container(
+          width: 8,
+          height: 8,
+          decoration: BoxDecoration(
+            color: color.withOpacity(value),
+            shape: BoxShape.circle,
+            boxShadow: [
+              BoxShadow(
+                color: color.withOpacity(value * 0.5),
+                blurRadius: 4,
+                spreadRadius: 2,
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
 }

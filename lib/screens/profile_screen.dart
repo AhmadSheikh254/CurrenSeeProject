@@ -34,29 +34,39 @@ class _ProfileScreenState extends State<ProfileScreen> {
           child: SafeArea(
             bottom: false,
             child: SingleChildScrollView(
-              padding: const EdgeInsets.fromLTRB(24, 24, 24, 120),
+              padding: const EdgeInsets.fromLTRB(24, 110, 24, 120),
               child: Column(
                 children: [
                   // Header
                   FadeInSlide(
                     delay: 0.0,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
                         Text(
                           'Profile',
                           style: TextStyle(
-                            fontSize: 28,
-                            fontWeight: FontWeight.bold,
+                            fontSize: 32,
+                            fontWeight: FontWeight.w900,
+                            letterSpacing: -1.0,
                             color: themeProvider.getTextColor(),
                           ),
                         ),
-                        Container(
-                          padding: const EdgeInsets.all(8),
-                          decoration: themeProvider.getGlassDecoration(borderRadius: 50),
-                          child: Icon(
-                            Icons.notifications_outlined,
-                            color: themeProvider.getTextColor(),
+                        ScaleButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => const AlertsScreen()),
+                            );
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.all(12),
+                            decoration: themeProvider.getGlassDecoration(borderRadius: 16).copyWith(
+                              color: themeProvider.getCardBackgroundColor().withOpacity(0.35),
+                              border: Border.all(color: themeProvider.getBorderColor().withOpacity(0.15)),
+                            ),
+                            child: Icon(
+                              Icons.notifications_active_rounded,
+                              color: themeProvider.getTextColor(),
+                              size: 24,
+                            ),
                           ),
                         ),
                       ],

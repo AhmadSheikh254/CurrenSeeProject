@@ -17,8 +17,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer2<ThemeProvider, PreferencesProvider>(
-      builder: (context, themeProvider, preferencesProvider, child) {
+    return Consumer3<ThemeProvider, PreferencesProvider, AuthProvider>(
+      builder: (context, themeProvider, preferencesProvider, authProvider, child) {
         final colors = themeProvider.getGradientColors();
 
         return Container(
@@ -32,182 +32,159 @@ class _SettingsScreenState extends State<SettingsScreen> {
             child: SafeArea(
             bottom: false,
             child: SingleChildScrollView(
-              padding: const EdgeInsets.fromLTRB(20, 24, 20, 120),
+              padding: const EdgeInsets.fromLTRB(20, 110, 20, 120),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   ScaleIn(
                     delay: 0.0,
-                    child: Text(
-                      'Settings',
-                      style: TextStyle(
-                        fontSize: 28,
-                        fontWeight: FontWeight.bold,
-                        color: themeProvider.getTextColor(),
-                      ),
-                    ),
+                    child: _buildProfileHeader(themeProvider, authProvider),
                   ),
                   const SizedBox(height: 32),
                   // App Preferences Section
                   FadeInSlide(
                     delay: 0.1,
-                    child: Container(
-                      padding: const EdgeInsets.all(20),
-                      decoration: themeProvider.getGlassDecoration(borderRadius: 24),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          _buildSectionTitle(themeProvider, 'App Preferences', Icons.tune_rounded),
-                          const SizedBox(height: 20),
-                          _buildToggleSetting(
-                            themeProvider,
-                            'Dark Mode',
-                            'Use dark theme',
-                            themeProvider.isDarkMode,
-                            (value) {
-                              themeProvider.setDarkMode(value);
-                            },
-                          ),
-                          const SizedBox(height: 16),
-                          _buildToggleSetting(
-                            themeProvider,
-                            'Push Notifications',
-                            'Receive currency alerts',
-                            preferencesProvider.notificationsEnabled,
-                            (value) {
-                              preferencesProvider.setNotificationsEnabled(value);
-                              if (value) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(content: Text('Notifications enabled')),
-                                );
-                              }
-                            },
-                          ),
-                        ],
-                      ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _buildSectionTitle(themeProvider, 'App Preferences', Icons.tune_rounded),
+                        const SizedBox(height: 16),
+                        _buildToggleSetting(
+                          themeProvider,
+                          'Dark Mode',
+                          'Use dark theme',
+                          themeProvider.isDarkMode,
+                          (value) {
+                            themeProvider.setDarkMode(value);
+                          },
+                        ),
+                        const SizedBox(height: 12),
+                        _buildToggleSetting(
+                          themeProvider,
+                          'Push Notifications',
+                          'Receive currency alerts',
+                          preferencesProvider.notificationsEnabled,
+                          (value) {
+                            preferencesProvider.setNotificationsEnabled(value);
+                            if (value) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(content: Text('Notifications enabled')),
+                              );
+                            }
+                          },
+                        ),
+                      ],
                     ),
                   ),
                   const SizedBox(height: 24),
                   // Account Settings Section
                   FadeInSlide(
                     delay: 0.2,
-                    child: Container(
-                      padding: const EdgeInsets.all(20),
-                      decoration: themeProvider.getGlassDecoration(borderRadius: 24),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          _buildSectionTitle(themeProvider, 'Account Settings', Icons.person_outline_rounded),
-                          const SizedBox(height: 20),
-                          _buildDropdownSetting(
-                            themeProvider,
-                            'Default Currency',
-                            preferencesProvider.defaultBaseCurrency,
-                            ['USD', 'EUR', 'GBP', 'JPY', 'INR'],
-                            (value) {
-                              preferencesProvider.setDefaultBaseCurrency(value);
-                            },
-                          ),
-                          const SizedBox(height: 16),
-                          _buildDropdownSetting(
-                            themeProvider,
-                            'Language',
-                            _selectedLanguage,
-                            ['English', 'Spanish', 'French', 'German', 'Chinese'],
-                            (value) {
-                              setState(() {
-                                _selectedLanguage = value;
-                              });
-                            },
-                          ),
-                        ],
-                      ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _buildSectionTitle(themeProvider, 'Account Settings', Icons.person_outline_rounded),
+                        const SizedBox(height: 16),
+                        _buildDropdownSetting(
+                          themeProvider,
+                          'Default Currency',
+                          preferencesProvider.defaultBaseCurrency,
+                          ['USD', 'EUR', 'GBP', 'JPY', 'INR'],
+                          (value) {
+                            preferencesProvider.setDefaultBaseCurrency(value);
+                          },
+                        ),
+                        const SizedBox(height: 12),
+                        _buildDropdownSetting(
+                          themeProvider,
+                          'Language',
+                          _selectedLanguage,
+                          ['English', 'Spanish', 'French', 'German', 'Chinese'],
+                          (value) {
+                            setState(() {
+                              _selectedLanguage = value;
+                            });
+                          },
+                        ),
+                      ],
                     ),
                   ),
                   const SizedBox(height: 24),
                   // Security Section
                   FadeInSlide(
                     delay: 0.3,
-                    child: Container(
-                      padding: const EdgeInsets.all(20),
-                      decoration: themeProvider.getGlassDecoration(borderRadius: 24),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          _buildSectionTitle(themeProvider, 'Security', Icons.security_rounded),
-                          const SizedBox(height: 20),
-                          _buildSettingsTile(
-                            themeProvider,
-                            'Change Password',
-                            'Update your password',
-                            Icons.lock_outline_rounded,
-                            () {
-                              _showChangePasswordDialog(context, themeProvider);
-                            },
-                          ),
-                          const SizedBox(height: 16),
-                          _buildSettingsTile(
-                            themeProvider,
-                            'Two-Factor Authentication',
-                            'Enable 2FA for security',
-                            Icons.verified_user_outlined,
-                            () {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text('2FA feature coming soon'),
-                                ),
-                              );
-                            },
-                          ),
-                        ],
-                      ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _buildSectionTitle(themeProvider, 'Security', Icons.security_rounded),
+                        const SizedBox(height: 16),
+                        _buildSettingsTile(
+                          themeProvider,
+                          'Change Password',
+                          'Update your password',
+                          Icons.lock_outline_rounded,
+                          () {
+                            _showChangePasswordDialog(context, themeProvider);
+                          },
+                        ),
+                        const SizedBox(height: 12),
+                        _buildSettingsTile(
+                          themeProvider,
+                          'Two-Factor Authentication',
+                          'Enable 2FA for security',
+                          Icons.verified_user_outlined,
+                          () {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('2FA feature coming soon'),
+                              ),
+                            );
+                          },
+                        ),
+                      ],
                     ),
                   ),
                   const SizedBox(height: 24),
                   // About Section
                   FadeInSlide(
                     delay: 0.4,
-                    child: Container(
-                      padding: const EdgeInsets.all(20),
-                      decoration: themeProvider.getGlassDecoration(borderRadius: 24),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          _buildSectionTitle(themeProvider, 'About', Icons.info_outline_rounded),
-                          const SizedBox(height: 20),
-                          _buildSettingsTile(
-                            themeProvider,
-                            'Privacy Policy',
-                            'Read our privacy policy',
-                            Icons.privacy_tip_outlined,
-                            () {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text('Opening privacy policy...'),
-                                ),
-                              );
-                            },
-                          ),
-                          const SizedBox(height: 16),
-                          _buildSettingsTile(themeProvider, 'Terms of Service', 'Read our terms', Icons.description_outlined, () {
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _buildSectionTitle(themeProvider, 'About', Icons.info_outline_rounded),
+                        const SizedBox(height: 16),
+                        _buildSettingsTile(
+                          themeProvider,
+                          'Privacy Policy',
+                          'Read our privacy policy',
+                          Icons.privacy_tip_outlined,
+                          () {
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
-                                content: Text('Opening terms of service...'),
+                                content: Text('Opening privacy policy...'),
                               ),
                             );
-                          }),
-                          const SizedBox(height: 16),
-                          _buildSettingsTile(themeProvider, 'About CurrenSee', 'Version 1.0.0', Icons.apps_rounded, () {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text(
-                                  'CurrenSee v1.0.0 - Currency Conversion App',
-                                ),
+                          },
+                        ),
+                        const SizedBox(height: 12),
+                        _buildSettingsTile(themeProvider, 'Terms of Service', 'Read our terms', Icons.description_outlined, () {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Opening terms of service...'),
+                            ),
+                          );
+                        }),
+                        const SizedBox(height: 12),
+                        _buildSettingsTile(themeProvider, 'About CurrenSee', 'Version 1.0.0', Icons.apps_rounded, () {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text(
+                                'CurrenSee v1.0.0 - Currency Conversion App',
                               ),
-                            );
-                          }),
-                        ],
-                      ),
+                            ),
+                          );
+                        }),
+                      ],
                     ),
                   ),
                   const SizedBox(height: 32),
@@ -268,24 +245,158 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  Widget _buildSectionTitle(ThemeProvider themeProvider, String title, IconData icon) {
-    return Row(
-      children: [
-        Icon(
-          icon,
-          color: themeProvider.getAccentColor(),
-          size: 24,
+  Widget _buildProfileHeader(ThemeProvider themeProvider, AuthProvider authProvider) {
+    final user = authProvider.user;
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: themeProvider.getGlassDecoration(borderRadius: 28).copyWith(
+        color: themeProvider.getCardBackgroundColor().withOpacity(0.35),
+        border: Border.all(
+          color: themeProvider.getBorderColor().withOpacity(0.15),
+          width: 1.5,
         ),
-        const SizedBox(width: 12),
-        Text(
-          title,
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: themeProvider.getTextColor(),
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(3),
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              gradient: LinearGradient(
+                colors: [themeProvider.getAccentColor(), themeProvider.getSecondaryAccentColor()],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: themeProvider.getAccentColor().withOpacity(0.3),
+                  blurRadius: 12,
+                  spreadRadius: 2,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: Container(
+              width: 65,
+              height: 65,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: themeProvider.getCardBackgroundColor(),
+                image: DecorationImage(
+                  image: NetworkImage(user?.photoUrl ?? 'https://i.pravatar.cc/150?img=11'),
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
           ),
-        ),
-      ],
+          const SizedBox(width: 20),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  user?.name ?? 'User',
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: -0.5,
+                    color: themeProvider.getTextColor(),
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  user?.email ?? 'user@example.com',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                    color: themeProvider.getSecondaryTextColor(),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        themeProvider.getAccentColor(),
+                        themeProvider.getSecondaryAccentColor(),
+                      ],
+                    ),
+                    borderRadius: BorderRadius.circular(20),
+                    boxShadow: [
+                      BoxShadow(
+                        color: themeProvider.getAccentColor().withOpacity(0.3),
+                        blurRadius: 8,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(Icons.star_rounded, color: Colors.white, size: 14),
+                      const SizedBox(width: 4),
+                      Text(
+                        'PRO MEMBER',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 10,
+                          fontWeight: FontWeight.w900,
+                          letterSpacing: 0.8,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSectionTitle(ThemeProvider themeProvider, String title, IconData icon) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            decoration: BoxDecoration(
+              color: themeProvider.getCardBackgroundColor(),
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(
+                color: themeProvider.getBorderColor().withOpacity(0.2),
+              ),
+            ),
+            child: Row(
+              children: [
+                Icon(
+                  icon,
+                  color: themeProvider.getAccentColor(),
+                  size: 16,
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                    color: themeProvider.getAccentColor(),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Divider(
+              color: themeProvider.getBorderColor().withOpacity(0.2),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -296,33 +407,48 @@ class _SettingsScreenState extends State<SettingsScreen> {
     bool value,
     Function(bool) onChanged,
   ) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              title,
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: themeProvider.getTextColor(),
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: themeProvider.getCardBackgroundColor().withOpacity(0.6),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: themeProvider.getBorderColor().withOpacity(0.1)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.02),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: themeProvider.getTextColor(),
+                ),
               ),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              subtitle,
-              style: TextStyle(fontSize: 12, color: themeProvider.getSecondaryTextColor()),
-            ),
-          ],
-        ),
-        Switch.adaptive(
-          value: value,
-          onChanged: onChanged,
-          activeColor: themeProvider.getAccentColor(),
-        ),
-      ],
+              const SizedBox(height: 4),
+              Text(
+                subtitle,
+                style: TextStyle(fontSize: 12, color: themeProvider.getSecondaryTextColor()),
+              ),
+            ],
+          ),
+          Switch.adaptive(
+            value: value,
+            onChanged: onChanged,
+            activeColor: themeProvider.getAccentColor(),
+          ),
+        ],
+      ),
     );
   }
 
@@ -333,51 +459,66 @@ class _SettingsScreenState extends State<SettingsScreen> {
     List<String> options,
     Function(String) onChanged,
   ) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(
-          title,
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-            color: themeProvider.getTextColor(),
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: themeProvider.getCardBackgroundColor().withOpacity(0.6),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: themeProvider.getBorderColor().withOpacity(0.1)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.02),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
           ),
-        ),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-          decoration: BoxDecoration(
-            color: themeProvider.getCardBackgroundColor(),
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: themeProvider.getBorderColor()),
+        ],
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            title,
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: themeProvider.getTextColor(),
+            ),
           ),
-          child: DropdownButton<String>(
-            value: currentValue,
-            dropdownColor: themeProvider.getCardBackgroundColor(),
-            items: options.map((option) {
-              return DropdownMenuItem<String>(
-                value: option,
-                child: Text(
-                  option,
-                  style: TextStyle(
-                    color: themeProvider.getTextColor(),
-                    fontSize: 14,
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+            decoration: BoxDecoration(
+              color: themeProvider.getCardBackgroundColor(),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: themeProvider.getBorderColor()),
+            ),
+            child: DropdownButton<String>(
+              value: currentValue,
+              dropdownColor: themeProvider.getCardBackgroundColor(),
+              items: options.map((option) {
+                return DropdownMenuItem<String>(
+                  value: option,
+                  child: Text(
+                    option,
+                    style: TextStyle(
+                      color: themeProvider.getTextColor(),
+                      fontSize: 14,
+                    ),
                   ),
-                ),
-              );
-            }).toList(),
-            onChanged: (value) {
-              if (value != null) {
-                onChanged(value);
-              }
-            },
-            style: TextStyle(color: themeProvider.getTextColor()),
-            underline: const SizedBox(),
-            icon: Icon(Icons.keyboard_arrow_down_rounded, color: themeProvider.getTextColor(), size: 20),
-            isDense: true,
+                );
+              }).toList(),
+              onChanged: (value) {
+                if (value != null) {
+                  onChanged(value);
+                }
+              },
+              style: TextStyle(color: themeProvider.getTextColor()),
+              underline: const SizedBox(),
+              icon: Icon(Icons.keyboard_arrow_down_rounded, color: themeProvider.getTextColor(), size: 20),
+              isDense: true,
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -387,16 +528,30 @@ class _SettingsScreenState extends State<SettingsScreen> {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: themeProvider.getCardBackgroundColor(),
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: themeProvider.getBorderColor().withOpacity(0.5)),
+          color: themeProvider.getCardBackgroundColor().withOpacity(0.6),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: themeProvider.getBorderColor().withOpacity(0.1)),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.02),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
         ),
         child: Row(
           children: [
             Container(
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
-                color: themeProvider.getAccentColor().withOpacity(0.1),
+                gradient: LinearGradient(
+                  colors: [
+                    themeProvider.getAccentColor().withOpacity(0.2),
+                    themeProvider.getSecondaryAccentColor().withOpacity(0.2),
+                  ],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
                 shape: BoxShape.circle,
               ),
               child: Icon(
