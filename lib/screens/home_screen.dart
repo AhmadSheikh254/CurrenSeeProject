@@ -36,16 +36,16 @@ class _HomeScreenState extends State<HomeScreen> {
   bool _isSidebarExpanded = false;
 
   final List<Map<String, dynamic>> _currencyRates = [
-    {'code': 'USD', 'name': 'US Dollar', 'rate': 1.0, 'symbol': '$'},
+    {'code': 'USD', 'name': 'US Dollar', 'rate': 1.0, 'symbol': '\$'},
     {'code': 'EUR', 'name': 'Euro', 'rate': 0.95, 'symbol': '€'},
     {'code': 'GBP', 'name': 'British Pound', 'rate': 0.78, 'symbol': '£'},
     {'code': 'JPY', 'name': 'Japanese Yen', 'rate': 155.0, 'symbol': '¥'},
-    {'code': 'AUD', 'name': 'Australian Dollar', 'rate': 1.58, 'symbol': 'A$'},
-    {'code': 'CAD', 'name': 'Canadian Dollar', 'rate': 1.37, 'symbol': 'C$'},
+    {'code': 'AUD', 'name': 'Australian Dollar', 'rate': 1.58, 'symbol': 'A\$'},
+    {'code': 'CAD', 'name': 'Canadian Dollar', 'rate': 1.37, 'symbol': 'C\$'},
     {'code': 'CHF', 'name': 'Swiss Franc', 'rate': 0.88, 'symbol': 'Fr'},
     {'code': 'CNY', 'name': 'Chinese Yuan', 'rate': 7.25, 'symbol': '¥'},
     {'code': 'INR', 'name': 'Indian Rupee', 'rate': 84.50, 'symbol': '₹'},
-    {'code': 'MXN', 'name': 'Mexican Peso', 'rate': 18.00, 'symbol': '$'},
+    {'code': 'MXN', 'name': 'Mexican Peso', 'rate': 18.00, 'symbol': '\$'},
     {'code': 'PKR', 'name': 'Pakistani Rupee', 'rate': 280.50, 'symbol': 'Rs'},
   ];
 
