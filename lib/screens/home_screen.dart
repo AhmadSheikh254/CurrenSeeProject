@@ -36,16 +36,16 @@ class _HomeScreenState extends State<HomeScreen> {
   bool _isSidebarExpanded = false;
 
   final List<Map<String, dynamic>> _currencyRates = [
-    {'code': 'USD', 'name': 'US Dollar', 'rate': 1.0, 'symbol': '\$'},
+    {'code': 'USD', 'name': 'US Dollar', 'rate': 1.0, 'symbol': '$'},
     {'code': 'EUR', 'name': 'Euro', 'rate': 0.95, 'symbol': '€'},
     {'code': 'GBP', 'name': 'British Pound', 'rate': 0.78, 'symbol': '£'},
     {'code': 'JPY', 'name': 'Japanese Yen', 'rate': 155.0, 'symbol': '¥'},
-    {'code': 'AUD', 'name': 'Australian Dollar', 'rate': 1.58, 'symbol': 'A\$'},
-    {'code': 'CAD', 'name': 'Canadian Dollar', 'rate': 1.37, 'symbol': 'C\$'},
+    {'code': 'AUD', 'name': 'Australian Dollar', 'rate': 1.58, 'symbol': 'A$'},
+    {'code': 'CAD', 'name': 'Canadian Dollar', 'rate': 1.37, 'symbol': 'C$'},
     {'code': 'CHF', 'name': 'Swiss Franc', 'rate': 0.88, 'symbol': 'Fr'},
     {'code': 'CNY', 'name': 'Chinese Yuan', 'rate': 7.25, 'symbol': '¥'},
     {'code': 'INR', 'name': 'Indian Rupee', 'rate': 84.50, 'symbol': '₹'},
-    {'code': 'MXN', 'name': 'Mexican Peso', 'rate': 18.00, 'symbol': '\$'},
+    {'code': 'MXN', 'name': 'Mexican Peso', 'rate': 18.00, 'symbol': '$'},
     {'code': 'PKR', 'name': 'Pakistani Rupee', 'rate': 280.50, 'symbol': 'Rs'},
   ];
 
@@ -430,10 +430,10 @@ class _HomeScreenState extends State<HomeScreen> {
               colors: colors,
             ),
           ),
-            child: SafeArea(
-              bottom: false,
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.fromLTRB(20.0, 110.0, 20.0, 24.0), // Increased top padding for menu button and blurred bar
+          child: SafeArea(
+            bottom: false,
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.fromLTRB(20.0, 110.0, 20.0, 24.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -685,58 +685,57 @@ class _HomeScreenState extends State<HomeScreen> {
                                   ],
                                 ),
                               ),
-                                const SizedBox(height: 16),
-                                SizedBox(
-                                  width: double.infinity,
-                                  child: ScaleButton(
-                                    onPressed: _isConverting ? null : () async {
-                                      await _convertCurrency();
-                                      _saveConversion();
-                                    },
-                                    child: Container(
-                                      width: double.infinity,
-                                      padding: const EdgeInsets.symmetric(vertical: 12),
-                                      decoration: BoxDecoration(
-                                        gradient: LinearGradient(
-                                          colors: [themeProvider.getAccentColor(), themeProvider.getSecondaryAccentColor()],
-                                          begin: Alignment.topLeft,
-                                          end: Alignment.bottomRight,
-                                        ),
-                                        borderRadius: BorderRadius.circular(12),
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: themeProvider.getAccentColor().withOpacity(0.4),
-                                            blurRadius: 15,
-                                            spreadRadius: 1,
-                                            offset: const Offset(0, 4),
-                                          ),
-                                          BoxShadow(
-                                            color: themeProvider.getSecondaryAccentColor().withOpacity(0.2),
-                                            blurRadius: 25,
-                                            spreadRadius: -2,
-                                            offset: const Offset(0, 8),
-                                          ),
-                                        ],
+                              const SizedBox(height: 16),
+                              SizedBox(
+                                width: double.infinity,
+                                child: ScaleButton(
+                                  onPressed: _isConverting ? null : () async {
+                                    await _convertCurrency();
+                                    _saveConversion();
+                                  },
+                                  child: Container(
+                                    width: double.infinity,
+                                    padding: const EdgeInsets.symmetric(vertical: 12),
+                                    decoration: BoxDecoration(
+                                      gradient: LinearGradient(
+                                        colors: [themeProvider.getAccentColor(), themeProvider.getSecondaryAccentColor()],
+                                        begin: Alignment.topLeft,
+                                        end: Alignment.bottomRight,
                                       ),
-                                      alignment: Alignment.center,
-                                      child: _isConverting
-                                          ? CustomAnimatedLoader(
-                                              size: 20,
-                                              color: themeProvider.isDarkMode ? Colors.black : Colors.white,
-                                            )
-                                          : Text(
-                                              'Convert',
-                                              style: TextStyle(
-                                                color: Colors.white,
-                                                fontWeight: FontWeight.w600,
-                                                fontSize: 16,
-                                              ),
-                                            ),
+                                      borderRadius: BorderRadius.circular(12),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: themeProvider.getAccentColor().withOpacity(0.4),
+                                          blurRadius: 15,
+                                          spreadRadius: 1,
+                                          offset: const Offset(0, 4),
+                                        ),
+                                        BoxShadow(
+                                          color: themeProvider.getSecondaryAccentColor().withOpacity(0.2),
+                                          blurRadius: 25,
+                                          spreadRadius: -2,
+                                          offset: const Offset(0, 8),
+                                        ),
+                                      ],
                                     ),
+                                    alignment: Alignment.center,
+                                    child: _isConverting
+                                        ? CustomAnimatedLoader(
+                                            size: 20,
+                                            color: themeProvider.isDarkMode ? Colors.black : Colors.white,
+                                          )
+                                        : const Text(
+                                            'Convert',
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.w600,
+                                              fontSize: 16,
+                                            ),
+                                          ),
                                   ),
                                 ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
                         ),
                       ],
@@ -769,7 +768,6 @@ class _HomeScreenState extends State<HomeScreen> {
                               _buildPopularPair(themeProvider, 'USD/EUR', '0.95', '+0.2%'),
                               _buildPopularPair(themeProvider, 'GBP/USD', '1.27', '-0.1%'),
                               _buildPopularPair(themeProvider, 'USD/JPY', '155.4', '+0.5%'),
-                              // _buildPopularPair(themeProvider, 'AUD/USD', '0.65', '+0.3%'),
                             ],
                           ),
                         ),
@@ -784,8 +782,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         _buildQuickAction(themeProvider, Icons.notifications_active_outlined, 'Alerts', () {
-                          // Navigate to Alerts (index 1 is Rates, maybe add a dedicated screen or switch tab)
-                          // For now, let's assume there's an AlertsScreen or just show a message
+                          // Navigate to Alerts
                         }),
                         _buildQuickAction(themeProvider, Icons.analytics_outlined, 'Trends', () {
                           Navigator.push(context, MaterialPageRoute(builder: (context) => const NewsScreen()));

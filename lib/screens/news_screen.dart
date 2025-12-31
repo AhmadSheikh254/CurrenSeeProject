@@ -113,9 +113,10 @@ class _NewsScreenState extends State<NewsScreen> {
               ScaleButton(
                 onPressed: () => Navigator.pop(context),
                 child: Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: themeProvider.getGlassDecoration(borderRadius: 12).copyWith(
-                    color: themeProvider.getCardBackgroundColor().withOpacity(0.3),
+                  padding: const EdgeInsets.all(12),
+                  decoration: themeProvider.getGlassDecoration(borderRadius: 16).copyWith(
+                    color: themeProvider.getCardBackgroundColor().withOpacity(0.35),
+                    border: Border.all(color: themeProvider.getBorderColor().withOpacity(0.15)),
                   ),
                   child: Icon(Icons.arrow_back_ios_new_rounded, color: themeProvider.getTextColor(), size: 20),
                 ),
@@ -124,25 +125,28 @@ class _NewsScreenState extends State<NewsScreen> {
               Text(
                 'Market News',
                 style: TextStyle(
-                  fontSize: 30,
-                  fontWeight: FontWeight.w800,
-                  letterSpacing: -0.8,
+                  fontSize: 32,
+                  fontWeight: FontWeight.w900,
+                  letterSpacing: -1.0,
                   color: themeProvider.getTextColor(),
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 24),
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            decoration: themeProvider.getGlassDecoration(borderRadius: 16),
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
+            decoration: themeProvider.getGlassDecoration(borderRadius: 20).copyWith(
+              color: themeProvider.getCardBackgroundColor().withOpacity(0.3),
+              border: Border.all(color: themeProvider.getBorderColor().withOpacity(0.1)),
+            ),
             child: TextField(
-              style: TextStyle(color: themeProvider.getTextColor()),
+              style: TextStyle(color: themeProvider.getTextColor(), fontWeight: FontWeight.w600),
               decoration: InputDecoration(
-                hintText: 'Search news...',
-                hintStyle: TextStyle(color: themeProvider.getSecondaryTextColor()),
+                hintText: 'Search market news...',
+                hintStyle: TextStyle(color: themeProvider.getSecondaryTextColor().withOpacity(0.6)),
                 border: InputBorder.none,
-                icon: Icon(Icons.search, color: themeProvider.getSecondaryTextColor()),
+                icon: Icon(Icons.search_rounded, color: themeProvider.getAccentColor(), size: 22),
               ),
             ),
           ),

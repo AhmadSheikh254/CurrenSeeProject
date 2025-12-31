@@ -40,6 +40,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   // Header
                   FadeInSlide(
                     delay: 0.0,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
                         Text(
                           'Profile',
                           style: TextStyle(
