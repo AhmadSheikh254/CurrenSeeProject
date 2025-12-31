@@ -782,13 +782,19 @@ class _HomeScreenState extends State<HomeScreen> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         _buildQuickAction(themeProvider, Icons.notifications_active_outlined, 'Alerts', () {
-                          // Navigate to Alerts
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => const AlertsScreen()));
                         }),
                         _buildQuickAction(themeProvider, Icons.analytics_outlined, 'Trends', () {
                           Navigator.push(context, MaterialPageRoute(builder: (context) => const NewsScreen()));
                         }),
-                        _buildQuickAction(themeProvider, Icons.star_outline_rounded, 'Favorites', () {}),
-                        _buildQuickAction(themeProvider, Icons.share_outlined, 'Share', () {}),
+                        _buildQuickAction(themeProvider, Icons.star_outline_rounded, 'Favorites', () {
+                          setState(() => _selectedIndex = 1);
+                        }),
+                        _buildQuickAction(themeProvider, Icons.share_outlined, 'Share', () {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('Sharing feature coming soon!')),
+                          );
+                        }),
                       ],
                     ),
                   ),
