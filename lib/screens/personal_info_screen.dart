@@ -39,91 +39,293 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
   }
 
   Future<void> _pickImage() async {
-    showDialog(
+    final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    
+    // Expanded list of aesthetic DiceBear styles
+    final avatarStyles = [
+      'lorelei',
+      'notionists',
+      'micah',
+      'adventurer',
+      'open-peeps',
+      'bottts',
+      'pixel-art',
+      'miniavs',
+      'big-smile',
+      'croodles',
+      'shapes',
+      'icons',
+    ];
+
+    // Special Character Avatars
+    final specialCharacters = [
+      {'name': 'Eleven', 'url': 'https://img.icons8.com/color/512/eleven.png'},
+      {'name': 'Dustin', 'url': 'https://img.icons8.com/color/512/dustin-henderson.png'},
+      {'name': 'Mike', 'url': 'https://img.icons8.com/color/512/mike-wheeler.png'},
+      {'name': 'Steve', 'url': 'https://img.icons8.com/color/512/steve-harrington.png'},
+      {'name': 'Vecna', 'url': 'https://img.icons8.com/color/512/vecna.png'},
+      {'name': 'Goku', 'url': 'https://img.icons8.com/color/512/goku.png'},
+      {'name': 'Vegeta', 'url': 'https://img.icons8.com/color/512/vegeta.png'},
+      {'name': 'Doraemon', 'url': 'https://img.icons8.com/color/512/doraemon.png'},
+      {'name': 'Shin-chan', 'url': 'https://img.icons8.com/color/512/shin-chan.png'},
+    ];
+
+    List<String> generateUrls() {
+      final List<String> urls = [];
+      final random = DateTime.now().millisecondsSinceEpoch;
+      for (var style in avatarStyles) {
+        // Generate 1 variation for each style to keep it diverse but not overwhelming
+        urls.add('https://api.dicebear.com/7.x/$style/png?seed=${random}_$style');
+      }
+      urls.shuffle();
+      return urls;
+    }
+
+    List<String> currentUrls = generateUrls();
+
+    showModalBottomSheet(
       context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
       builder: (context) {
-        final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
-        
-        // Mix of different avatar styles using PNG format
-        final avatarUrls = [
-          'https://api.dicebear.com/7.x/avataaars/png?seed=Felix',
-          'https://api.dicebear.com/7.x/avataaars/png?seed=Aneka',
-          'https://api.dicebear.com/7.x/avataaars/png?seed=Luna',
-          'https://api.dicebear.com/7.x/avataaars/png?seed=Max',
-          'https://api.dicebear.com/7.x/bottts/png?seed=Robot1',
-          'https://api.dicebear.com/7.x/bottts/png?seed=Robot2',
-          'https://api.dicebear.com/7.x/adventurer/png?seed=Sarah',
-          'https://api.dicebear.com/7.x/adventurer/png?seed=John',
-          'https://api.dicebear.com/7.x/big-smile/png?seed=Happy',
-          'https://api.dicebear.com/7.x/big-smile/png?seed=Joy',
-          'https://api.dicebear.com/7.x/personas/png?seed=Alex',
-          'https://api.dicebear.com/7.x/personas/png?seed=Sam',
-        ];
-        
-        return AlertDialog(
-          backgroundColor: themeProvider.getCardBackgroundColor(),
-          title: Text(
-            'Choose Avatar',
-            style: TextStyle(
-              color: themeProvider.getTextColor(),
-              fontWeight: FontWeight.bold,
+        return StatefulBuilder(
+          builder: (context, setModalState) {
+            return DraggableScrollableSheet(
+              initialChildSize: 0.8,
+              minChildSize: 0.5,
+              maxChildSize: 0.95,
+              builder: (context, scrollController) {
+                return Container(
+                  decoration: BoxDecoration(
+                    color: themeProvider.isDarkMode ? const Color(0xFF0F172A) : Colors.white,
+                    borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.3),
+                        blurRadius: 20,
+                        offset: const Offset(0, -5),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    children: [
+                      // Handle
+                      Container(
+                        margin: const EdgeInsets.only(top: 12),
+                        width: 40,
+                        height: 4,
+                        decoration: BoxDecoration(
+                          color: themeProvider.getSecondaryTextColor().withOpacity(0.3),
+                          borderRadius: BorderRadius.circular(2),
+                        ),
+                      ),
+                      
+                      // Header
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(24, 20, 24, 10),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Choose Avatar',
+                                  style: TextStyle(
+                                    fontSize: 24,
+                                    fontWeight: FontWeight.bold,
+                                    color: themeProvider.getTextColor(),
+                                  ),
+                                ),
+                                Text(
+                                  'Select a style that fits you',
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: themeProvider.getSecondaryTextColor(),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            ScaleButton(
+                              onPressed: () {
+                                setModalState(() {
+                                  currentUrls = generateUrls();
+                                });
+                              },
+                              child: Container(
+                                padding: const EdgeInsets.all(10),
+                                decoration: BoxDecoration(
+                                  color: themeProvider.getAccentColor().withOpacity(0.1),
+                                  shape: BoxShape.circle,
+                                ),
+                                child: Icon(
+                                  Icons.refresh_rounded,
+                                  color: themeProvider.getAccentColor(),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      
+                      const Divider(),
+                      
+                      // Grid
+                      Expanded(
+                        child: ListView(
+                          controller: scrollController,
+                          padding: const EdgeInsets.all(24),
+                          children: [
+                            // Special Characters Section
+                            Text(
+                              'Special Characters',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: themeProvider.getAccentColor(),
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+                            GridView.builder(
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 4,
+                                crossAxisSpacing: 16,
+                                mainAxisSpacing: 16,
+                                childAspectRatio: 1,
+                              ),
+                              itemCount: specialCharacters.length,
+                              itemBuilder: (context, index) {
+                                final char = specialCharacters[index];
+                                return _buildAvatarItem(char['url']!, char['name']!, themeProvider, authProvider);
+                              },
+                            ),
+                            
+                            const SizedBox(height: 32),
+                            
+                            // Aesthetic Styles Section
+                            Text(
+                              'Aesthetic Styles',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: themeProvider.getAccentColor(),
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+                            GridView.builder(
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 3,
+                                crossAxisSpacing: 20,
+                                mainAxisSpacing: 20,
+                                childAspectRatio: 1,
+                              ),
+                              itemCount: currentUrls.length,
+                              itemBuilder: (context, index) {
+                                final url = currentUrls[index];
+                                return _buildAvatarItem(url, 'Style ${index + 1}', themeProvider, authProvider);
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+                      
+                      // Cancel Button
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
+                        child: ScaleButton(
+                          onPressed: () => Navigator.pop(context),
+                          child: Container(
+                            width: double.infinity,
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            decoration: BoxDecoration(
+                              color: themeProvider.getCardBackgroundColor(),
+                              borderRadius: BorderRadius.circular(16),
+                              border: Border.all(color: themeProvider.getBorderColor()),
+                            ),
+                            alignment: Alignment.center,
+                            child: Text(
+                              'Cancel',
+                              style: TextStyle(
+                                color: themeProvider.getTextColor(),
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Widget _buildAvatarItem(String url, String name, ThemeProvider themeProvider, AuthProvider authProvider) {
+    return FadeInSlide(
+      duration: 0.4,
+      beginOffset: const Offset(0, 0.1),
+      child: ScaleButton(
+        onPressed: () {
+          authProvider.updatePhotoUrl(url);
+          Navigator.pop(context);
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('$name selected!'),
+              behavior: SnackBarBehavior.floating,
+              backgroundColor: themeProvider.getAccentColor(),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            ),
+          );
+        },
+        child: Container(
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: themeProvider.isDarkMode 
+                ? Colors.white.withOpacity(0.05) 
+                : Colors.grey.withOpacity(0.1),
+            border: Border.all(
+              color: themeProvider.getBorderColor(),
+              width: 2,
             ),
           ),
-          content: SizedBox(
-            width: double.maxFinite,
-            height: 400,
-            child: GridView.builder(
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 3,
-                crossAxisSpacing: 12,
-                mainAxisSpacing: 12,
-              ),
-              itemCount: avatarUrls.length,
-              itemBuilder: (context, index) {
-                final avatarUrl = avatarUrls[index];
-                return GestureDetector(
-                  onTap: () {
-                    final authProvider = Provider.of<AuthProvider>(context, listen: false);
-                    authProvider.updatePhotoUrl(avatarUrl);
-                    Navigator.pop(context);
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Profile picture updated!')),
-                    );
-                  },
-                  child: Container(
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                        color: themeProvider.getAccentColor(),
-                        width: 2,
-                      ),
-                      color: Colors.white,
-                    ),
-                    child: ClipOval(
-                      child: Image.network(
-                        avatarUrl,
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) {
-                          return const Icon(Icons.person, size: 40);
-                        },
-                      ),
+          child: ClipOval(
+            child: Image.network(
+              url,
+              fit: BoxFit.cover,
+              loadingBuilder: (context, child, loadingProgress) {
+                if (loadingProgress == null) return child;
+                return Center(
+                  child: SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      valueColor: AlwaysStoppedAnimation<Color>(themeProvider.getAccentColor()),
                     ),
                   ),
                 );
               },
+              errorBuilder: (context, error, stackTrace) {
+                return Icon(
+                  Icons.person_rounded,
+                  color: themeProvider.getSecondaryTextColor(),
+                  size: 30,
+                );
+              },
             ),
           ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: Text(
-                'Cancel',
-                style: TextStyle(color: themeProvider.getTextColor()),
-              ),
-            ),
-          ],
-        );
-      },
+        ),
+      ),
     );
   }
 
@@ -212,7 +414,7 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
                                     Consumer<AuthProvider>(
                                       builder: (context, authProvider, child) {
                                         final photoUrl = authProvider.user?.photoUrl ?? 
-                                                        'https://i.pravatar.cc/150?img=11';
+                                                        'https://api.dicebear.com/7.x/lorelei/png?seed=CurrenSee';
                                         
                                         return Hero(
                                           tag: 'profile_avatar',

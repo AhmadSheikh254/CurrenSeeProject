@@ -108,10 +108,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                         offset: const Offset(0, 4),
                                       ),
                                     ],
-                                    image: DecorationImage(
-                                      image: NetworkImage(user?.photoUrl ?? 'https://i.pravatar.cc/150?img=11'),
-                                      fit: BoxFit.cover,
-                                    ),
+                                      image: DecorationImage(
+                                        image: NetworkImage(user?.photoUrl ?? 'https://api.dicebear.com/7.x/lorelei/png?seed=CurrenSee'),
+                                        fit: BoxFit.cover,
+                                      ),
                                   ),
                                 ),
                               ),

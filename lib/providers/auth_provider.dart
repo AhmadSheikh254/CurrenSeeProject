@@ -76,7 +76,7 @@ class AuthProvider extends ChangeNotifier {
           id: firebaseUser.uid,
           name: firebaseUser.displayName ?? firebaseUser.email?.split('@')[0] ?? 'User',
           email: firebaseUser.email ?? '',
-          photoUrl: firebaseUser.photoURL ?? 'https://i.pravatar.cc/150?img=11',
+          photoUrl: firebaseUser.photoURL ?? 'https://api.dicebear.com/7.x/lorelei/png?seed=CurrenSee',
         );
         
         await _database.ref('users/${firebaseUser.uid}').set(newUser.toJson());
@@ -89,7 +89,7 @@ class AuthProvider extends ChangeNotifier {
           id: firebaseUser.uid,
           name: firebaseUser.displayName ?? firebaseUser.email?.split('@')[0] ?? 'User',
           email: firebaseUser.email ?? '',
-          photoUrl: firebaseUser.photoURL ?? 'https://i.pravatar.cc/150?img=11',
+          photoUrl: firebaseUser.photoURL ?? 'https://api.dicebear.com/7.x/lorelei/png?seed=CurrenSee',
       );
       notifyListeners();
     }
@@ -175,7 +175,7 @@ class AuthProvider extends ChangeNotifier {
           id: cred.user!.uid,
           name: name,
           email: email,
-          photoUrl: 'https://i.pravatar.cc/150?img=11',
+          photoUrl: 'https://api.dicebear.com/7.x/lorelei/png?seed=CurrenSee',
         );
 
         await _database.ref('users/${cred.user!.uid}').set(newUser.toJson());
