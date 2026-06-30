@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../models/feedback_entry.dart';
+import 'package:currensee/models/feedback_entry.dart';
 
 class FeedbackProvider extends ChangeNotifier {
   final List<FeedbackEntry> _feedbacks = [];
@@ -11,3 +11,4 @@ class FeedbackProvider extends ChangeNotifier {
     notifyListeners();
   }
 }
+

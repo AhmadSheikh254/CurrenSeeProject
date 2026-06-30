@@ -1,4 +1,4 @@
-import '../models/news_article.dart';
+import 'package:currensee/models/news_article.dart';
 
 class NewsService {
   Future<List<NewsArticle>> getNews({String category = 'All'}) async {
@@ -95,3 +95,4 @@ class NewsService {
     }
   }
 }
+

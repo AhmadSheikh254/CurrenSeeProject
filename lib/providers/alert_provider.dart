@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../models/rate_alert.dart';
+import 'package:currensee/models/rate_alert.dart';
 
 class AlertProvider extends ChangeNotifier {
   final List<RateAlert> _alerts = [];
@@ -38,3 +38,4 @@ class AlertProvider extends ChangeNotifier {
     return triggered;
   }
 }
+

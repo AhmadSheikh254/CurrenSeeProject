@@ -3,7 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
-import '../models/conversion.dart';
+import 'package:currensee/models/conversion.dart';
 
 class HistoryProvider extends ChangeNotifier {
   final List<Conversion> _conversions = [];
@@ -176,3 +176,4 @@ class HistoryProvider extends ChangeNotifier {
   // Get number of saved conversions
   int get savedCount => _conversions.where((c) => c.isSaved).length;
 }
+

@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'widgets/page_transitions.dart';
-import 'providers/theme_provider.dart';
-import 'providers/auth_provider.dart';
-import 'providers/history_provider.dart';
-import 'providers/alert_provider.dart';
-import 'providers/preferences_provider.dart';
-import 'providers/feedback_provider.dart';
-import 'screens/splash_screen.dart';
-import 'screens/login_screen.dart';
-import 'screens/signup_screen.dart';
-import 'screens/home_screen.dart';
+import 'package:currensee/widgets/page_transitions.dart';
+import 'package:currensee/providers/theme_provider.dart';
+import 'package:currensee/features/auth/presentation/providers/auth_provider.dart';
+import 'package:currensee/providers/history_provider.dart';
+import 'package:currensee/providers/alert_provider.dart';
+import 'package:currensee/providers/preferences_provider.dart';
+import 'package:currensee/providers/feedback_provider.dart';
+import 'package:currensee/features/currency/presentation/screens/splash_screen.dart';
+import 'package:currensee/features/auth/presentation/screens/login_screen.dart';
+import 'package:currensee/features/auth/presentation/screens/signup_screen.dart';
+import 'package:currensee/features/currency/presentation/screens/home_screen.dart';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
@@ -109,4 +109,5 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+
 
