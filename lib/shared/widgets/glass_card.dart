@@ -9,6 +9,9 @@ class GlassCard extends StatelessWidget {
   final EdgeInsetsGeometry? margin;
   final VoidCallback? onTap;
   final bool useHover;
+  final Color? customBgColor;
+  final bool hasBorder;
+  final double? width;
 
   const GlassCard({
     super.key,
@@ -18,6 +21,9 @@ class GlassCard extends StatelessWidget {
     this.margin,
     this.onTap,
     this.useHover = false,
+    this.customBgColor,
+    this.hasBorder = true,
+    this.width,
   });
 
   @override
@@ -25,9 +31,31 @@ class GlassCard extends StatelessWidget {
     final themeProvider = Provider.of<ThemeProvider>(context);
 
     Widget card = Container(
+      width: width,
       margin: margin,
       padding: padding ?? const EdgeInsets.all(20),
-      decoration: themeProvider.getGlassDecoration(borderRadius: borderRadius),
+      decoration: BoxDecoration(
+        color: customBgColor ?? themeProvider.getCardBackgroundColor().withValues(alpha: 0.85),
+        borderRadius: BorderRadius.circular(borderRadius),
+        border: hasBorder
+            ? Border.all(
+                color: themeProvider.getBorderColor().withValues(alpha: themeProvider.isDarkMode ? 0.6 : 0.8),
+                width: 0.5,
+              )
+            : null,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: themeProvider.isDarkMode ? 0.3 : 0.04),
+            blurRadius: 20,
+            offset: const Offset(0, 8),
+          ),
+          BoxShadow(
+            color: Colors.black.withValues(alpha: themeProvider.isDarkMode ? 0.1 : 0.02),
+            blurRadius: 6,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
       child: child,
     );
 

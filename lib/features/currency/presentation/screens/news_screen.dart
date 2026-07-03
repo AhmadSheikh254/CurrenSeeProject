@@ -5,6 +5,8 @@ import 'package:currensee/providers/theme_provider.dart';
 import 'package:currensee/models/news_article.dart';
 import 'package:currensee/services/news_service.dart';
 import 'package:currensee/widgets/animations.dart';
+import 'package:currensee/shared/widgets/responsive.dart';
+import 'package:currensee/shared/widgets/app_states.dart';
 import 'news_detail_screen.dart';
 
 class NewsScreen extends StatefulWidget {
@@ -57,38 +59,40 @@ class _NewsScreenState extends State<NewsScreen> {
                       future: _newsFuture,
                       builder: (context, snapshot) {
                         if (snapshot.connectionState == ConnectionState.waiting) {
-                          return Center(
-                            child: CurrencyLoader(
-                              color: themeProvider.getAccentColor(),
+                          return SingleChildScrollView(
+                            physics: const NeverScrollableScrollPhysics(),
+                            padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+                            child: const ResponsiveCenter(
+                              child: SkeletonList(itemCount: 5, itemHeight: 120),
                             ),
                           );
                         } else if (snapshot.hasError) {
-                          return Center(
-                            child: Text(
-                              'Failed to load news',
-                              style: TextStyle(color: themeProvider.getErrorColor()),
-                            ),
+                          return ErrorState(
+                            title: 'Unable to load news',
+                            message: 'Check your internet connection and try again.',
+                            onRetry: () => _onCategorySelected(_selectedCategory),
                           );
                         } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                          return Center(
-                            child: Text(
-                              'No news available',
-                              style: TextStyle(color: themeProvider.getSecondaryTextColor()),
-                            ),
+                          return const EmptyState(
+                            icon: Icons.newspaper_rounded,
+                            title: 'No news available',
+                            message: 'There are no articles in this category right now. Try another category.',
                           );
                         }
 
                         final articles = snapshot.data!;
-                        return ListView.builder(
-                          padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
-                          itemCount: articles.length,
-                          itemBuilder: (context, index) {
-                            final article = articles[index];
-                            return FadeInSlide(
-                              delay: index * 0.1,
-                              child: _buildNewsCard(themeProvider, article, index),
-                            );
-                          },
+                        return ResponsiveCenter(
+                          child: ListView.builder(
+                            padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+                            itemCount: articles.length,
+                            itemBuilder: (context, index) {
+                              final article = articles[index];
+                              return FadeInSlide(
+                                delay: index * 0.1,
+                                child: _buildNewsCard(themeProvider, article, index),
+                              );
+                            },
+                          ),
                         );
                       },
                     ),
@@ -105,7 +109,8 @@ class _NewsScreenState extends State<NewsScreen> {
   Widget _buildHeader(ThemeProvider themeProvider) {
     return Padding(
       padding: const EdgeInsets.all(20.0),
-      child: Column(
+      child: ResponsiveCenter(
+        child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
@@ -165,6 +170,7 @@ class _NewsScreenState extends State<NewsScreen> {
             ),
           ),
         ],
+        ),
       ),
     );
   }

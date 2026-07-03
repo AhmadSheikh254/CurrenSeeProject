@@ -205,12 +205,14 @@ class CurrencyLoader extends StatefulWidget {
   final double size;
   final Color? color;
   final String? message;
+  final double strokeWidth;
 
   const CurrencyLoader({
     super.key,
     this.size = 80.0,
     this.color,
     this.message,
+    this.strokeWidth = 3.0,
   });
 
   @override
@@ -281,6 +283,7 @@ class _CurrencyLoaderState extends State<CurrencyLoader>
                     painter: _CurrencyLoaderPainter(
                       color: accentColor,
                       progress: _rotateController.value,
+                      strokeWidth: widget.strokeWidth,
                     ),
                     child: Center(
                       child: Text(
@@ -318,8 +321,9 @@ class _CurrencyLoaderState extends State<CurrencyLoader>
 class _CurrencyLoaderPainter extends CustomPainter {
   final Color color;
   final double progress;
+  final double strokeWidth;
 
-  _CurrencyLoaderPainter({required this.color, required this.progress});
+  _CurrencyLoaderPainter({required this.color, required this.progress, this.strokeWidth = 3.0});
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -329,14 +333,14 @@ class _CurrencyLoaderPainter extends CustomPainter {
     // Outer track ring
     final trackPaint = Paint()
       ..color = color.withValues(alpha: 0.08)
-      ..strokeWidth = 3.0
+      ..strokeWidth = strokeWidth
       ..style = PaintingStyle.stroke;
     canvas.drawCircle(center, radius - 2, trackPaint);
 
     // Inner subtle ring
     final innerTrackPaint = Paint()
       ..color = color.withValues(alpha: 0.04)
-      ..strokeWidth = 1.5
+      ..strokeWidth = strokeWidth * 0.5
       ..style = PaintingStyle.stroke;
     canvas.drawCircle(center, radius * 0.7, innerTrackPaint);
 
@@ -345,7 +349,7 @@ class _CurrencyLoaderPainter extends CustomPainter {
     final startAngle = progress * 2 * math.pi - math.pi / 2;
 
     final arcPaint = Paint()
-      ..strokeWidth = 3.0
+      ..strokeWidth = strokeWidth
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.round
       ..shader = SweepGradient(
@@ -585,11 +589,13 @@ class AnimatedCounter extends StatelessWidget {
 class PulsingDot extends StatefulWidget {
   final Color color;
   final double size;
+  final double glowIntensity;
 
   const PulsingDot({
     super.key,
     this.color = const Color(0xFF10B981),
     this.size = 8.0,
+    this.glowIntensity = 1.0,
   });
 
   @override
@@ -628,14 +634,111 @@ class _PulsingDotState extends State<PulsingDot>
             color: widget.color,
             boxShadow: [
               BoxShadow(
-                color: widget.color.withValues(alpha: 0.4 * _controller.value),
-                blurRadius: 6 * _controller.value,
-                spreadRadius: 2 * _controller.value,
+                color: widget.color.withValues(alpha: 0.4 * _controller.value * widget.glowIntensity),
+                blurRadius: 6 * _controller.value * widget.glowIntensity,
+                spreadRadius: 2 * _controller.value * widget.glowIntensity,
               ),
             ],
           ),
         );
       },
+    );
+  }
+}
+
+// ──────────────────────────────────────────────────────────────────────────────
+// 11. DOTS DECORATION — Background ambient dots for premium feel
+// ──────────────────────────────────────────────────────────────────────────────
+class AmbientDots extends StatelessWidget {
+  final Color color;
+  final double opacity;
+
+  const AmbientDots({
+    super.key,
+    this.color = const Color(0xFF6366F1),
+    this.opacity = 0.03,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final random = math.Random(42);
+    return CustomPaint(
+      painter: _DotsPainter(color: color, opacity: opacity, random: random),
+    );
+  }
+}
+
+class _DotsPainter extends CustomPainter {
+  final Color color;
+  final double opacity;
+  final math.Random random;
+
+  _DotsPainter({required this.color, required this.opacity, required this.random});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = color.withValues(alpha: opacity)
+      ..style = PaintingStyle.fill;
+
+    final dotCount = (size.width * size.height / 80000).round().clamp(5, 40);
+    for (int i = 0; i < dotCount; i++) {
+      final x = random.nextDouble() * size.width;
+      final y = random.nextDouble() * size.height;
+      final r = random.nextDouble() * 2.5 + 0.5;
+      canvas.drawCircle(Offset(x, y), r, paint);
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+}
+
+// ──────────────────────────────────────────────────────────────────────────────
+// 12. GLOW OVERLAY — Premium ambient glow positioned
+// ──────────────────────────────────────────────────────────────────────────────
+class GlowOverlay extends StatelessWidget {
+  final Color color;
+  final double size;
+  final double top;
+  final double left;
+  final double right;
+  final double bottom;
+  final double opacity;
+
+  const GlowOverlay({
+    super.key,
+    required this.color,
+    this.size = 300,
+    this.top = -100,
+    this.left = -100,
+    this.right = 0,
+    this.bottom = 0,
+    this.opacity = 0.12,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Positioned(
+      top: top,
+      left: left,
+      right: right,
+      bottom: bottom,
+      child: Container(
+        width: size,
+        height: size,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: color.withValues(alpha: opacity),
+          boxShadow: [
+            BoxShadow(
+              color: color.withValues(alpha: opacity * 0.5),
+              blurRadius: size * 0.5,
+              spreadRadius: size * 0.1,
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

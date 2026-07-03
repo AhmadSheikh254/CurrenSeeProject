@@ -12,6 +12,9 @@ class CustomButton extends StatefulWidget {
   final bool isOutlined;
   final IconData? icon;
   final double? width;
+  final bool isFullWidth;
+  final double fontSize;
+  final EdgeInsetsGeometry? padding;
 
   const CustomButton({
     super.key,
@@ -24,6 +27,9 @@ class CustomButton extends StatefulWidget {
     this.isOutlined = false,
     this.icon,
     this.width,
+    this.isFullWidth = true,
+    this.fontSize = 15,
+    this.padding,
   });
 
   @override
@@ -83,8 +89,10 @@ class _CustomButtonState extends State<CustomButton> with SingleTickerProviderSt
         },
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 200),
-          width: widget.width ?? double.infinity,
+          curve: Curves.easeOutCubic,
+          width: widget.isFullWidth ? (widget.width ?? double.infinity) : widget.width,
           height: widget.height,
+          padding: widget.padding,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(widget.borderRadius),
             gradient: LinearGradient(
@@ -99,6 +107,11 @@ class _CustomButtonState extends State<CustomButton> with SingleTickerProviderSt
                 color: accentColor.withValues(alpha: _isPressed ? 0.15 : 0.25),
                 blurRadius: _isPressed ? 8 : 20,
                 offset: Offset(0, _isPressed ? 2 : 6),
+              ),
+              BoxShadow(
+                color: secondAccent.withValues(alpha: _isPressed ? 0.08 : 0.15),
+                blurRadius: _isPressed ? 4 : 12,
+                offset: Offset(0, _isPressed ? 1 : 4),
               ),
             ],
           ),
@@ -121,11 +134,11 @@ class _CustomButtonState extends State<CustomButton> with SingleTickerProviderSt
                       ],
                       Text(
                         widget.text,
-                        style: const TextStyle(
+                        style: TextStyle(
                           color: Colors.white,
-                          fontSize: 15,
+                          fontSize: widget.fontSize,
                           fontWeight: FontWeight.w600,
-                          letterSpacing: 0.3,
+                          letterSpacing: 0.2,
                         ),
                       ),
                     ],
@@ -149,15 +162,23 @@ class _CustomButtonState extends State<CustomButton> with SingleTickerProviderSt
         },
         onTapCancel: () => _animationController.reverse(),
         child: Container(
-          width: widget.width ?? double.infinity,
+          width: widget.isFullWidth ? double.infinity : widget.width,
           height: widget.height,
+          padding: widget.padding,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(widget.borderRadius),
             border: Border.all(
               color: accentColor.withValues(alpha: 0.4),
               width: 1.5,
             ),
-            color: accentColor.withValues(alpha: 0.05),
+            gradient: LinearGradient(
+              colors: [
+                accentColor.withValues(alpha: 0.06),
+                accentColor.withValues(alpha: 0.02),
+              ],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
           ),
           child: Center(
             child: Row(
@@ -171,9 +192,9 @@ class _CustomButtonState extends State<CustomButton> with SingleTickerProviderSt
                   widget.text,
                   style: TextStyle(
                     color: accentColor,
-                    fontSize: 15,
+                    fontSize: widget.fontSize,
                     fontWeight: FontWeight.w600,
-                    letterSpacing: 0.3,
+                    letterSpacing: 0.2,
                   ),
                 ),
               ],

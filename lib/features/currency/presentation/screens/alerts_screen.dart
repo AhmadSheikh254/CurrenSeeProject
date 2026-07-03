@@ -4,6 +4,7 @@ import 'package:currensee/providers/theme_provider.dart';
 import 'package:currensee/providers/alert_provider.dart';
 import 'package:currensee/models/rate_alert.dart';
 import 'package:currensee/widgets/animations.dart';
+import 'package:currensee/shared/widgets/responsive.dart';
 
 class AlertsScreen extends StatefulWidget {
   const AlertsScreen({super.key});
@@ -34,7 +35,8 @@ class _AlertsScreenState extends State<AlertsScreen> {
                 children: [
                   Padding(
                     padding: const EdgeInsets.all(20.0),
-                    child: Row(
+                    child: ResponsiveCenter(
+                      child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Row(
@@ -58,6 +60,7 @@ class _AlertsScreenState extends State<AlertsScreen> {
                           child: Icon(Icons.add_circle_outline, color: themeProvider.getAccentColor(), size: 32),
                         ),
                       ],
+                      ),
                     ),
                   ),
                   Expanded(
@@ -135,7 +138,8 @@ class _AlertsScreenState extends State<AlertsScreen> {
                               ),
                             ),
                           )
-                        : ListView.builder(
+                        : ResponsiveCenter(
+                            child: ListView.builder(
                             padding: const EdgeInsets.fromLTRB(20, 0, 20, 40),
                             itemCount: alerts.length,
                             itemBuilder: (context, index) {
@@ -229,6 +233,7 @@ class _AlertsScreenState extends State<AlertsScreen> {
                                 ),
                               );
                             },
+                            ),
                           ),
                   ),
                 ],

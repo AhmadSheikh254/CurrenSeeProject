@@ -2,14 +2,8 @@
   "name": "currensee",
   "private": true,
   "version": "1.0.0",
-  "type": "module",
+  "description": "CurrenSee — smart currency conversion (Flutter web). Vercel builds via scripts/vercel_build.sh.",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc && vite build",
-    "preview": "vite preview"
-  },
-  "devDependencies": {
-    "typescript": "^5.2.2",
-    "vite": "^5.0.8"
+    "build": "bash scripts/vercel_build.sh"
   }
 }

@@ -6,6 +6,7 @@ import 'package:currensee/providers/theme_provider.dart';
 import 'package:currensee/features/auth/presentation/providers/auth_provider.dart';
 import 'package:currensee/widgets/animations.dart';
 import 'package:currensee/core/utils/avatar_helper.dart';
+import 'package:currensee/shared/widgets/responsive.dart';
 
 class PersonalInfoScreen extends StatefulWidget {
   const PersonalInfoScreen({super.key});
@@ -471,7 +472,8 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
               Expanded(
                 child: SingleChildScrollView(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: Form(
+                  child: ResponsiveCenter(
+                    child: Form(
                     key: _formKey,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -749,6 +751,7 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
                           ),
                         const SizedBox(height: 24),
                       ],
+                    ),
                     ),
                   ),
                 ),

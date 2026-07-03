@@ -16,6 +16,7 @@ import 'package:currensee/services/currency_service.dart';
 import 'package:currensee/widgets/animations.dart';
 import 'package:currensee/features/currency/presentation/screens/alerts_screen.dart';
 import 'package:currensee/core/utils/avatar_helper.dart';
+import 'package:currensee/shared/widgets/responsive.dart';
 
 class HomeScreen extends StatefulWidget {
   final bool isGuest;
@@ -34,7 +35,6 @@ class _HomeScreenState extends State<HomeScreen> {
   String _toCurrency = 'EUR';
   final CurrencyService _currencyService = CurrencyService();
   bool _isConverting = false;
-  bool _isSidebarExpanded = false;
 
   final List<Map<String, dynamic>> _currencyRates = [
     {'code': 'USD', 'name': 'US Dollar', 'rate': 1.0, 'symbol': '\$'},
@@ -211,171 +211,45 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
               
-              // Main Content Area (Full Screen)
+              // Content
               screens[_selectedIndex],
-              
-              // Glassy Top Bar (Fixed)
+
+              // Premium glass bottom navigation
               Positioned(
-                top: 0,
+                bottom: 0,
                 left: 0,
                 right: 0,
-                child: ClipRect(
+                child: ClipRRect(
                   child: BackdropFilter(
-                    filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                    filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
                     child: Container(
-                      height: MediaQuery.of(context).padding.top + 60,
                       decoration: BoxDecoration(
-                        color: themeProvider.getCardBackgroundColor().withValues(alpha: 0.2),
+                        color: themeProvider.getBottomNavColor(),
                         border: Border(
-                          bottom: BorderSide(
-                            color: themeProvider.getBorderColor().withValues(alpha: 0.1),
-                            width: 1,
+                          top: BorderSide(
+                            color: themeProvider.getBorderColor().withValues(alpha: 0.15),
+                            width: 0.5,
                           ),
                         ),
                       ),
-                    ),
-                  ),
-                ),
-              ),
-              
-              // Floating Menu Button (Minimal & Top-Left)
-              AnimatedPositioned(
-                duration: const Duration(milliseconds: 300),
-                curve: Curves.easeInOut,
-                left: _isSidebarExpanded ? -60 : 16,
-                top: 12, 
-                child: SafeArea(
-                  child: ScaleButton(
-                    onPressed: () {
-                      setState(() {
-                        _isSidebarExpanded = true;
-                      });
-                    },
-                    child: Container(
-                      width: 40,
-                      height: 40,
-                      decoration: themeProvider.getGlassDecoration(borderRadius: 10).copyWith(
-                        color: themeProvider.getCardBackgroundColor().withValues(alpha: 0.4),
-                      ),
-                      child: Icon(
-                        Icons.menu_rounded,
-                        color: themeProvider.getTextColor(),
-                        size: 22,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-
-              // Sidebar Overlay (Drawer)
-              AnimatedPositioned(
-                duration: const Duration(milliseconds: 300),
-                curve: Curves.easeInOut,
-                left: _isSidebarExpanded ? 0 : -280,
-                top: 0,
-                bottom: 0,
-                child: Container(
-                  width: 280,
-                  decoration: BoxDecoration(
-                    color: themeProvider.getSidebarBackground(),
-                    border: Border(
-                      right: BorderSide(
-                        color: themeProvider.getBorderColor(),
-                        width: 1,
-                      ),
-                    ),
-                    boxShadow: [
-                      if (_isSidebarExpanded)
-                        BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.15),
-                          blurRadius: 24,
-                          offset: const Offset(4, 0),
-                        ),
-                    ],
-                  ),
-                  child: SafeArea(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.all(20),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Row(
-                                children: [
-                                  Container(
-                                    width: 40,
-                                    height: 40,
-                                    decoration: BoxDecoration(
-                                      gradient: LinearGradient(
-                                        colors: [themeProvider.getAccentColor(), themeProvider.getSecondaryAccentColor()],
-                                        begin: Alignment.topLeft,
-                                        end: Alignment.bottomRight,
-                                      ),
-                                      borderRadius: BorderRadius.circular(12),
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: themeProvider.getAccentColor().withValues(alpha: 0.3),
-                                          blurRadius: 8,
-                                          offset: const Offset(0, 4),
-                                        ),
-                                      ],
-                                    ),
-                                    child: const Icon(Icons.currency_exchange_rounded, color: Colors.white, size: 20),
-                                  ),
-                                  const SizedBox(width: 12),
-                                  Text(
-                                    'CurrenSee',
-                                    style: TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold,
-                                      color: themeProvider.getTextColor(),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              IconButton(
-                                icon: Icon(Icons.close_rounded, color: themeProvider.getTextColor()),
-                                onPressed: () {
-                                  setState(() {
-                                    _isSidebarExpanded = false;
-                                  });
-                                },
-                              ),
-                            ],
-                          ),
-                        ),
-                        Divider(color: themeProvider.getBorderColor()),
-                        const SizedBox(height: 20),
-                        Expanded(
-                          child: SingleChildScrollView(
-                            padding: const EdgeInsets.symmetric(horizontal: 16),
-                            child: Column(
+                      child: SafeArea(
+                        top: false,
+                        child: Padding(
+                          padding: const EdgeInsets.fromLTRB(8, 6, 8, 4),
+                          child: ResponsiveCenter(
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
                               children: [
-                                _buildDrawerItem(themeProvider, 0, Icons.dashboard_rounded, 'Home'),
-                                _buildDrawerItem(themeProvider, 1, Icons.candlestick_chart_rounded, 'Exchange Rates'),
-                                _buildDrawerItem(themeProvider, 2, Icons.receipt_long_rounded, 'History'),
-                                _buildDrawerItem(themeProvider, 3, Icons.account_circle_rounded, 'Profile'),
-                                const SizedBox(height: 20),
-                                Divider(color: themeProvider.getBorderColor()),
-                                const SizedBox(height: 20),
-                                _buildDrawerItem(themeProvider, 4, Icons.tune_rounded, 'Settings'),
+                                _navItem(themeProvider, 0, Icons.home_rounded, 'Home'),
+                                _navItem(themeProvider, 1, Icons.currency_exchange_rounded, 'Rates'),
+                                _navItem(themeProvider, 2, Icons.receipt_long_rounded, 'History'),
+                                _navItem(themeProvider, 3, Icons.person_rounded, 'Profile'),
+                                _navItem(themeProvider, 4, Icons.tune_rounded, 'Settings'),
                               ],
                             ),
                           ),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.all(20),
-                          child: Text(
-                            'v1.0.0',
-                            style: TextStyle(
-                              color: themeProvider.getSecondaryTextColor(),
-                              fontSize: 12,
-                            ),
-                          ),
-                        ),
-                      ],
+                      ),
                     ),
                   ),
                 ),
@@ -387,56 +261,38 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildDrawerItem(ThemeProvider themeProvider, int index, IconData icon, String label) {
+  Widget _navItem(ThemeProvider themeProvider, int index, IconData icon, String label) {
     final isSelected = _selectedIndex == index;
-    return Container(
-      margin: const EdgeInsets.only(bottom: 8),
-      child: Stack(
-        children: [
-          Material(
-            color: isSelected ? themeProvider.getSidebarActiveItemBg() : Colors.transparent,
-            borderRadius: BorderRadius.circular(12),
-            clipBehavior: Clip.antiAlias,
-            child: ListTile(
-              contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 2),
-              leading: Icon(
-                icon,
-                color: isSelected ? themeProvider.getAccentColor() : themeProvider.getSecondaryTextColor(),
-              ),
-              title: Text(
-                label,
-                style: TextStyle(
-                  color: isSelected ? themeProvider.getTextColor() : themeProvider.getSecondaryTextColor(),
-                  fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-                  fontSize: 14,
-                ),
-              ),
-              onTap: () {
-                setState(() {
-                  _selectedIndex = index;
-                  _isSidebarExpanded = false; // Close drawer on selection
-                });
-              },
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+    return GestureDetector(
+      onTap: () => setState(() => _selectedIndex = index),
+      behavior: HitTestBehavior.opaque,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        curve: Curves.easeOutCubic,
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+        decoration: BoxDecoration(
+          color: isSelected ? themeProvider.getAccentColor().withValues(alpha: 0.12) : Colors.transparent,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              icon,
+              size: 22,
+              color: isSelected ? themeProvider.getAccentColor() : themeProvider.getBottomNavUnselectedColor(),
             ),
-          ),
-          if (isSelected)
-            Positioned(
-              left: 0,
-              top: 12,
-              bottom: 12,
-              child: Container(
-                width: 3.5,
-                decoration: BoxDecoration(
-                  color: themeProvider.getSidebarActiveIndicator(),
-                  borderRadius: const BorderRadius.only(
-                    topRight: Radius.circular(4),
-                    bottomRight: Radius.circular(4),
-                  ),
-                ),
+            const SizedBox(height: 2),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 10,
+                fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+                color: isSelected ? themeProvider.getAccentColor() : themeProvider.getBottomNavUnselectedColor(),
               ),
             ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -457,8 +313,9 @@ class _HomeScreenState extends State<HomeScreen> {
           child: SafeArea(
             bottom: false,
             child: SingleChildScrollView(
-              padding: const EdgeInsets.fromLTRB(20.0, 110.0, 20.0, 24.0),
-              child: Column(
+              padding: const EdgeInsets.fromLTRB(20.0, 24.0, 20.0, 24.0),
+              child: ResponsiveCenter(
+                child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // Header
@@ -744,9 +601,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                     ),
                                     alignment: Alignment.center,
                                     child: _isConverting
-                                        ? CurrencyLoader(
+                                        ? const CurrencyLoader(
                                             size: 20,
-                                            color: themeProvider.isDarkMode ? Colors.black : Colors.white,
+                                            color: Colors.white,
                                           )
                                         : const Text(
                                             'Convert',
@@ -858,9 +715,36 @@ class _HomeScreenState extends State<HomeScreen> {
                             final recentConversions = historyProvider.conversions.take(5).toList();
                             
                             if (recentConversions.isEmpty) {
-                              return Text(
-                                'No recent conversions',
-                                style: TextStyle(color: themeProvider.getSecondaryTextColor()),
+                              return Container(
+                                width: double.infinity,
+                                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 28),
+                                decoration: themeProvider.getItemDecoration(borderRadius: 16),
+                                child: Column(
+                                  children: [
+                                    Icon(
+                                      Icons.swap_horiz_rounded,
+                                      size: 32,
+                                      color: themeProvider.getAccentColor().withValues(alpha: 0.5),
+                                    ),
+                                    const SizedBox(height: 12),
+                                    Text(
+                                      'No conversions yet',
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w600,
+                                        color: themeProvider.getTextColor(),
+                                      ),
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      'Your recent conversions will appear here',
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        color: themeProvider.getSecondaryTextColor(),
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               );
                             }
                             
@@ -958,8 +842,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 120),
+                  const SizedBox(height: 80),
                 ],
+                ),
               ),
             ),
           ),

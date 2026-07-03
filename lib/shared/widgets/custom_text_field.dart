@@ -9,6 +9,7 @@ class CustomTextField extends StatefulWidget {
   final bool isPassword;
   final TextInputType keyboardType;
   final Widget? prefixIcon;
+  final Widget? suffixIcon;
   final String? Function(String?)? validator;
   final int maxLines;
   final bool readOnly;
@@ -22,6 +23,7 @@ class CustomTextField extends StatefulWidget {
     this.isPassword = false,
     this.keyboardType = TextInputType.text,
     this.prefixIcon,
+    this.suffixIcon,
     this.validator,
     this.maxLines = 1,
     this.readOnly = false,
@@ -87,7 +89,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
               style: TextStyle(
                 color: themeProvider.getTextColor(),
                 fontSize: 15,
-                fontWeight: FontWeight.w400,
+                fontWeight: FontWeight.w500,
               ),
               decoration: InputDecoration(
                 hintText: widget.hintText,
@@ -103,11 +105,11 @@ class _CustomTextFieldState extends State<CustomTextField> {
                 contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide(color: borderColor, width: 1.0),
+                  borderSide: BorderSide.none,
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide(color: borderColor, width: 1.0),
+                  borderSide: BorderSide(color: borderColor.withValues(alpha: 0.5), width: 1.0),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
@@ -135,7 +137,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
                         ),
                         onPressed: () => setState(() => _obscureText = !_obscureText),
                       )
-                    : null,
+                    : widget.suffixIcon,
               ),
             ),
           ),

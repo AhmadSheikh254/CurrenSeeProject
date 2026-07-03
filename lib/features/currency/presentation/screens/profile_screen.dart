@@ -9,6 +9,7 @@ import 'package:currensee/features/currency/presentation/screens/feedback_screen
 import 'package:currensee/features/currency/presentation/screens/personal_info_screen.dart';
 import 'package:currensee/widgets/animations.dart';
 import 'package:currensee/core/utils/avatar_helper.dart';
+import 'package:currensee/shared/widgets/responsive.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -35,8 +36,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
           child: SafeArea(
             bottom: false,
             child: SingleChildScrollView(
-              padding: const EdgeInsets.fromLTRB(24, 110, 24, 120),
-              child: Column(
+              padding: const EdgeInsets.fromLTRB(24, 24, 24, 100),
+              child: ResponsiveCenter(
+                child: Column(
                 children: [
                   // Header
                   FadeInSlide(
@@ -123,12 +125,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   children: [
                                     Row(
                                       children: [
-                                        Text(
-                                          user?.name ?? 'Guest User',
-                                          style: TextStyle(
-                                            fontSize: 20,
-                                            fontWeight: FontWeight.bold,
-                                            color: themeProvider.getTextColor(),
+                                        Flexible(
+                                          child: Text(
+                                            user?.name ?? 'Guest User',
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: TextStyle(
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.bold,
+                                              color: themeProvider.getTextColor(),
+                                            ),
                                           ),
                                         ),
                                         const SizedBox(width: 8),
@@ -418,6 +424,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                   ),
                 ],
+                ),
               ),
             ),
           ),

@@ -4,6 +4,7 @@ import 'package:currensee/providers/theme_provider.dart';
 import 'package:currensee/providers/feedback_provider.dart';
 import 'package:currensee/models/feedback_entry.dart';
 import 'package:currensee/widgets/animations.dart';
+import 'package:currensee/shared/widgets/responsive.dart';
 
 class FeedbackScreen extends StatefulWidget {
   const FeedbackScreen({super.key});
@@ -85,7 +86,8 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                   Expanded(
                     child: SingleChildScrollView(
                       padding: const EdgeInsets.symmetric(horizontal: 20),
-                      child: StaggeredList(
+                      child: ResponsiveCenter(
+                        child: StaggeredList(
                         children: [
                           TextField(
                             controller: _titleController,
@@ -170,6 +172,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                             ),
                           ),
                         ],
+                        ),
                       ),
                     ),
                   ),

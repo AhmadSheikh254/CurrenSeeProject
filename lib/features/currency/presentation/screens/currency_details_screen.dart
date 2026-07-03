@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:currensee/providers/theme_provider.dart';
 import 'package:currensee/widgets/animations.dart';
+import 'package:currensee/shared/widgets/responsive.dart';
 
 class CurrencyDetailsScreen extends StatelessWidget {
   final String currencyCode;
@@ -60,7 +61,8 @@ class CurrencyDetailsScreen extends StatelessWidget {
                   Expanded(
                     child: SingleChildScrollView(
                       padding: const EdgeInsets.all(24.0),
-                      child: Column(
+                      child: ResponsiveCenter(
+                        child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           // Header
@@ -204,6 +206,7 @@ class CurrencyDetailsScreen extends StatelessWidget {
                             ),
                           ),
                         ],
+                        ),
                       ),
                     ),
                   ),

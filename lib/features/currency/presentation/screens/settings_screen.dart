@@ -4,6 +4,8 @@ import 'package:currensee/providers/theme_provider.dart';
 import 'package:currensee/providers/preferences_provider.dart';
 import 'package:currensee/features/auth/presentation/providers/auth_provider.dart';
 import 'package:currensee/widgets/animations.dart';
+import 'package:currensee/core/utils/avatar_helper.dart';
+import 'package:currensee/shared/widgets/responsive.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -32,8 +34,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
             child: SafeArea(
             bottom: false,
             child: SingleChildScrollView(
-              padding: const EdgeInsets.fromLTRB(20, 110, 20, 120),
-              child: Column(
+              padding: const EdgeInsets.fromLTRB(20, 24, 20, 100),
+              child: ResponsiveCenter(
+                child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   ScaleIn(
@@ -237,6 +240,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ),
                   const SizedBox(height: 24),
                 ],
+                ),
               ),
             ),
           ),
@@ -283,7 +287,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 shape: BoxShape.circle,
                 color: themeProvider.getCardBackgroundColor(),
                 image: DecorationImage(
-                  image: NetworkImage(user?.photoUrl ?? 'https://i.pravatar.cc/150?img=11'),
+                  image: getUserAvatarProvider(user?.photoUrl),
                   fit: BoxFit.cover,
                 ),
               ),
@@ -763,9 +767,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
             ),
             TextButton(
-              onPressed: () {
+              onPressed: () async {
+                final authProvider = Provider.of<AuthProvider>(context, listen: false);
                 Navigator.of(context).pop();
-                Navigator.of(context).pushReplacementNamed('/login');
+                await authProvider.logout();
+                if (context.mounted) {
+                  Navigator.of(context).pushNamedAndRemoveUntil('/login', (route) => false);
+                }
               },
               child: const Text('Logout', style: TextStyle(color: Colors.red)),
             ),

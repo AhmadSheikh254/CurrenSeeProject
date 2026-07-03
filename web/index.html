@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <!--
     If you are serving your web app in a path other than the root, change the
@@ -18,21 +18,122 @@
 
   <meta charset="UTF-8">
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
-  <meta name="description" content="A new Flutter project.">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="description" content="CurrenSee — smart currency conversion with live exchange rates, alerts and market news.">
+  <meta name="theme-color" content="#05060A">
 
   <!-- iOS meta tags & icons -->
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
-  <meta name="apple-mobile-web-app-title" content="currensee">
+  <meta name="apple-mobile-web-app-title" content="CurrenSee">
   <link rel="apple-touch-icon" href="icons/Icon-192.png">
 
   <!-- Favicon -->
   <link rel="icon" type="image/png" href="favicon.png"/>
 
-  <title>currensee</title>
+  <title>CurrenSee — Smart Currency Conversion</title>
   <link rel="manifest" href="manifest.json">
+
+  <style>
+    /* Hide Flutter's debug-mode loading progress bar */
+    .flutter-loader { display: none !important; }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      background: #05060A;
+      overflow: hidden;
+    }
+
+    /* ── Branded boot splash (removed on first Flutter frame) ─────────── */
+    #boot-splash {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(120% 120% at 20% 0%, #0A0C14 0%, #05060A 55%);
+      z-index: 9999;
+      transition: opacity 400ms ease-out;
+    }
+    #boot-splash.hidden { opacity: 0; pointer-events: none; }
+
+    .boot-logo {
+      width: 96px;
+      height: 96px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%);
+      box-shadow: 0 0 60px rgba(99, 102, 241, 0.35), 0 0 120px rgba(139, 92, 246, 0.2);
+      animation: boot-pulse 2s ease-in-out infinite;
+    }
+    .boot-logo svg { width: 46px; height: 46px; }
+
+    .boot-title {
+      margin-top: 28px;
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      font-size: 30px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      color: #EDF2F7;
+    }
+    .boot-subtitle {
+      margin-top: 8px;
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.4px;
+      color: #7F8EA3;
+    }
+
+    .boot-spinner {
+      margin-top: 40px;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: 2.5px solid rgba(99, 102, 241, 0.15);
+      border-top-color: #6366F1;
+      animation: boot-spin 0.9s linear infinite;
+    }
+
+    @keyframes boot-spin { to { transform: rotate(360deg); } }
+    @keyframes boot-pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .boot-logo { animation: none; }
+    }
+  </style>
 </head>
 <body>
+  <div id="boot-splash">
+    <div class="boot-logo">
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 2a10 10 0 1 0 10 10h-2a8 8 0 1 1-8-8V2z" fill="#fff" opacity="0.9"/>
+        <path d="M12 6a6 6 0 1 0 6 6h-2a4 4 0 1 1-4-4V6z" fill="#fff" opacity="0.6"/>
+        <circle cx="12" cy="12" r="2" fill="#fff"/>
+      </svg>
+    </div>
+    <div class="boot-title">CurrenSee</div>
+    <div class="boot-subtitle">Smart Currency Conversion</div>
+    <div class="boot-spinner"></div>
+  </div>
+
+  <script>
+    window.addEventListener('flutter-first-frame', function () {
+      var splash = document.getElementById('boot-splash');
+      if (splash) {
+        splash.classList.add('hidden');
+        setTimeout(function () { splash.remove(); document.body.style.overflow = ''; }, 450);
+      }
+    });
+  </script>
   <script src="flutter_bootstrap.js" async></script>
 </body>
 </html>

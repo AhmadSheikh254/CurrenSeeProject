@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:currensee/providers/theme_provider.dart';
 import 'package:currensee/widgets/animations.dart';
+import 'package:currensee/shared/widgets/responsive.dart';
 
 class SupportScreen extends StatelessWidget {
   const SupportScreen({super.key});
@@ -47,7 +48,8 @@ class SupportScreen extends StatelessWidget {
                   Expanded(
                     child: SingleChildScrollView(
                       padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                      child: Column(
+                      child: ResponsiveCenter(
+                        child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           // Contact Support Section
@@ -124,6 +126,7 @@ class SupportScreen extends StatelessWidget {
                           ),
                           const SizedBox(height: 32),
                         ],
+                        ),
                       ),
                     ),
                   ),

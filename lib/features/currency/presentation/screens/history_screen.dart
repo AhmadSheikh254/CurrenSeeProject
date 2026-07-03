@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:currensee/providers/theme_provider.dart';
 import 'package:currensee/providers/history_provider.dart';
 import 'package:currensee/widgets/animations.dart';
+import 'package:currensee/shared/widgets/responsive.dart';
 
 class HistoryScreen extends StatelessWidget {
   const HistoryScreen({super.key});
@@ -28,8 +29,9 @@ class HistoryScreen extends StatelessWidget {
             child: Column(
               children: [
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 110, 20, 20),
-                  child: Row(
+                  padding: const EdgeInsets.fromLTRB(20, 24, 20, 20),
+                  child: ResponsiveCenter(
+                    child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
@@ -82,12 +84,14 @@ class HistoryScreen extends StatelessWidget {
                         ),
 
                     ],
+                    ),
                   ),
                 ),
                 if (conversions.isNotEmpty)
                   Padding(
                     padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
-                    child: Container(
+                    child: ResponsiveCenter(
+                      child: Container(
                       padding: const EdgeInsets.all(20),
                       decoration: themeProvider.getGlassDecoration(borderRadius: 20),
                       child: Row(
@@ -125,6 +129,7 @@ class HistoryScreen extends StatelessWidget {
                             ],
                           ),
                         ],
+                      ),
                       ),
                     ),
                   ),
@@ -173,10 +178,11 @@ class HistoryScreen extends StatelessWidget {
                             ),
                           ),
                         )
-                      : Container(
+                      : ResponsiveCenter(
+                          child: Container(
                           margin: const EdgeInsets.fromLTRB(20, 0, 20, 0),
                           child: ListView.builder(
-                            padding: const EdgeInsets.only(bottom: 20),
+                            padding: const EdgeInsets.only(bottom: 96),
                             itemCount: conversions.length,
                             itemBuilder: (context, index) {
                               final conversion = conversions[index];
@@ -195,6 +201,7 @@ class HistoryScreen extends StatelessWidget {
                                 ],
                               );
                             },
+                          ),
                           ),
                         ),
                 ),

@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:currensee/providers/theme_provider.dart';
 import 'package:currensee/models/news_article.dart';
 import 'package:currensee/widgets/animations.dart';
+import 'package:currensee/shared/widgets/responsive.dart';
 
 class NewsDetailScreen extends StatelessWidget {
   final NewsArticle article;
@@ -59,7 +60,8 @@ class NewsDetailScreen extends StatelessWidget {
                   ),
                   Expanded(
                     child: SingleChildScrollView(
-                      child: Column(
+                      child: ResponsiveCenter(
+                        child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Hero(
@@ -175,6 +177,7 @@ class NewsDetailScreen extends StatelessWidget {
                             ),
                           ),
                         ],
+                        ),
                       ),
                     ),
                   ),

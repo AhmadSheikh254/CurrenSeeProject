@@ -4,6 +4,8 @@ import 'package:currensee/providers/theme_provider.dart';
 import 'package:currensee/services/currency_service.dart';
 import 'package:currensee/widgets/animations.dart';
 import 'package:currensee/features/currency/presentation/screens/currency_details_screen.dart';
+import 'package:currensee/shared/widgets/responsive.dart';
+import 'package:currensee/shared/widgets/app_states.dart';
 
 class CurrencyRateScreen extends StatefulWidget {
   const CurrencyRateScreen({super.key});
@@ -88,8 +90,9 @@ class _CurrencyRateScreenState extends State<CurrencyRateScreen> {
             child: Column(
               children: [
                   Padding(
-                    padding: const EdgeInsets.fromLTRB(20, 110, 20, 20),
-                    child: Column(
+                    padding: const EdgeInsets.fromLTRB(20, 24, 20, 20),
+                    child: ResponsiveCenter(
+                      child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Row(
@@ -203,60 +206,59 @@ class _CurrencyRateScreenState extends State<CurrencyRateScreen> {
                         ),
                         _buildQuickActions(themeProvider),
                       ],
+                      ),
                     ),
                   ),
                   Expanded(
                     child: _isLoading
-                        ? Center(child: CurrencyLoader(color: themeProvider.getAccentColor()))
-                      : _errorMessage != null
-                          ? Center(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text(
-                                      'Failed to load rates',
-                                      style: TextStyle(color: themeProvider.getErrorColor()),
-                                    ),
-                                    const SizedBox(height: 8),
-                                    ElevatedButton(
-                                      onPressed: _fetchRates,
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: themeProvider.getAccentColor(),
-                                      ),
-                                      child: const Text('Retry'),
-                                    ),
-                                  ],
-                                ),
-                              )
-                          : _filteredRates.isEmpty
-                      ? Center(
-                            child: Text(
-                              'No currencies found',
-                              style: TextStyle(
-                                fontSize: 16,
-                                color: themeProvider.getSecondaryTextColor(),
-                              ),
+                        ? SingleChildScrollView(
+                            physics: const NeverScrollableScrollPhysics(),
+                            padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+                            child: const ResponsiveCenter(
+                              child: SkeletonList(itemCount: 8, itemHeight: 80),
                             ),
                           )
-                      : Container(
-                          margin: const EdgeInsets.fromLTRB(20, 0, 20, 20),
-                          decoration: themeProvider.getGlassDecoration(borderRadius: 24),
-                          clipBehavior: Clip.hardEdge,
-                          child: ListView.builder(
-                            padding: EdgeInsets.zero,
-                            physics: const BouncingScrollPhysics(),
-                            itemCount: _filteredRates.length,
-                            itemBuilder: (context, index) {
-                              final rate = _filteredRates[index];
-                              final isLast = index == _filteredRates.length - 1;
-                              
-                              return FadeInSlide(
-                                delay: index < 15 ? index * 0.05 : 0.0,
-                                child: _buildRateItem(themeProvider, rate, isLast),
-                              );
-                            },
-                          ),
-                        ),
+                        : _errorMessage != null
+                            ? ErrorState(
+                                title: 'Unable to load rates',
+                                message:
+                                    'Check your internet connection and try again.',
+                                onRetry: () {
+                                  setState(() {
+                                    _isLoading = true;
+                                    _errorMessage = null;
+                                  });
+                                  _fetchRates();
+                                },
+                              )
+                            : _filteredRates.isEmpty
+                                ? EmptyState(
+                                    icon: Icons.search_off_rounded,
+                                    title: 'No currencies found',
+                                    message:
+                                        'Try a different search term or clear the search to see all currencies.',
+                                  )
+                                : ResponsiveCenter(
+                                    child: Container(
+                                      margin: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+                                      decoration: themeProvider.getGlassDecoration(borderRadius: 24),
+                                      clipBehavior: Clip.hardEdge,
+                                      child: ListView.builder(
+                                        padding: const EdgeInsets.only(bottom: 76),
+                                        physics: const BouncingScrollPhysics(),
+                                        itemCount: _filteredRates.length,
+                                        itemBuilder: (context, index) {
+                                          final rate = _filteredRates[index];
+                                          final isLast = index == _filteredRates.length - 1;
+
+                                          return FadeInSlide(
+                                            delay: index < 15 ? index * 0.05 : 0.0,
+                                            child: _buildRateItem(themeProvider, rate, isLast),
+                                          );
+                                        },
+                                      ),
+                                    ),
+                                  ),
                   ),
                 ],
               ),
