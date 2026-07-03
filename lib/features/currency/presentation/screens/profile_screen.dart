@@ -8,6 +8,7 @@ import 'package:currensee/features/currency/presentation/screens/alerts_screen.d
 import 'package:currensee/features/currency/presentation/screens/feedback_screen.dart';
 import 'package:currensee/features/currency/presentation/screens/personal_info_screen.dart';
 import 'package:currensee/widgets/animations.dart';
+import 'package:currensee/core/utils/avatar_helper.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -62,8 +63,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           child: Container(
                             padding: const EdgeInsets.all(12),
                             decoration: themeProvider.getGlassDecoration(borderRadius: 16).copyWith(
-                              color: themeProvider.getCardBackgroundColor().withOpacity(0.35),
-                              border: Border.all(color: themeProvider.getBorderColor().withOpacity(0.15)),
+                              color: themeProvider.getCardBackgroundColor().withValues(alpha: 0.35),
+                              border: Border.all(color: themeProvider.getBorderColor().withValues(alpha: 0.15)),
                             ),
                             child: Icon(
                               Icons.notifications_active_rounded,
@@ -103,13 +104,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     ),
                                     boxShadow: [
                                       BoxShadow(
-                                        color: themeProvider.getAccentColor().withOpacity(0.3),
+                                        color: themeProvider.getAccentColor().withValues(alpha: 0.3),
                                         blurRadius: 10,
                                         offset: const Offset(0, 4),
                                       ),
                                     ],
                                       image: DecorationImage(
-                                        image: NetworkImage(user?.photoUrl ?? 'https://api.dicebear.com/7.x/lorelei/png?seed=CurrenSee'),
+                                        image: getUserAvatarProvider(user?.photoUrl),
                                         fit: BoxFit.cover,
                                       ),
                                   ),
@@ -146,7 +147,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                               borderRadius: BorderRadius.circular(20),
                                               boxShadow: [
                                                 BoxShadow(
-                                                  color: themeProvider.getAccentColor().withOpacity(0.3),
+                                                  color: themeProvider.getAccentColor().withValues(alpha: 0.3),
                                                   blurRadius: 8,
                                                   offset: const Offset(0, 2),
                                                 ),
@@ -309,7 +310,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       ),
                                       Padding(
                                         padding: const EdgeInsets.symmetric(horizontal: 20),
-                                        child: Divider(height: 1, color: themeProvider.getBorderColor().withOpacity(0.3)),
+                                        child: Divider(height: 1, color: themeProvider.getBorderColor().withValues(alpha: 0.3)),
                                       ),
                                       _buildMenuOption(
                                         themeProvider,
@@ -320,7 +321,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       ),
                                       Padding(
                                         padding: const EdgeInsets.symmetric(horizontal: 20),
-                                        child: Divider(height: 1, color: themeProvider.getBorderColor().withOpacity(0.3)),
+                                        child: Divider(height: 1, color: themeProvider.getBorderColor().withValues(alpha: 0.3)),
                                       ),
                                     ],
                                   );
@@ -376,7 +377,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               ),
                               Padding(
                                 padding: const EdgeInsets.symmetric(horizontal: 20),
-                                child: Divider(height: 1, color: themeProvider.getBorderColor().withOpacity(0.3)),
+                                child: Divider(height: 1, color: themeProvider.getBorderColor().withValues(alpha: 0.3)),
                               ),
                               _buildMenuOption(
                                 themeProvider,
@@ -436,7 +437,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             Container(
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
-                color: themeProvider.getAccentColor().withOpacity(0.1),
+                color: themeProvider.getAccentColor().withValues(alpha: 0.1),
                 shape: BoxShape.circle,
               ),
               child: Icon(icon, color: themeProvider.getAccentColor(), size: 22),
@@ -485,8 +486,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
                   color: isDestructive
-                      ? Colors.red.withOpacity(0.1)
-                      : themeProvider.getAccentColor().withOpacity(0.1),
+                      ? Colors.red.withValues(alpha: 0.1)
+                      : themeProvider.getAccentColor().withValues(alpha: 0.1),
                   shape: BoxShape.circle,
                 ),
                 child: Icon(

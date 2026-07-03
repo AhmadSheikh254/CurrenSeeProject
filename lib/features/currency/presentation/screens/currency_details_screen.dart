@@ -74,20 +74,20 @@ class CurrencyDetailsScreen extends StatelessWidget {
                                     height: 100,
                                     decoration: BoxDecoration(
                                       gradient: LinearGradient(
-                                        colors: [themeProvider.getAccentColor().withOpacity(0.2), themeProvider.getSecondaryAccentColor().withOpacity(0.2)],
+                                        colors: [themeProvider.getAccentColor().withValues(alpha: 0.2), themeProvider.getSecondaryAccentColor().withValues(alpha: 0.2)],
                                         begin: Alignment.topLeft,
                                         end: Alignment.bottomRight,
                                       ),
                                       shape: BoxShape.circle,
                                       boxShadow: [
                                         BoxShadow(
-                                          color: themeProvider.getAccentColor().withOpacity(0.2),
+                                          color: themeProvider.getAccentColor().withValues(alpha: 0.2),
                                           blurRadius: 20,
                                           spreadRadius: 5,
                                         ),
                                       ],
                                       border: Border.all(
-                                        color: themeProvider.getAccentColor().withOpacity(0.5),
+                                        color: themeProvider.getAccentColor().withValues(alpha: 0.5),
                                         width: 2,
                                       ),
                                     ),
@@ -192,13 +192,13 @@ class CurrencyDetailsScreen extends StatelessWidget {
                               decoration: themeProvider.getGlassDecoration(borderRadius: 24),
                               child: Column(
                                 children: [
-                                  _buildInfoRow(themeProvider, 'Open', '${(currentRate * 0.99).toStringAsFixed(4)}', Icons.lock_open_rounded),
+                                  _buildInfoRow(themeProvider, 'Open', (currentRate * 0.99).toStringAsFixed(4), Icons.lock_open_rounded),
                                   const Divider(height: 24),
-                                  _buildInfoRow(themeProvider, 'High', '${(currentRate * 1.02).toStringAsFixed(4)}', Icons.arrow_upward_rounded),
+                                  _buildInfoRow(themeProvider, 'High', (currentRate * 1.02).toStringAsFixed(4), Icons.arrow_upward_rounded),
                                   const Divider(height: 24),
-                                  _buildInfoRow(themeProvider, 'Low', '${(currentRate * 0.98).toStringAsFixed(4)}', Icons.arrow_downward_rounded),
+                                  _buildInfoRow(themeProvider, 'Low', (currentRate * 0.98).toStringAsFixed(4), Icons.arrow_downward_rounded),
                                   const Divider(height: 24),
-                                  _buildInfoRow(themeProvider, 'Close', '${currentRate.toStringAsFixed(4)}', Icons.lock_outline_rounded),
+                                  _buildInfoRow(themeProvider, 'Close', currentRate.toStringAsFixed(4), Icons.lock_outline_rounded),
                                 ],
                               ),
                             ),
@@ -313,7 +313,7 @@ class CurrencyDetailsScreen extends StatelessWidget {
           dotData: FlDotData(show: true),
           belowBarData: BarAreaData(
             show: true,
-            color: themeProvider.getAccentColor().withOpacity(0.1),
+            color: themeProvider.getAccentColor().withValues(alpha: 0.1),
           ),
         ),
       ],

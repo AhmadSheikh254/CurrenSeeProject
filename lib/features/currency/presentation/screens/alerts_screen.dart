@@ -70,13 +70,13 @@ class _AlertsScreenState extends State<AlertsScreen> {
                                   Container(
                                     padding: const EdgeInsets.all(32),
                                     decoration: BoxDecoration(
-                                      color: themeProvider.getAccentColor().withOpacity(0.1),
+                                      color: themeProvider.getAccentColor().withValues(alpha: 0.1),
                                       shape: BoxShape.circle,
                                     ),
                                     child: Icon(
                                       Icons.notifications_none_rounded,
                                       size: 80,
-                                      color: themeProvider.getAccentColor().withOpacity(0.5),
+                                      color: themeProvider.getAccentColor().withValues(alpha: 0.5),
                                     ),
                                   ),
                                   const SizedBox(height: 24),
@@ -115,7 +115,7 @@ class _AlertsScreenState extends State<AlertsScreen> {
                                         borderRadius: BorderRadius.circular(30),
                                         boxShadow: [
                                           BoxShadow(
-                                            color: themeProvider.getAccentColor().withOpacity(0.3),
+                                            color: themeProvider.getAccentColor().withValues(alpha: 0.3),
                                             blurRadius: 15,
                                             offset: const Offset(0, 8),
                                           ),
@@ -180,7 +180,7 @@ class _AlertsScreenState extends State<AlertsScreen> {
                                             Container(
                                               padding: const EdgeInsets.all(12),
                                               decoration: BoxDecoration(
-                                                color: (alert.isAbove ? Colors.green : Colors.red).withOpacity(0.1),
+                                                color: (alert.isAbove ? Colors.green : Colors.red).withValues(alpha: 0.1),
                                                 shape: BoxShape.circle,
                                               ),
                                               child: Icon(
@@ -218,7 +218,8 @@ class _AlertsScreenState extends State<AlertsScreen> {
                                               onChanged: (value) {
                                                 alertProvider.toggleAlert(alert.id);
                                               },
-                                              activeColor: themeProvider.getAccentColor(),
+                                              activeThumbColor: themeProvider.getAccentColor(),
+                                              activeTrackColor: themeProvider.getAccentColor().withValues(alpha: 0.5),
                                             ),
                                           ],
                                         ),
@@ -327,7 +328,7 @@ class _AlertsScreenState extends State<AlertsScreen> {
                           onSelected: (selected) {
                             setState(() => isAbove = true);
                           },
-                          selectedColor: Colors.green.withOpacity(0.2),
+                          selectedColor: Colors.green.withValues(alpha: 0.2),
                           labelStyle: TextStyle(color: isAbove ? Colors.green : themeProvider.getSecondaryTextColor()),
                         ),
                         const SizedBox(width: 8),
@@ -337,7 +338,7 @@ class _AlertsScreenState extends State<AlertsScreen> {
                           onSelected: (selected) {
                             setState(() => isAbove = false);
                           },
-                          selectedColor: Colors.red.withOpacity(0.2),
+                          selectedColor: Colors.red.withValues(alpha: 0.2),
                           labelStyle: TextStyle(color: !isAbove ? Colors.red : themeProvider.getSecondaryTextColor()),
                         ),
                       ],

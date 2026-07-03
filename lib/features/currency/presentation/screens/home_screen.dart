@@ -15,6 +15,7 @@ import 'package:currensee/models/conversion.dart';
 import 'package:currensee/services/currency_service.dart';
 import 'package:currensee/widgets/animations.dart';
 import 'package:currensee/features/currency/presentation/screens/alerts_screen.dart';
+import 'package:currensee/core/utils/avatar_helper.dart';
 
 class HomeScreen extends StatefulWidget {
   final bool isGuest;
@@ -111,7 +112,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ],
                 ),
                 content: Text(
-                  'The rate for ${_fromCurrency}/${_toCurrency} is now ${rate.toStringAsFixed(4)}, which is ${alert.isAbove ? 'above' : 'below'} your target of ${alert.targetRate}.',
+                  'The rate for $_fromCurrency/$_toCurrency is now ${rate.toStringAsFixed(4)}, which is ${alert.isAbove ? 'above' : 'below'} your target of ${alert.targetRate}.',
                 ),
                 actions: [
                   TextButton(
@@ -183,13 +184,13 @@ class _HomeScreenState extends State<HomeScreen> {
                   height: 300,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: themeProvider.getAccentColor().withOpacity(0.15),
+                    color: themeProvider.getAccentColor().withValues(alpha: 0.15),
                   ),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(150),
                     child: BackdropFilter(
                       filter: ColorFilter.mode(
-                        themeProvider.getAccentColor().withOpacity(0.1),
+                        themeProvider.getAccentColor().withValues(alpha: 0.1),
                         BlendMode.srcATop,
                       ),
                       child: Container(),
@@ -205,7 +206,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   height: 200,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: themeProvider.getSecondaryAccentColor().withOpacity(0.1),
+                    color: themeProvider.getSecondaryAccentColor().withValues(alpha: 0.1),
                   ),
                 ),
               ),
@@ -224,10 +225,10 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: Container(
                       height: MediaQuery.of(context).padding.top + 60,
                       decoration: BoxDecoration(
-                        color: themeProvider.getCardBackgroundColor().withOpacity(0.2),
+                        color: themeProvider.getCardBackgroundColor().withValues(alpha: 0.2),
                         border: Border(
                           bottom: BorderSide(
-                            color: themeProvider.getBorderColor().withOpacity(0.1),
+                            color: themeProvider.getBorderColor().withValues(alpha: 0.1),
                             width: 1,
                           ),
                         ),
@@ -254,7 +255,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       width: 40,
                       height: 40,
                       decoration: themeProvider.getGlassDecoration(borderRadius: 10).copyWith(
-                        color: themeProvider.getCardBackgroundColor().withOpacity(0.4),
+                        color: themeProvider.getCardBackgroundColor().withValues(alpha: 0.4),
                       ),
                       child: Icon(
                         Icons.menu_rounded,
@@ -276,19 +277,19 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: Container(
                   width: 280,
                   decoration: BoxDecoration(
-                    color: themeProvider.getCardBackgroundColor().withOpacity(0.95),
+                    color: themeProvider.getSidebarBackground(),
                     border: Border(
                       right: BorderSide(
-                        color: themeProvider.getBorderColor().withOpacity(0.2),
+                        color: themeProvider.getBorderColor(),
                         width: 1,
                       ),
                     ),
                     boxShadow: [
                       if (_isSidebarExpanded)
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.2),
-                          blurRadius: 20,
-                          offset: const Offset(5, 0),
+                          color: Colors.black.withValues(alpha: 0.15),
+                          blurRadius: 24,
+                          offset: const Offset(4, 0),
                         ),
                     ],
                   ),
@@ -315,13 +316,13 @@ class _HomeScreenState extends State<HomeScreen> {
                                       borderRadius: BorderRadius.circular(12),
                                       boxShadow: [
                                         BoxShadow(
-                                          color: themeProvider.getAccentColor().withOpacity(0.3),
+                                          color: themeProvider.getAccentColor().withValues(alpha: 0.3),
                                           blurRadius: 8,
                                           offset: const Offset(0, 4),
                                         ),
                                       ],
                                     ),
-                                    child: const Icon(Icons.currency_exchange, color: Colors.white, size: 20),
+                                    child: const Icon(Icons.currency_exchange_rounded, color: Colors.white, size: 20),
                                   ),
                                   const SizedBox(width: 12),
                                   Text(
@@ -345,7 +346,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             ],
                           ),
                         ),
-                        const Divider(height: 1),
+                        Divider(color: themeProvider.getBorderColor()),
                         const SizedBox(height: 20),
                         Expanded(
                           child: SingleChildScrollView(
@@ -357,7 +358,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 _buildDrawerItem(themeProvider, 2, Icons.receipt_long_rounded, 'History'),
                                 _buildDrawerItem(themeProvider, 3, Icons.account_circle_rounded, 'Profile'),
                                 const SizedBox(height: 20),
-                                Divider(color: themeProvider.getBorderColor().withOpacity(0.2)),
+                                Divider(color: themeProvider.getBorderColor()),
                                 const SizedBox(height: 20),
                                 _buildDrawerItem(themeProvider, 4, Icons.tune_rounded, 'Settings'),
                               ],
@@ -390,29 +391,52 @@ class _HomeScreenState extends State<HomeScreen> {
     final isSelected = _selectedIndex == index;
     return Container(
       margin: const EdgeInsets.only(bottom: 8),
-      decoration: BoxDecoration(
-        color: isSelected ? themeProvider.getAccentColor().withOpacity(0.1) : Colors.transparent,
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: ListTile(
-        leading: Icon(
-          icon,
-          color: isSelected ? themeProvider.getAccentColor() : themeProvider.getSecondaryTextColor(),
-        ),
-        title: Text(
-          label,
-          style: TextStyle(
-            color: isSelected ? themeProvider.getAccentColor() : themeProvider.getTextColor(),
-            fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+      child: Stack(
+        children: [
+          Material(
+            color: isSelected ? themeProvider.getSidebarActiveItemBg() : Colors.transparent,
+            borderRadius: BorderRadius.circular(12),
+            clipBehavior: Clip.antiAlias,
+            child: ListTile(
+              contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 2),
+              leading: Icon(
+                icon,
+                color: isSelected ? themeProvider.getAccentColor() : themeProvider.getSecondaryTextColor(),
+              ),
+              title: Text(
+                label,
+                style: TextStyle(
+                  color: isSelected ? themeProvider.getTextColor() : themeProvider.getSecondaryTextColor(),
+                  fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                  fontSize: 14,
+                ),
+              ),
+              onTap: () {
+                setState(() {
+                  _selectedIndex = index;
+                  _isSidebarExpanded = false; // Close drawer on selection
+                });
+              },
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            ),
           ),
-        ),
-        onTap: () {
-          setState(() {
-            _selectedIndex = index;
-            _isSidebarExpanded = false; // Close drawer on selection
-          });
-        },
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          if (isSelected)
+            Positioned(
+              left: 0,
+              top: 12,
+              bottom: 12,
+              child: Container(
+                width: 3.5,
+                decoration: BoxDecoration(
+                  color: themeProvider.getSidebarActiveIndicator(),
+                  borderRadius: const BorderRadius.only(
+                    topRight: Radius.circular(4),
+                    bottomRight: Radius.circular(4),
+                  ),
+                ),
+              ),
+            ),
+        ],
       ),
     );
   }
@@ -443,9 +467,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: Container(
                       padding: const EdgeInsets.all(20),
                       decoration: themeProvider.getGlassDecoration(borderRadius: 28).copyWith(
-                        color: themeProvider.getCardBackgroundColor().withOpacity(0.35),
+                        color: themeProvider.getCardBackgroundColor().withValues(alpha: 0.35),
                         border: Border.all(
-                          color: themeProvider.getBorderColor().withOpacity(0.15),
+                          color: themeProvider.getBorderColor().withValues(alpha: 0.15),
                           width: 1.5,
                         ),
                       ),
@@ -471,14 +495,14 @@ class _HomeScreenState extends State<HomeScreen> {
                                     const SizedBox(height: 6),
                                     Row(
                                       children: [
-                                        _buildPulsingDot(Colors.green),
+                                        const PulsingDot(color: Colors.green),
                                         const SizedBox(width: 8),
                                         Text(
                                           'Market Live • ${DateTime.now().hour}:${DateTime.now().minute.toString().padLeft(2, '0')}',
                                           style: TextStyle(
                                             fontSize: 12,
                                             fontWeight: FontWeight.w600,
-                                            color: Colors.green.withOpacity(0.9),
+                                            color: Colors.green.withValues(alpha: 0.9),
                                             letterSpacing: 0.2,
                                           ),
                                         ),
@@ -503,7 +527,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     ),
                                     boxShadow: [
                                       BoxShadow(
-                                        color: themeProvider.getAccentColor().withOpacity(0.4),
+                                        color: themeProvider.getAccentColor().withValues(alpha: 0.4),
                                         blurRadius: 12,
                                         spreadRadius: 2,
                                         offset: const Offset(0, 4),
@@ -518,7 +542,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       color: themeProvider.getCardBackgroundColor(),
                                       image: (!widget.isGuest && user?.photoUrl != null)
                                           ? DecorationImage(
-                                              image: NetworkImage(user!.photoUrl!),
+                                              image: getUserAvatarProvider(user!.photoUrl),
                                               fit: BoxFit.cover,
                                             )
                                           : null,
@@ -558,16 +582,16 @@ class _HomeScreenState extends State<HomeScreen> {
                                 color: themeProvider.getTextColor(),
                               ),
                             ),
-                            Icon(Icons.auto_graph_rounded, color: themeProvider.getAccentColor().withOpacity(0.5), size: 20),
+                            Icon(Icons.auto_graph_rounded, color: themeProvider.getAccentColor().withValues(alpha: 0.5), size: 20),
                           ],
                         ),
                         const SizedBox(height: 16),
                         Container(
                           padding: const EdgeInsets.all(20),
                           decoration: themeProvider.getGlassDecoration(borderRadius: 28).copyWith(
-                            color: themeProvider.getCardBackgroundColor().withOpacity(0.3),
+                            color: themeProvider.getCardBackgroundColor().withValues(alpha: 0.3),
                             border: Border.all(
-                              color: themeProvider.getBorderColor().withOpacity(0.1),
+                              color: themeProvider.getBorderColor().withValues(alpha: 0.1),
                               width: 1,
                             ),
                           ),
@@ -576,9 +600,9 @@ class _HomeScreenState extends State<HomeScreen> {
                               // From Currency
                               Container(
                                 decoration: BoxDecoration(
-                                  color: themeProvider.getCardBackgroundColor().withOpacity(0.4),
+                                  color: themeProvider.getCardBackgroundColor().withValues(alpha: 0.4),
                                   borderRadius: BorderRadius.circular(20),
-                                  border: Border.all(color: themeProvider.getBorderColor().withOpacity(0.1)),
+                                  border: Border.all(color: themeProvider.getBorderColor().withValues(alpha: 0.1)),
                                 ),
                                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                                 child: Row(
@@ -601,7 +625,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                             fontWeight: FontWeight.w600,
                                           ),
                                           hintText: '0.00',
-                                          hintStyle: TextStyle(color: themeProvider.getSecondaryTextColor().withOpacity(0.5)),
+                                          hintStyle: TextStyle(color: themeProvider.getSecondaryTextColor().withValues(alpha: 0.5)),
                                           border: InputBorder.none,
                                           contentPadding: EdgeInsets.zero,
                                         ),
@@ -631,8 +655,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                     padding: const EdgeInsets.all(10),
                                     decoration: BoxDecoration(
                                       shape: BoxShape.circle,
-                                      color: themeProvider.getAccentColor().withOpacity(0.15),
-                                      border: Border.all(color: themeProvider.getAccentColor().withOpacity(0.3), width: 1.5),
+                                      color: themeProvider.getAccentColor().withValues(alpha: 0.15),
+                                      border: Border.all(color: themeProvider.getAccentColor().withValues(alpha: 0.3), width: 1.5),
                                     ),
                                     child: Icon(
                                       Icons.swap_vert_rounded,
@@ -646,9 +670,9 @@ class _HomeScreenState extends State<HomeScreen> {
                               // To Currency
                               Container(
                                 decoration: BoxDecoration(
-                                  color: themeProvider.getCardBackgroundColor().withOpacity(0.4),
+                                  color: themeProvider.getCardBackgroundColor().withValues(alpha: 0.4),
                                   borderRadius: BorderRadius.circular(20),
-                                  border: Border.all(color: themeProvider.getBorderColor().withOpacity(0.1)),
+                                  border: Border.all(color: themeProvider.getBorderColor().withValues(alpha: 0.1)),
                                 ),
                                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                                 child: Row(
@@ -670,7 +694,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                             fontWeight: FontWeight.w600,
                                           ),
                                           hintText: '0.00',
-                                          hintStyle: TextStyle(color: themeProvider.getSecondaryTextColor().withOpacity(0.5)),
+                                          hintStyle: TextStyle(color: themeProvider.getSecondaryTextColor().withValues(alpha: 0.5)),
                                           border: InputBorder.none,
                                           contentPadding: EdgeInsets.zero,
                                         ),
@@ -705,13 +729,13 @@ class _HomeScreenState extends State<HomeScreen> {
                                       borderRadius: BorderRadius.circular(12),
                                       boxShadow: [
                                         BoxShadow(
-                                          color: themeProvider.getAccentColor().withOpacity(0.4),
+                                          color: themeProvider.getAccentColor().withValues(alpha: 0.4),
                                           blurRadius: 15,
                                           spreadRadius: 1,
                                           offset: const Offset(0, 4),
                                         ),
                                         BoxShadow(
-                                          color: themeProvider.getSecondaryAccentColor().withOpacity(0.2),
+                                          color: themeProvider.getSecondaryAccentColor().withValues(alpha: 0.2),
                                           blurRadius: 25,
                                           spreadRadius: -2,
                                           offset: const Offset(0, 8),
@@ -720,7 +744,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     ),
                                     alignment: Alignment.center,
                                     child: _isConverting
-                                        ? CustomAnimatedLoader(
+                                        ? CurrencyLoader(
                                             size: 20,
                                             color: themeProvider.isDarkMode ? Colors.black : Colors.white,
                                           )
@@ -881,7 +905,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           borderRadius: BorderRadius.circular(20),
                           boxShadow: [
                             BoxShadow(
-                              color: themeProvider.getAccentColor().withOpacity(0.3),
+                              color: themeProvider.getAccentColor().withValues(alpha: 0.3),
                               blurRadius: 15,
                               offset: const Offset(0, 8),
                             ),
@@ -892,7 +916,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             Container(
                               padding: const EdgeInsets.all(12),
                               decoration: BoxDecoration(
-                                color: Colors.white.withOpacity(0.2),
+                                color: Colors.white.withValues(alpha: 0.2),
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               child: const Icon(Icons.auto_graph_rounded, color: Colors.white, size: 28),
@@ -924,7 +948,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             Container(
                               padding: const EdgeInsets.all(8),
                               decoration: BoxDecoration(
-                                color: Colors.white.withOpacity(0.1),
+                                color: Colors.white.withValues(alpha: 0.1),
                                 shape: BoxShape.circle,
                               ),
                               child: const Icon(Icons.arrow_forward_ios, color: Colors.white, size: 14),
@@ -953,7 +977,7 @@ class _HomeScreenState extends State<HomeScreen> {
           Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: themeProvider.getAccentColor().withOpacity(0.1),
+              color: themeProvider.getAccentColor().withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Icon(
@@ -1002,7 +1026,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 'Completed',
                 style: TextStyle(
                   fontSize: 11,
-                  color: Colors.green.withOpacity(0.8),
+                  color: Colors.green.withValues(alpha: 0.8),
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -1018,9 +1042,9 @@ class _HomeScreenState extends State<HomeScreen> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
       decoration: BoxDecoration(
-        color: themeProvider.getAccentColor().withOpacity(0.1),
+        color: themeProvider.getAccentColor().withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: themeProvider.getAccentColor().withOpacity(0.2)),
+        border: Border.all(color: themeProvider.getAccentColor().withValues(alpha: 0.2)),
       ),
       child: DropdownButtonHideUnderline(
         child: DropdownButton<String>(
@@ -1053,8 +1077,8 @@ class _HomeScreenState extends State<HomeScreen> {
       padding: const EdgeInsets.all(16),
       width: 140,
       decoration: themeProvider.getGlassDecoration(borderRadius: 24).copyWith(
-        color: themeProvider.getCardBackgroundColor().withOpacity(0.3),
-        border: Border.all(color: themeProvider.getBorderColor().withOpacity(0.1)),
+        color: themeProvider.getCardBackgroundColor().withValues(alpha: 0.3),
+        border: Border.all(color: themeProvider.getBorderColor().withValues(alpha: 0.1)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1081,7 +1105,7 @@ class _HomeScreenState extends State<HomeScreen> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
             decoration: BoxDecoration(
-              color: (isPositive ? Colors.green : Colors.red).withOpacity(0.1),
+              color: (isPositive ? Colors.green : Colors.red).withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(6),
             ),
             child: Text(
@@ -1107,8 +1131,8 @@ class _HomeScreenState extends State<HomeScreen> {
             width: 60,
             height: 60,
             decoration: themeProvider.getGlassDecoration(borderRadius: 20).copyWith(
-              color: themeProvider.getCardBackgroundColor().withOpacity(0.3),
-              border: Border.all(color: themeProvider.getBorderColor().withOpacity(0.1)),
+              color: themeProvider.getCardBackgroundColor().withValues(alpha: 0.3),
+              border: Border.all(color: themeProvider.getBorderColor().withValues(alpha: 0.1)),
             ),
             child: Icon(
               icon,
@@ -1122,35 +1146,12 @@ class _HomeScreenState extends State<HomeScreen> {
             style: TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.w700,
-              color: themeProvider.getTextColor().withOpacity(0.8),
+              color: themeProvider.getTextColor().withValues(alpha: 0.8),
             ),
           ),
         ],
       ),
     );
   }
-
-  Widget _buildPulsingDot(Color color) {
-    return TweenAnimationBuilder<double>(
-      tween: Tween(begin: 0.4, end: 1.0),
-      duration: const Duration(milliseconds: 1000),
-      builder: (context, value, child) {
-        return Container(
-          width: 8,
-          height: 8,
-          decoration: BoxDecoration(
-            color: color.withOpacity(value),
-            shape: BoxShape.circle,
-            boxShadow: [
-              BoxShadow(
-                color: color.withOpacity(value * 0.5),
-                blurRadius: 4,
-                spreadRadius: 2,
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
 }
+

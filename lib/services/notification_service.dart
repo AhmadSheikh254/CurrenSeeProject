@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 
 class NotificationService {
   // Singleton pattern
@@ -13,13 +13,13 @@ class NotificationService {
     
     // In a real app, we would initialize local notifications plugin here
     // and request permissions
-    print('Notification Service Initialized');
+    debugPrint('Notification Service Initialized');
     _initialized = true;
   }
 
   Future<void> showNotification(String title, String body) async {
     // In a real app, this would trigger a system notification
-    print('NOTIFICATION: $title - $body');
+    debugPrint('NOTIFICATION: $title - $body');
   }
 
   Future<bool> requestPermissions() async {

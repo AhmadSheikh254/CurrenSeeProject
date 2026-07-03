@@ -152,7 +152,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                                   borderRadius: BorderRadius.circular(16),
                                   boxShadow: [
                                     BoxShadow(
-                                      color: themeProvider.getAccentColor().withOpacity(0.3),
+                                      color: themeProvider.getAccentColor().withValues(alpha: 0.3),
                                       blurRadius: 12,
                                       offset: const Offset(0, 6),
                                     ),

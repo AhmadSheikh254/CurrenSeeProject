@@ -209,7 +209,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               borderRadius: BorderRadius.circular(16),
                               boxShadow: [
                                 BoxShadow(
-                                  color: Colors.red.withOpacity(0.3),
+                                  color: Colors.red.withValues(alpha: 0.3),
                                   blurRadius: 12,
                                   offset: const Offset(0, 6),
                                 ),
@@ -250,9 +250,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: themeProvider.getGlassDecoration(borderRadius: 28).copyWith(
-        color: themeProvider.getCardBackgroundColor().withOpacity(0.35),
+        color: themeProvider.getCardBackgroundColor().withValues(alpha: 0.35),
         border: Border.all(
-          color: themeProvider.getBorderColor().withOpacity(0.15),
+          color: themeProvider.getBorderColor().withValues(alpha: 0.15),
           width: 1.5,
         ),
       ),
@@ -269,7 +269,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
               boxShadow: [
                 BoxShadow(
-                  color: themeProvider.getAccentColor().withOpacity(0.3),
+                  color: themeProvider.getAccentColor().withValues(alpha: 0.3),
                   blurRadius: 12,
                   spreadRadius: 2,
                   offset: const Offset(0, 4),
@@ -325,7 +325,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     borderRadius: BorderRadius.circular(20),
                     boxShadow: [
                       BoxShadow(
-                        color: themeProvider.getAccentColor().withOpacity(0.3),
+                        color: themeProvider.getAccentColor().withValues(alpha: 0.3),
                         blurRadius: 8,
                         offset: const Offset(0, 2),
                       ),
@@ -367,7 +367,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               color: themeProvider.getCardBackgroundColor(),
               borderRadius: BorderRadius.circular(20),
               border: Border.all(
-                color: themeProvider.getBorderColor().withOpacity(0.2),
+                color: themeProvider.getBorderColor().withValues(alpha: 0.2),
               ),
             ),
             child: Row(
@@ -392,7 +392,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           const SizedBox(width: 12),
           Expanded(
             child: Divider(
-              color: themeProvider.getBorderColor().withOpacity(0.2),
+              color: themeProvider.getBorderColor().withValues(alpha: 0.2),
             ),
           ),
         ],
@@ -410,12 +410,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: themeProvider.getCardBackgroundColor().withOpacity(0.6),
+        color: themeProvider.getCardBackgroundColor().withValues(alpha: 0.6),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: themeProvider.getBorderColor().withOpacity(0.1)),
+        border: Border.all(color: themeProvider.getBorderColor().withValues(alpha: 0.1)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.02),
+            color: Colors.black.withValues(alpha: 0.02),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -445,7 +445,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
           Switch.adaptive(
             value: value,
             onChanged: onChanged,
-            activeColor: themeProvider.getAccentColor(),
+            activeThumbColor: themeProvider.getAccentColor(),
+            activeTrackColor: themeProvider.getAccentColor().withValues(alpha: 0.5),
           ),
         ],
       ),
@@ -462,12 +463,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: themeProvider.getCardBackgroundColor().withOpacity(0.6),
+        color: themeProvider.getCardBackgroundColor().withValues(alpha: 0.6),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: themeProvider.getBorderColor().withOpacity(0.1)),
+        border: Border.all(color: themeProvider.getBorderColor().withValues(alpha: 0.1)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.02),
+            color: Colors.black.withValues(alpha: 0.02),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -528,12 +529,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: themeProvider.getCardBackgroundColor().withOpacity(0.6),
+          color: themeProvider.getCardBackgroundColor().withValues(alpha: 0.6),
           borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: themeProvider.getBorderColor().withOpacity(0.1)),
+          border: Border.all(color: themeProvider.getBorderColor().withValues(alpha: 0.1)),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.02),
+              color: Colors.black.withValues(alpha: 0.02),
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),
@@ -546,8 +547,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
-                    themeProvider.getAccentColor().withOpacity(0.2),
-                    themeProvider.getSecondaryAccentColor().withOpacity(0.2),
+                    themeProvider.getAccentColor().withValues(alpha: 0.2),
+                    themeProvider.getSecondaryAccentColor().withValues(alpha: 0.2),
                   ],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,

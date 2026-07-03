@@ -1,9 +1,11 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:currensee/providers/theme_provider.dart';
 import 'package:currensee/features/auth/presentation/providers/auth_provider.dart';
 import 'package:currensee/widgets/animations.dart';
+import 'package:currensee/core/utils/avatar_helper.dart';
 
 class PersonalInfoScreen extends StatefulWidget {
   const PersonalInfoScreen({super.key});
@@ -19,7 +21,7 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
   late TextEditingController _phoneController;
   bool _isEditing = false;
   final ImagePicker _picker = ImagePicker();
-  String? _selectedImagePath;
+  String? _tempPhotoUrl;
 
   @override
   void initState() {
@@ -38,11 +40,73 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
     super.dispose();
   }
 
+  Future<void> _uploadFromDevice(StateSetter setModalState, ThemeProvider themeProvider) async {
+    try {
+      final XFile? file = await _picker.pickImage(source: ImageSource.gallery);
+      if (file == null) return;
+
+      // 1. Format Check
+      final ext = file.name.split('.').last.toLowerCase();
+      final validFormats = ['png', 'jpg', 'jpeg', 'webp'];
+      if (!validFormats.contains(ext)) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Invalid format. Supported formats: PNG, JPG, JPEG, WEBP'),
+              backgroundColor: Colors.redAccent,
+            ),
+          );
+        }
+        return;
+      }
+
+      // 2. Size Check (2MB limit)
+      final length = await file.length();
+      if (length > 2 * 1024 * 1024) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('File size must be under 2MB'),
+              backgroundColor: Colors.redAccent,
+            ),
+          );
+        }
+        return;
+      }
+
+      // 3. Convert to Base64 data URL
+      final bytes = await file.readAsBytes();
+      final base64String = base64Encode(bytes);
+      final dataUrl = 'data:image/$ext;base64,$base64String';
+
+      setState(() {
+        _tempPhotoUrl = dataUrl;
+      });
+
+      if (mounted) {
+        Navigator.pop(context);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text('Device image selected for preview!'),
+            backgroundColor: themeProvider.getAccentColor(),
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to load image: $e'),
+            backgroundColor: Colors.redAccent,
+          ),
+        );
+      }
+    }
+  }
+
   Future<void> _pickImage() async {
     final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
-    final authProvider = Provider.of<AuthProvider>(context, listen: false);
     
-    // Expanded list of aesthetic DiceBear styles
     final avatarStyles = [
       'lorelei',
       'notionists',
@@ -58,7 +122,6 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
       'icons',
     ];
 
-    // Special Character Avatars
     final specialCharacters = [
       {'name': 'Eleven', 'url': 'https://img.icons8.com/color/512/eleven.png'},
       {'name': 'Dustin', 'url': 'https://img.icons8.com/color/512/dustin-henderson.png'},
@@ -75,7 +138,6 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
       final List<String> urls = [];
       final random = DateTime.now().millisecondsSinceEpoch;
       for (var style in avatarStyles) {
-        // Generate 1 variation for each style to keep it diverse but not overwhelming
         urls.add('https://api.dicebear.com/7.x/$style/png?seed=${random}_$style');
       }
       urls.shuffle();
@@ -100,28 +162,18 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
                   decoration: BoxDecoration(
                     color: themeProvider.isDarkMode ? const Color(0xFF0F172A) : Colors.white,
                     borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.3),
-                        blurRadius: 20,
-                        offset: const Offset(0, -5),
-                      ),
-                    ],
                   ),
                   child: Column(
                     children: [
-                      // Handle
                       Container(
                         margin: const EdgeInsets.only(top: 12),
                         width: 40,
                         height: 4,
                         decoration: BoxDecoration(
-                          color: themeProvider.getSecondaryTextColor().withOpacity(0.3),
+                          color: themeProvider.getSecondaryTextColor().withValues(alpha: 0.3),
                           borderRadius: BorderRadius.circular(2),
                         ),
                       ),
-                      
-                      // Header
                       Padding(
                         padding: const EdgeInsets.fromLTRB(24, 20, 24, 10),
                         child: Row(
@@ -139,7 +191,7 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
                                   ),
                                 ),
                                 Text(
-                                  'Select a style that fits you',
+                                  'Select or upload a custom image',
                                   style: TextStyle(
                                     fontSize: 14,
                                     color: themeProvider.getSecondaryTextColor(),
@@ -156,7 +208,7 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
                               child: Container(
                                 padding: const EdgeInsets.all(10),
                                 decoration: BoxDecoration(
-                                  color: themeProvider.getAccentColor().withOpacity(0.1),
+                                  color: themeProvider.getAccentColor().withValues(alpha: 0.1),
                                   shape: BoxShape.circle,
                                 ),
                                 child: Icon(
@@ -168,16 +220,28 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
                           ],
                         ),
                       ),
-                      
                       const Divider(),
-                      
-                      // Grid
+                      // Local Upload Button
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+                        child: OutlinedButton.icon(
+                          onPressed: () => _uploadFromDevice(setModalState, themeProvider),
+                          icon: const Icon(Icons.upload_file_rounded),
+                          label: const Text('Upload from Device'),
+                          style: OutlinedButton.styleFrom(
+                            minimumSize: const Size(double.infinity, 48),
+                            side: BorderSide(color: themeProvider.getBorderColor()),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                        ),
+                      ),
                       Expanded(
                         child: ListView(
                           controller: scrollController,
                           padding: const EdgeInsets.all(24),
                           children: [
-                            // Special Characters Section
                             Text(
                               'Special Characters',
                               style: TextStyle(
@@ -199,13 +263,10 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
                               itemCount: specialCharacters.length,
                               itemBuilder: (context, index) {
                                 final char = specialCharacters[index];
-                                return _buildAvatarItem(char['url']!, char['name']!, themeProvider, authProvider);
+                                return _buildAvatarItem(char['url']!, char['name']!, themeProvider);
                               },
                             ),
-                            
                             const SizedBox(height: 32),
-                            
-                            // Aesthetic Styles Section
                             Text(
                               'Aesthetic Styles',
                               style: TextStyle(
@@ -227,14 +288,12 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
                               itemCount: currentUrls.length,
                               itemBuilder: (context, index) {
                                 final url = currentUrls[index];
-                                return _buildAvatarItem(url, 'Style ${index + 1}', themeProvider, authProvider);
+                                return _buildAvatarItem(url, 'Style ${index + 1}', themeProvider);
                               },
                             ),
                           ],
                         ),
                       ),
-                      
-                      // Cancel Button
                       Padding(
                         padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
                         child: ScaleButton(
@@ -270,17 +329,19 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
     );
   }
 
-  Widget _buildAvatarItem(String url, String name, ThemeProvider themeProvider, AuthProvider authProvider) {
+  Widget _buildAvatarItem(String url, String name, ThemeProvider themeProvider) {
     return FadeInSlide(
       duration: 0.4,
       beginOffset: const Offset(0, 0.1),
       child: ScaleButton(
         onPressed: () {
-          authProvider.updatePhotoUrl(url);
+          setState(() {
+            _tempPhotoUrl = url;
+          });
           Navigator.pop(context);
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('$name selected!'),
+              content: Text('$name selected for preview!'),
               behavior: SnackBarBehavior.floating,
               backgroundColor: themeProvider.getAccentColor(),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
@@ -291,8 +352,8 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             color: themeProvider.isDarkMode 
-                ? Colors.white.withOpacity(0.05) 
-                : Colors.grey.withOpacity(0.1),
+                ? Colors.white.withValues(alpha: 0.05) 
+                : Colors.grey.withValues(alpha: 0.1),
             border: Border.all(
               color: themeProvider.getBorderColor(),
               width: 2,
@@ -329,381 +390,373 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
     );
   }
 
-  void _saveChanges() {
+  void _saveChanges() async {
     if (_formKey.currentState!.validate()) {
       final authProvider = Provider.of<AuthProvider>(context, listen: false);
-      authProvider.updateUserInfo(
+      
+      // Save details
+      await authProvider.updateUserInfo(
         _nameController.text, 
         _emailController.text,
         phoneNumber: _phoneController.text.isNotEmpty ? _phoneController.text : null,
       );
+
+      // Save photo url if updated
+      if (_tempPhotoUrl != null) {
+        await authProvider.updatePhotoUrl(_tempPhotoUrl!);
+      }
       
       setState(() {
         _isEditing = false;
       });
       
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Personal information updated successfully')),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Personal information updated successfully')),
+        );
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<ThemeProvider>(
-      builder: (context, themeProvider, child) {
-        final colors = themeProvider.getGradientColors();
-        
-        return Scaffold(
-          body: Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: colors,
+    final themeProvider = Provider.of<ThemeProvider>(context);
+    final authProvider = Provider.of<AuthProvider>(context);
+    final user = authProvider.user;
+    final photoUrl = _tempPhotoUrl ?? user?.photoUrl;
+    final colors = themeProvider.getGradientColors();
+
+    return Scaffold(
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: colors,
+          ),
+        ),
+        child: SafeArea(
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Row(
+                  children: [
+                    IconButton(
+                      icon: Icon(Icons.arrow_back, color: themeProvider.getTextColor()),
+                      onPressed: () => Navigator.pop(context),
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      'Personal Info',
+                      style: TextStyle(
+                        fontSize: 28,
+                        fontWeight: FontWeight.bold,
+                        color: themeProvider.getTextColor(),
+                      ),
+                    ),
+                    const Spacer(),
+                    if (!_isEditing)
+                      IconButton(
+                        icon: Icon(Icons.edit, color: themeProvider.getAccentColor()),
+                        onPressed: () {
+                          setState(() {
+                            _isEditing = true;
+                          });
+                        },
+                      ),
+                  ],
+                ),
               ),
-            ),
-            child: SafeArea(
-              child: Column(
-                children: [
-                  // App Bar
-                  Padding(
-                    padding: const EdgeInsets.all(20.0),
-                    child: Row(
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        IconButton(
-                          icon: Icon(Icons.arrow_back, color: themeProvider.getTextColor()),
-                          onPressed: () => Navigator.pop(context),
-                        ),
-                        const SizedBox(width: 8),
-                        Text(
-                          'Personal Info',
-                          style: TextStyle(
-                            fontSize: 28,
-                            fontWeight: FontWeight.bold,
-                            color: themeProvider.getTextColor(),
+                        ScaleIn(
+                          delay: 0.0,
+                          child: Center(
+                            child: Stack(
+                              children: [
+                                Hero(
+                                  tag: 'profile_avatar',
+                                  child: Container(
+                                    width: 120,
+                                    height: 120,
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      gradient: LinearGradient(
+                                        colors: [themeProvider.getAccentColor(), themeProvider.getSecondaryAccentColor()],
+                                        begin: Alignment.topLeft,
+                                        end: Alignment.bottomRight,
+                                      ),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: themeProvider.getAccentColor().withValues(alpha: 0.3),
+                                          blurRadius: 15,
+                                          offset: const Offset(0, 8),
+                                        ),
+                                      ],
+                                      image: DecorationImage(
+                                        image: getUserAvatarProvider(photoUrl),
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                if (_isEditing)
+                                  Positioned(
+                                    bottom: 0,
+                                    right: 0,
+                                    child: GestureDetector(
+                                      onTap: _pickImage,
+                                      child: Container(
+                                        padding: const EdgeInsets.all(8),
+                                        decoration: BoxDecoration(
+                                          color: themeProvider.getAccentColor(),
+                                          shape: BoxShape.circle,
+                                        ),
+                                        child: const Icon(
+                                          Icons.camera_alt,
+                                          color: Colors.white,
+                                          size: 20,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                              ],
+                            ),
                           ),
                         ),
-                        const Spacer(),
-                        if (!_isEditing)
-                          IconButton(
-                            icon: Icon(Icons.edit, color: themeProvider.getAccentColor()),
-                            onPressed: () {
-                              setState(() {
-                                _isEditing = true;
-                              });
-                            },
+                        const SizedBox(height: 32),
+                        FadeInSlide(
+                          delay: 0.1,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Full Name',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: themeProvider.getTextColor(),
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              TextFormField(
+                                controller: _nameController,
+                                enabled: _isEditing,
+                                style: TextStyle(color: themeProvider.getTextColor()),
+                                decoration: InputDecoration(
+                                  filled: true,
+                                  fillColor: themeProvider.getCardBackgroundColor(),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(16),
+                                    borderSide: BorderSide(color: themeProvider.getBorderColor()),
+                                  ),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(16),
+                                    borderSide: BorderSide(color: themeProvider.getBorderColor()),
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(16),
+                                    borderSide: BorderSide(color: themeProvider.getAccentColor(), width: 1.5),
+                                  ),
+                                  disabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(16),
+                                    borderSide: BorderSide(color: themeProvider.getBorderColor()),
+                                  ),
+                                  prefixIcon: Icon(Icons.person, color: themeProvider.getAccentColor()),
+                                ),
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Please enter your name';
+                                  }
+                                  return null;
+                                },
+                              ),
+                            ],
                           ),
+                        ),
+                        const SizedBox(height: 24),
+                        FadeInSlide(
+                          delay: 0.2,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Email Address',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: themeProvider.getTextColor(),
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              TextFormField(
+                                controller: _emailController,
+                                enabled: _isEditing,
+                                style: TextStyle(color: themeProvider.getTextColor()),
+                                decoration: InputDecoration(
+                                  filled: true,
+                                  fillColor: themeProvider.getCardBackgroundColor(),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                    borderSide: BorderSide(color: themeProvider.getBorderColor()),
+                                  ),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                    borderSide: BorderSide(color: themeProvider.getBorderColor()),
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                    borderSide: BorderSide(color: themeProvider.getAccentColor(), width: 2),
+                                  ),
+                                  disabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                    borderSide: BorderSide(color: themeProvider.getBorderColor()),
+                                  ),
+                                  prefixIcon: Icon(Icons.email, color: themeProvider.getAccentColor()),
+                                ),
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Please enter your email';
+                                  }
+                                  if (!value.contains('@')) {
+                                    return 'Please enter a valid email';
+                                  }
+                                  return null;
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 24),
+                        FadeInSlide(
+                          delay: 0.3,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Phone Number',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: themeProvider.getTextColor(),
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              TextFormField(
+                                controller: _phoneController,
+                                enabled: _isEditing,
+                                style: TextStyle(color: themeProvider.getTextColor()),
+                                decoration: InputDecoration(
+                                  filled: true,
+                                  fillColor: themeProvider.getCardBackgroundColor(),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                    borderSide: BorderSide(color: themeProvider.getBorderColor()),
+                                  ),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                    borderSide: BorderSide(color: themeProvider.getBorderColor()),
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                    borderSide: BorderSide(color: themeProvider.getAccentColor(), width: 2),
+                                  ),
+                                  disabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                    borderSide: BorderSide(color: themeProvider.getBorderColor()),
+                                  ),
+                                  prefixIcon: Icon(Icons.phone, color: themeProvider.getAccentColor()),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 32),
+                        if (_isEditing)
+                          FadeInSlide(
+                            delay: 0.4,
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: ScaleButton(
+                                    onPressed: () {
+                                      setState(() {
+                                        _tempPhotoUrl = null;
+                                        _isEditing = false;
+                                      });
+                                    },
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(vertical: 16),
+                                      decoration: BoxDecoration(
+                                        color: themeProvider.getCardBackgroundColor(),
+                                        borderRadius: BorderRadius.circular(16),
+                                        border: Border.all(color: themeProvider.getBorderColor()),
+                                      ),
+                                      alignment: Alignment.center,
+                                      child: Text(
+                                        'Cancel',
+                                        style: TextStyle(
+                                          color: themeProvider.getTextColor(),
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: 16),
+                                Expanded(
+                                  child: ScaleButton(
+                                    onPressed: _saveChanges,
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(vertical: 16),
+                                      decoration: BoxDecoration(
+                                        gradient: LinearGradient(
+                                          colors: [themeProvider.getAccentColor(), themeProvider.getSecondaryAccentColor()],
+                                          begin: Alignment.topLeft,
+                                          end: Alignment.bottomRight,
+                                        ),
+                                        borderRadius: BorderRadius.circular(16),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: themeProvider.getAccentColor().withValues(alpha: 0.3),
+                                            blurRadius: 12,
+                                            offset: const Offset(0, 6),
+                                          ),
+                                        ],
+                                      ),
+                                      alignment: Alignment.center,
+                                      child: const Text(
+                                        'Save Changes',
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        const SizedBox(height: 24),
                       ],
                     ),
                   ),
-                  Expanded(
-                    child: SingleChildScrollView(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      child: Form(
-                        key: _formKey,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            // Profile Picture
-                            ScaleIn(
-                              delay: 0.0,
-                              child: Center(
-                                child: Stack(
-                                  children: [
-                                    Consumer<AuthProvider>(
-                                      builder: (context, authProvider, child) {
-                                        final photoUrl = authProvider.user?.photoUrl ?? 
-                                                        'https://api.dicebear.com/7.x/lorelei/png?seed=CurrenSee';
-                                        
-                                        return Hero(
-                                          tag: 'profile_avatar',
-                                          child: Container(
-                                            width: 120,
-                                            height: 120,
-                                            decoration: BoxDecoration(
-                                              shape: BoxShape.circle,
-                                              gradient: LinearGradient(
-                                                colors: [themeProvider.getAccentColor(), themeProvider.getSecondaryAccentColor()],
-                                                begin: Alignment.topLeft,
-                                                end: Alignment.bottomRight,
-                                              ),
-                                              boxShadow: [
-                                                BoxShadow(
-                                                  color: themeProvider.getAccentColor().withOpacity(0.3),
-                                                  blurRadius: 15,
-                                                  offset: const Offset(0, 8),
-                                                ),
-                                              ],
-                                              image: DecorationImage(
-                                                image: NetworkImage(photoUrl),
-                                                fit: BoxFit.cover,
-                                              ),
-                                            ),
-                                          ),
-                                        );
-                                      },
-                                    ),
-                                    if (_isEditing)
-                                      Positioned(
-                                        bottom: 0,
-                                        right: 0,
-                                        child: GestureDetector(
-                                          onTap: _pickImage,
-                                          child: Container(
-                                            padding: const EdgeInsets.all(8),
-                                            decoration: BoxDecoration(
-                                              color: themeProvider.getAccentColor(),
-                                              shape: BoxShape.circle,
-                                            ),
-                                            child: const Icon(
-                                              Icons.camera_alt,
-                                              color: Colors.white,
-                                              size: 20,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            const SizedBox(height: 32),
-                            
-                            // Name Field
-                            FadeInSlide(
-                              delay: 0.1,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    'Full Name',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                      color: themeProvider.getTextColor(),
-                                    ),
-                                  ),
-                                  const SizedBox(height: 8),
-                                  TextFormField(
-                                    controller: _nameController,
-                                    enabled: _isEditing,
-                                    style: TextStyle(color: themeProvider.getTextColor()),
-                                    decoration: InputDecoration(
-                                      filled: true,
-                                      fillColor: themeProvider.getCardBackgroundColor(),
-                                      border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(16),
-                                        borderSide: BorderSide(color: themeProvider.getBorderColor()),
-                                      ),
-                                      enabledBorder: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(16),
-                                        borderSide: BorderSide(color: themeProvider.getBorderColor()),
-                                      ),
-                                      focusedBorder: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(16),
-                                        borderSide: BorderSide(color: themeProvider.getAccentColor(), width: 1.5),
-                                      ),
-                                      disabledBorder: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(16),
-                                        borderSide: BorderSide(color: themeProvider.getBorderColor()),
-                                      ),
-                                      prefixIcon: Icon(Icons.person, color: themeProvider.getAccentColor()),
-                                    ),
-                                    validator: (value) {
-                                      if (value == null || value.isEmpty) {
-                                        return 'Please enter your name';
-                                      }
-                                      return null;
-                                    },
-                                  ),
-                                ],
-                              ),
-                            ),
-                            const SizedBox(height: 24),
-                            
-                            // Email Field
-                            FadeInSlide(
-                              delay: 0.2,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    'Email Address',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                      color: themeProvider.getTextColor(),
-                                    ),
-                                  ),
-                                  const SizedBox(height: 8),
-                                  TextFormField(
-                                    controller: _emailController,
-                                    enabled: _isEditing,
-                                    style: TextStyle(color: themeProvider.getTextColor()),
-                                    decoration: InputDecoration(
-                                      filled: true,
-                                      fillColor: themeProvider.getCardBackgroundColor(),
-                                      border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(12),
-                                        borderSide: BorderSide(color: themeProvider.getBorderColor()),
-                                      ),
-                                      enabledBorder: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(12),
-                                        borderSide: BorderSide(color: themeProvider.getBorderColor()),
-                                      ),
-                                      focusedBorder: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(12),
-                                        borderSide: BorderSide(color: themeProvider.getAccentColor(), width: 2),
-                                      ),
-                                      disabledBorder: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(12),
-                                        borderSide: BorderSide(color: themeProvider.getBorderColor()),
-                                      ),
-                                      prefixIcon: Icon(Icons.email, color: themeProvider.getAccentColor()),
-                                    ),
-                                    validator: (value) {
-                                      if (value == null || value.isEmpty) {
-                                        return 'Please enter your email';
-                                      }
-                                      if (!value.contains('@')) {
-                                        return 'Please enter a valid email';
-                                      }
-                                      return null;
-                                    },
-                                  ),
-                                ],
-                              ),
-                            ),
-                            const SizedBox(height: 24),
-                            
-                            // Phone Field
-                            FadeInSlide(
-                              delay: 0.3,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    'Phone Number',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                      color: themeProvider.getTextColor(),
-                                    ),
-                                  ),
-                                  const SizedBox(height: 8),
-                                  TextFormField(
-                                    controller: _phoneController,
-                                    enabled: _isEditing,
-                                    style: TextStyle(color: themeProvider.getTextColor()),
-                                    decoration: InputDecoration(
-                                      filled: true,
-                                      fillColor: themeProvider.getCardBackgroundColor(),
-                                      border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(12),
-                                        borderSide: BorderSide(color: themeProvider.getBorderColor()),
-                                      ),
-                                      enabledBorder: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(12),
-                                        borderSide: BorderSide(color: themeProvider.getBorderColor()),
-                                      ),
-                                      focusedBorder: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(12),
-                                        borderSide: BorderSide(color: themeProvider.getAccentColor(), width: 2),
-                                      ),
-                                      disabledBorder: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(12),
-                                        borderSide: BorderSide(color: themeProvider.getBorderColor()),
-                                      ),
-                                      prefixIcon: Icon(Icons.phone, color: themeProvider.getAccentColor()),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            const SizedBox(height: 32),
-                            
-                            // Save Button
-                            if (_isEditing)
-                              FadeInSlide(
-                                delay: 0.4,
-                                child: Row(
-                                  children: [
-                                    Expanded(
-                                      child: ScaleButton(
-                                        onPressed: () {
-                                          setState(() {
-                                            _isEditing = false;
-                                          });
-                                        },
-                                        child: Container(
-                                          padding: const EdgeInsets.symmetric(vertical: 16),
-                                          decoration: BoxDecoration(
-                                            color: themeProvider.getCardBackgroundColor(),
-                                            borderRadius: BorderRadius.circular(16),
-                                            border: Border.all(color: themeProvider.getBorderColor()),
-                                          ),
-                                          alignment: Alignment.center,
-                                          child: Text(
-                                            'Cancel',
-                                            style: TextStyle(
-                                              color: themeProvider.getTextColor(),
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    const SizedBox(width: 16),
-                                    Expanded(
-                                      child: ScaleButton(
-                                        onPressed: _saveChanges,
-                                        child: Container(
-                                          padding: const EdgeInsets.symmetric(vertical: 16),
-                                          decoration: BoxDecoration(
-                                            gradient: LinearGradient(
-                                              colors: [themeProvider.getAccentColor(), themeProvider.getSecondaryAccentColor()],
-                                              begin: Alignment.topLeft,
-                                              end: Alignment.bottomRight,
-                                            ),
-                                            borderRadius: BorderRadius.circular(16),
-                                            boxShadow: [
-                                              BoxShadow(
-                                                color: themeProvider.getAccentColor().withOpacity(0.3),
-                                                blurRadius: 12,
-                                                offset: const Offset(0, 6),
-                                              ),
-                                            ],
-                                          ),
-                                          alignment: Alignment.center,
-                                          child: const Text(
-                                            'Save Changes',
-                                            style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            const SizedBox(height: 24),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
+                ),
               ),
-            ),
+            ],
           ),
-        );
-      },
+        ),
+      ),
     );
   }
 }
-

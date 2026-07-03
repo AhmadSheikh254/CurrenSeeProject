@@ -72,7 +72,7 @@ class NewsDetailScreen extends StatelessWidget {
                               errorBuilder: (context, error, stackTrace) {
                                 return Container(
                                   height: 250,
-                                  color: themeProvider.getAccentColor().withOpacity(0.2),
+                                  color: themeProvider.getAccentColor().withValues(alpha: 0.2),
                                   child: Center(
                                     child: Icon(
                                       Icons.image_not_supported,
@@ -96,9 +96,9 @@ class NewsDetailScreen extends StatelessWidget {
                                       Container(
                                         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                                         decoration: BoxDecoration(
-                                          color: themeProvider.getAccentColor().withOpacity(0.2),
+                                          color: themeProvider.getAccentColor().withValues(alpha: 0.2),
                                           borderRadius: BorderRadius.circular(20),
-                                          border: Border.all(color: themeProvider.getAccentColor().withOpacity(0.3)),
+                                          border: Border.all(color: themeProvider.getAccentColor().withValues(alpha: 0.3)),
                                         ),
                                         child: Text(
                                           article.source,
@@ -154,7 +154,7 @@ class NewsDetailScreen extends StatelessWidget {
                                     article.content, // In a real app, this would be longer
                                     style: TextStyle(
                                       fontSize: 16,
-                                      color: themeProvider.getTextColor().withOpacity(0.9),
+                                      color: themeProvider.getTextColor().withValues(alpha: 0.9),
                                       height: 1.6,
                                     ),
                                   ),
@@ -166,7 +166,7 @@ class NewsDetailScreen extends StatelessWidget {
                                     'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
                                     style: TextStyle(
                                       fontSize: 16,
-                                      color: themeProvider.getTextColor().withOpacity(0.9),
+                                      color: themeProvider.getTextColor().withValues(alpha: 0.9),
                                       height: 1.6,
                                     ),
                                   ),

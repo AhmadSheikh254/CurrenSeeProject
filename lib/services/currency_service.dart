@@ -2,8 +2,8 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class CurrencyService {
+  // ignore: unused_field
   static const String _apiKey = 'YOUR_API_KEY'; // Replace with your actual API key
-  static const String _baseUrl = 'https://v6.exchangerate-api.com/v6/$_apiKey/latest/USD';
   
   // Fallback to free API if no key is provided or for testing
   static const String _freeUrl = 'https://api.exchangerate-api.com/v4/latest/USD';

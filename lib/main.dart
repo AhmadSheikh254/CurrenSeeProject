@@ -15,6 +15,8 @@ import 'package:currensee/features/currency/presentation/screens/home_screen.dar
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 
+import 'package:currensee/core/theme/app_theme.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
@@ -58,40 +60,27 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<ThemeProvider>(
       builder: (context, themeProvider, child) {
-          final colors = themeProvider.getGradientColors();
-          final accentColor = themeProvider.getAccentColor();
-          
           return MaterialApp(
             title: 'CurrenSee',
-            theme: ThemeData(
-              colorScheme: ColorScheme.fromSeed(
-                seedColor: accentColor,
-                primary: accentColor,
-              ),
-              useMaterial3: true,
-              scaffoldBackgroundColor: colors.first,
+            theme: AppTheme.lightTheme.copyWith(
               pageTransitionsTheme: const PageTransitionsTheme(
                 builders: {
                   TargetPlatform.android: CustomPageTransitionsBuilder(),
                   TargetPlatform.iOS: CustomPageTransitionsBuilder(),
                   TargetPlatform.windows: CustomPageTransitionsBuilder(),
+                  TargetPlatform.macOS: CustomPageTransitionsBuilder(),
+                  TargetPlatform.linux: CustomPageTransitionsBuilder(),
                 },
               ),
             ),
-            darkTheme: ThemeData(
-              colorScheme: ColorScheme.fromSeed(
-                seedColor: accentColor,
-                brightness: Brightness.dark,
-                primary: accentColor,
-                surface: colors.first,
-              ),
-              useMaterial3: true,
-              scaffoldBackgroundColor: colors.first,
+            darkTheme: AppTheme.darkTheme.copyWith(
               pageTransitionsTheme: const PageTransitionsTheme(
                 builders: {
                   TargetPlatform.android: CustomPageTransitionsBuilder(),
                   TargetPlatform.iOS: CustomPageTransitionsBuilder(),
                   TargetPlatform.windows: CustomPageTransitionsBuilder(),
+                  TargetPlatform.macOS: CustomPageTransitionsBuilder(),
+                  TargetPlatform.linux: CustomPageTransitionsBuilder(),
                 },
               ),
             ),

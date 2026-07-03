@@ -63,19 +63,19 @@ class _SplashScreenState extends State<SplashScreen> {
                             ),
                             boxShadow: [
                               BoxShadow(
-                                color: themeProvider.getAccentColor().withOpacity(0.2),
-                                blurRadius: 20,
+                                color: themeProvider.getAccentColor().withValues(alpha: 0.2),
+                                blurRadius: 24,
                                 spreadRadius: 5,
                               ),
                             ],
                           ),
                           child: Icon(
-                            Icons.currency_exchange,
-                            size: 60,
+                            Icons.currency_exchange_rounded,
+                            size: 56,
                             color: themeProvider.getAccentColor(),
                           ),
                         ),
-                        const SizedBox(height: 30),
+                        const SizedBox(height: 32),
                         Text(
                           'CurrenSee',
                           style: TextStyle(
@@ -85,7 +85,7 @@ class _SplashScreenState extends State<SplashScreen> {
                             letterSpacing: 2,
                           ),
                         ),
-                        const SizedBox(height: 10),
+                        const SizedBox(height: 12),
                         Text(
                           'Smart Currency Conversion',
                           style: TextStyle(
@@ -97,10 +97,10 @@ class _SplashScreenState extends State<SplashScreen> {
                       ],
                     ),
                   ),
-                  const SizedBox(height: 60),
-                  CustomAnimatedLoader(
+                  const SizedBox(height: 64),
+                  CurrencyLoader(
                     color: themeProvider.getAccentColor(),
-                    size: 30,
+                    size: 48,
                   ),
                 ],
               ),

@@ -70,8 +70,8 @@ class HistoryScreen extends StatelessWidget {
                           child: Container(
                             padding: const EdgeInsets.all(12),
                             decoration: themeProvider.getGlassDecoration(borderRadius: 16).copyWith(
-                              color: themeProvider.getErrorColor().withOpacity(0.1),
-                              border: Border.all(color: themeProvider.getErrorColor().withOpacity(0.2)),
+                              color: themeProvider.getErrorColor().withValues(alpha: 0.1),
+                              border: Border.all(color: themeProvider.getErrorColor().withValues(alpha: 0.2)),
                             ),
                             child: Icon(
                               Icons.delete_sweep_rounded,
@@ -95,7 +95,7 @@ class HistoryScreen extends StatelessWidget {
                           Container(
                             padding: const EdgeInsets.all(12),
                             decoration: BoxDecoration(
-                              color: themeProvider.getAccentColor().withOpacity(0.1),
+                              color: themeProvider.getAccentColor().withValues(alpha: 0.1),
                               shape: BoxShape.circle,
                             ),
                             child: Icon(
@@ -138,13 +138,13 @@ class HistoryScreen extends StatelessWidget {
                                 Container(
                                   padding: const EdgeInsets.all(32),
                                   decoration: BoxDecoration(
-                                    color: themeProvider.getAccentColor().withOpacity(0.1),
+                                    color: themeProvider.getAccentColor().withValues(alpha: 0.1),
                                     shape: BoxShape.circle,
                                   ),
                                   child: Icon(
                                     Icons.history_rounded,
                                     size: 80,
-                                    color: themeProvider.getAccentColor().withOpacity(0.5),
+                                    color: themeProvider.getAccentColor().withValues(alpha: 0.5),
                                   ),
                                 ),
                                 const SizedBox(height: 24),
@@ -235,7 +235,7 @@ class HistoryScreen extends StatelessWidget {
               color: themeProvider.getCardBackgroundColor(),
               borderRadius: BorderRadius.circular(20),
               border: Border.all(
-                color: themeProvider.getBorderColor().withOpacity(0.2),
+                color: themeProvider.getBorderColor().withValues(alpha: 0.2),
               ),
             ),
             child: Text(
@@ -250,7 +250,7 @@ class HistoryScreen extends StatelessWidget {
           const SizedBox(width: 12),
           Expanded(
             child: Divider(
-              color: themeProvider.getBorderColor().withOpacity(0.2),
+              color: themeProvider.getBorderColor().withValues(alpha: 0.2),
             ),
           ),
         ],
@@ -268,14 +268,14 @@ class HistoryScreen extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
-        color: themeProvider.getCardBackgroundColor().withOpacity(0.6),
+        color: themeProvider.getCardBackgroundColor().withValues(alpha: 0.6),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: themeProvider.getBorderColor().withOpacity(0.1),
+          color: themeProvider.getBorderColor().withValues(alpha: 0.1),
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.02),
+            color: Colors.black.withValues(alpha: 0.02),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -296,8 +296,8 @@ class HistoryScreen extends StatelessWidget {
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       colors: [
-                        themeProvider.getAccentColor().withOpacity(0.2),
-                        themeProvider.getSecondaryAccentColor().withOpacity(0.2),
+                        themeProvider.getAccentColor().withValues(alpha: 0.2),
+                        themeProvider.getSecondaryAccentColor().withValues(alpha: 0.2),
                       ],
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
@@ -389,7 +389,7 @@ class HistoryScreen extends StatelessWidget {
                             padding: const EdgeInsets.all(6),
                             decoration: BoxDecoration(
                               color: conversion.isSaved 
-                                  ? themeProvider.getAccentColor().withOpacity(0.1) 
+                                  ? themeProvider.getAccentColor().withValues(alpha: 0.1) 
                                   : Colors.transparent,
                               shape: BoxShape.circle,
                             ),

@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'dart:math' as math;
 
+// ──────────────────────────────────────────────────────────────────────────────
+// 1. FADE IN SLIDE — Entrance animation with fade + slide
+// ──────────────────────────────────────────────────────────────────────────────
 class FadeInSlide extends StatefulWidget {
   final Widget child;
   final double delay;
@@ -11,7 +15,7 @@ class FadeInSlide extends StatefulWidget {
     required this.child,
     this.delay = 0.0,
     this.duration = 0.5,
-    this.beginOffset = const Offset(0, 0.2),
+    this.beginOffset = const Offset(0, 0.15),
   });
 
   @override
@@ -30,19 +34,14 @@ class _FadeInSlideState extends State<FadeInSlide> with SingleTickerProviderStat
       vsync: this,
       duration: Duration(milliseconds: (widget.duration * 1000).round()),
     );
-
     _opacityAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeOut),
+      CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic),
     );
-
     _slideAnimation = Tween<Offset>(begin: widget.beginOffset, end: Offset.zero).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeOut),
+      CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic),
     );
-
     Future.delayed(Duration(milliseconds: (widget.delay * 1000).round()), () {
-      if (mounted) {
-        _controller.forward();
-      }
+      if (mounted) _controller.forward();
     });
   }
 
@@ -56,14 +55,14 @@ class _FadeInSlideState extends State<FadeInSlide> with SingleTickerProviderStat
   Widget build(BuildContext context) {
     return FadeTransition(
       opacity: _opacityAnimation,
-      child: SlideTransition(
-        position: _slideAnimation,
-        child: widget.child,
-      ),
+      child: SlideTransition(position: _slideAnimation, child: widget.child),
     );
   }
 }
 
+// ──────────────────────────────────────────────────────────────────────────────
+// 2. SCALE BUTTON — Press-to-scale tactile button
+// ──────────────────────────────────────────────────────────────────────────────
 class ScaleButton extends StatefulWidget {
   final Widget child;
   final VoidCallback? onPressed;
@@ -73,7 +72,7 @@ class ScaleButton extends StatefulWidget {
     super.key,
     required this.child,
     required this.onPressed,
-    this.scale = 0.95,
+    this.scale = 0.96,
   });
 
   @override
@@ -89,9 +88,8 @@ class _ScaleButtonState extends State<ScaleButton> with SingleTickerProviderStat
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 100),
+      duration: const Duration(milliseconds: 120),
     );
-
     _scaleAnimation = Tween<double>(begin: 1.0, end: widget.scale).animate(
       CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
     );
@@ -112,14 +110,14 @@ class _ScaleButtonState extends State<ScaleButton> with SingleTickerProviderStat
         widget.onPressed?.call();
       },
       onTapCancel: () => _controller.reverse(),
-      child: ScaleTransition(
-        scale: _scaleAnimation,
-        child: widget.child,
-      ),
+      child: ScaleTransition(scale: _scaleAnimation, child: widget.child),
     );
   }
 }
 
+// ──────────────────────────────────────────────────────────────────────────────
+// 3. SCALE IN — Scale + fade entrance animation
+// ──────────────────────────────────────────────────────────────────────────────
 class ScaleIn extends StatefulWidget {
   final Widget child;
   final double delay;
@@ -148,19 +146,14 @@ class _ScaleInState extends State<ScaleIn> with SingleTickerProviderStateMixin {
       vsync: this,
       duration: Duration(milliseconds: (widget.duration * 1000).round()),
     );
-
-    _scaleAnimation = Tween<double>(begin: 0.8, end: 1.0).animate(
+    _scaleAnimation = Tween<double>(begin: 0.85, end: 1.0).animate(
       CurvedAnimation(parent: _controller, curve: Curves.easeOutBack),
     );
-
     _opacityAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeIn),
+      CurvedAnimation(parent: _controller, curve: Curves.easeOut),
     );
-
     Future.delayed(Duration(milliseconds: (widget.delay * 1000).round()), () {
-      if (mounted) {
-        _controller.forward();
-      }
+      if (mounted) _controller.forward();
     });
   }
 
@@ -174,14 +167,14 @@ class _ScaleInState extends State<ScaleIn> with SingleTickerProviderStateMixin {
   Widget build(BuildContext context) {
     return FadeTransition(
       opacity: _opacityAnimation,
-      child: ScaleTransition(
-        scale: _scaleAnimation,
-        child: widget.child,
-      ),
+      child: ScaleTransition(scale: _scaleAnimation, child: widget.child),
     );
   }
 }
 
+// ──────────────────────────────────────────────────────────────────────────────
+// 4. STAGGERED LIST — Column with auto-staggered fade-in children
+// ──────────────────────────────────────────────────────────────────────────────
 class StaggeredList extends StatelessWidget {
   final List<Widget> children;
   final double delayIncrement;
@@ -189,7 +182,7 @@ class StaggeredList extends StatelessWidget {
   const StaggeredList({
     super.key,
     required this.children,
-    this.delayIncrement = 0.1,
+    this.delayIncrement = 0.08,
   });
 
   @override
@@ -205,7 +198,198 @@ class StaggeredList extends StatelessWidget {
   }
 }
 
-class CustomAnimatedLoader extends StatefulWidget {
+// ──────────────────────────────────────────────────────────────────────────────
+// 5. PREMIUM BRANDED LOADER — Currency-themed loading animation
+// ──────────────────────────────────────────────────────────────────────────────
+class CurrencyLoader extends StatefulWidget {
+  final double size;
+  final Color? color;
+  final String? message;
+
+  const CurrencyLoader({
+    super.key,
+    this.size = 80.0,
+    this.color,
+    this.message,
+  });
+
+  @override
+  State<CurrencyLoader> createState() => _CurrencyLoaderState();
+}
+
+class _CurrencyLoaderState extends State<CurrencyLoader>
+    with TickerProviderStateMixin {
+  late AnimationController _rotateController;
+  late AnimationController _pulseController;
+  late AnimationController _fadeController;
+  late Animation<double> _pulseAnimation;
+  late Animation<double> _fadeAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _rotateController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 2400),
+    )..repeat();
+
+    _pulseController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1800),
+    )..repeat(reverse: true);
+
+    _fadeController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 800),
+    )..forward();
+
+    _pulseAnimation = Tween<double>(begin: 0.92, end: 1.08).animate(
+      CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
+    );
+
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _fadeController, curve: Curves.easeOut),
+    );
+  }
+
+  @override
+  void dispose() {
+    _rotateController.dispose();
+    _pulseController.dispose();
+    _fadeController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final accentColor = widget.color ?? const Color(0xFF6366F1);
+
+    return FadeTransition(
+      opacity: _fadeAnimation,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          ScaleTransition(
+            scale: _pulseAnimation,
+            child: SizedBox(
+              width: widget.size,
+              height: widget.size,
+              child: AnimatedBuilder(
+                animation: _rotateController,
+                builder: (context, child) {
+                  return CustomPaint(
+                    painter: _CurrencyLoaderPainter(
+                      color: accentColor,
+                      progress: _rotateController.value,
+                    ),
+                    child: Center(
+                      child: Text(
+                        '¤',
+                        style: TextStyle(
+                          fontSize: widget.size * 0.32,
+                          fontWeight: FontWeight.w700,
+                          color: accentColor,
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ),
+          if (widget.message != null) ...[
+            const SizedBox(height: 20),
+            Text(
+              widget.message!,
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+                color: accentColor.withValues(alpha: 0.7),
+                letterSpacing: 0.5,
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+class _CurrencyLoaderPainter extends CustomPainter {
+  final Color color;
+  final double progress;
+
+  _CurrencyLoaderPainter({required this.color, required this.progress});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final center = size.center(Offset.zero);
+    final radius = size.width / 2;
+
+    // Outer track ring
+    final trackPaint = Paint()
+      ..color = color.withValues(alpha: 0.08)
+      ..strokeWidth = 3.0
+      ..style = PaintingStyle.stroke;
+    canvas.drawCircle(center, radius - 2, trackPaint);
+
+    // Inner subtle ring
+    final innerTrackPaint = Paint()
+      ..color = color.withValues(alpha: 0.04)
+      ..strokeWidth = 1.5
+      ..style = PaintingStyle.stroke;
+    canvas.drawCircle(center, radius * 0.7, innerTrackPaint);
+
+    // Animated gradient arc
+    final sweepAngle = math.pi * 0.8;
+    final startAngle = progress * 2 * math.pi - math.pi / 2;
+
+    final arcPaint = Paint()
+      ..strokeWidth = 3.0
+      ..style = PaintingStyle.stroke
+      ..strokeCap = StrokeCap.round
+      ..shader = SweepGradient(
+        startAngle: startAngle,
+        endAngle: startAngle + sweepAngle,
+        colors: [
+          color.withValues(alpha: 0.0),
+          color.withValues(alpha: 0.6),
+          color,
+        ],
+        stops: const [0.0, 0.5, 1.0],
+      ).createShader(Rect.fromCircle(center: center, radius: radius - 2));
+
+    canvas.drawArc(
+      Rect.fromCircle(center: center, radius: radius - 2),
+      startAngle,
+      sweepAngle,
+      false,
+      arcPaint,
+    );
+
+    // Leading dot
+    final dotX = center.dx + (radius - 2) * math.cos(startAngle + sweepAngle);
+    final dotY = center.dy + (radius - 2) * math.sin(startAngle + sweepAngle);
+    final dotPaint = Paint()
+      ..color = color
+      ..style = PaintingStyle.fill;
+    canvas.drawCircle(Offset(dotX, dotY), 3.5, dotPaint);
+
+    // Glow around leading dot
+    final glowPaint = Paint()
+      ..color = color.withValues(alpha: 0.25)
+      ..style = PaintingStyle.fill
+      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 6);
+    canvas.drawCircle(Offset(dotX, dotY), 5, glowPaint);
+  }
+
+  @override
+  bool shouldRepaint(covariant _CurrencyLoaderPainter oldDelegate) =>
+      oldDelegate.progress != progress;
+}
+
+// Keep backward-compatible alias
+class CustomAnimatedLoader extends StatelessWidget {
   final Color color;
   final double size;
 
@@ -216,10 +400,63 @@ class CustomAnimatedLoader extends StatefulWidget {
   });
 
   @override
-  State<CustomAnimatedLoader> createState() => _CustomAnimatedLoaderState();
+  Widget build(BuildContext context) {
+    return CurrencyLoader(size: size, color: color);
+  }
 }
 
-class _CustomAnimatedLoaderState extends State<CustomAnimatedLoader> with SingleTickerProviderStateMixin {
+// ──────────────────────────────────────────────────────────────────────────────
+// 6. FULL SCREEN LOADER — Branded full-screen loading overlay
+// ──────────────────────────────────────────────────────────────────────────────
+class FullScreenLoader extends StatelessWidget {
+  final String? message;
+  final Color? backgroundColor;
+  final Color? accentColor;
+
+  const FullScreenLoader({
+    super.key,
+    this.message,
+    this.backgroundColor,
+    this.accentColor,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final bgColor = backgroundColor ?? const Color(0xFF090E1A);
+    return Container(
+      color: bgColor,
+      child: Center(
+        child: CurrencyLoader(
+          size: 80,
+          color: accentColor ?? const Color(0xFF6366F1),
+          message: message ?? 'Loading...',
+        ),
+      ),
+    );
+  }
+}
+
+// ──────────────────────────────────────────────────────────────────────────────
+// 7. SHIMMER EFFECT — Premium content placeholder
+// ──────────────────────────────────────────────────────────────────────────────
+class ShimmerEffect extends StatefulWidget {
+  final Widget child;
+  final Color? baseColor;
+  final Color? highlightColor;
+
+  const ShimmerEffect({
+    super.key,
+    required this.child,
+    this.baseColor,
+    this.highlightColor,
+  });
+
+  @override
+  State<ShimmerEffect> createState() => _ShimmerEffectState();
+}
+
+class _ShimmerEffectState extends State<ShimmerEffect>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
 
   @override
@@ -227,7 +464,7 @@ class _CustomAnimatedLoaderState extends State<CustomAnimatedLoader> with Single
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 2),
+      duration: const Duration(milliseconds: 1500),
     )..repeat();
   }
 
@@ -239,56 +476,166 @@ class _CustomAnimatedLoaderState extends State<CustomAnimatedLoader> with Single
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: SizedBox(
-        width: widget.size,
-        height: widget.size,
-        child: AnimatedBuilder(
-          animation: _controller,
-          builder: (context, child) {
-            return CustomPaint(
-              painter: _LoaderPainter(
-                color: widget.color,
-                value: _controller.value,
-              ),
-            );
+    final base = widget.baseColor ?? const Color(0xFF1E2E4A).withValues(alpha: 0.3);
+    final highlight = widget.highlightColor ?? const Color(0xFF6366F1).withValues(alpha: 0.08);
+
+    return AnimatedBuilder(
+      animation: _controller,
+      builder: (context, child) {
+        return ShaderMask(
+          shaderCallback: (bounds) {
+            return LinearGradient(
+              begin: Alignment.centerLeft,
+              end: Alignment.centerRight,
+              colors: [base, highlight, base],
+              stops: [
+                (_controller.value - 0.3).clamp(0.0, 1.0),
+                _controller.value,
+                (_controller.value + 0.3).clamp(0.0, 1.0),
+              ],
+            ).createShader(bounds);
           },
-        ),
+          blendMode: BlendMode.srcATop,
+          child: widget.child,
+        );
+      },
+    );
+  }
+}
+
+// ──────────────────────────────────────────────────────────────────────────────
+// 8. HOVER SCALE — Desktop hover effect for cards
+// ──────────────────────────────────────────────────────────────────────────────
+class HoverScale extends StatefulWidget {
+  final Widget child;
+  final double scale;
+  final double liftAmount;
+
+  const HoverScale({
+    super.key,
+    required this.child,
+    this.scale = 1.02,
+    this.liftAmount = 4.0,
+  });
+
+  @override
+  State<HoverScale> createState() => _HoverScaleState();
+}
+
+class _HoverScaleState extends State<HoverScale> {
+  bool _isHovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      onEnter: (_) => setState(() => _isHovered = true),
+      onExit: (_) => setState(() => _isHovered = false),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 250),
+        curve: Curves.easeOutCubic,
+        transform: (Matrix4.identity()
+          // ignore: deprecated_member_use
+          ..translate(0.0, _isHovered ? -widget.liftAmount : 0.0, 0.0)
+          // ignore: deprecated_member_use
+          ..scale(_isHovered ? widget.scale : 1.0)),
+        child: widget.child,
       ),
     );
   }
 }
 
-class _LoaderPainter extends CustomPainter {
-  final Color color;
-  final double value;
+// ──────────────────────────────────────────────────────────────────────────────
+// 9. ANIMATED COUNTER — Counting number animation
+// ──────────────────────────────────────────────────────────────────────────────
+class AnimatedCounter extends StatelessWidget {
+  final int value;
+  final TextStyle? style;
+  final Duration duration;
+  final String? prefix;
+  final String? suffix;
 
-  _LoaderPainter({required this.color, required this.value});
+  const AnimatedCounter({
+    super.key,
+    required this.value,
+    this.style,
+    this.duration = const Duration(milliseconds: 800),
+    this.prefix,
+    this.suffix,
+  });
 
   @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = color.withOpacity(0.2)
-      ..strokeWidth = 3
-      ..style = PaintingStyle.stroke;
-
-    canvas.drawCircle(size.center(Offset.zero), size.width / 2, paint);
-
-    final activePaint = Paint()
-      ..color = color
-      ..strokeWidth = 3
-      ..style = PaintingStyle.stroke
-      ..strokeCap = StrokeCap.round;
-
-    canvas.drawArc(
-      Rect.fromLTWH(0, 0, size.width, size.height),
-      -0.5 * 3.14159 + (value * 2 * 3.14159),
-      0.5 * 3.14159,
-      false,
-      activePaint,
+  Widget build(BuildContext context) {
+    return TweenAnimationBuilder<int>(
+      tween: IntTween(begin: 0, end: value),
+      duration: duration,
+      curve: Curves.easeOutCubic,
+      builder: (context, val, child) {
+        return Text(
+          '${prefix ?? ''}$val${suffix ?? ''}',
+          style: style,
+        );
+      },
     );
+  }
+}
+
+// ──────────────────────────────────────────────────────────────────────────────
+// 10. PULSING DOT — Live status indicator
+// ──────────────────────────────────────────────────────────────────────────────
+class PulsingDot extends StatefulWidget {
+  final Color color;
+  final double size;
+
+  const PulsingDot({
+    super.key,
+    this.color = const Color(0xFF10B981),
+    this.size = 8.0,
+  });
+
+  @override
+  State<PulsingDot> createState() => _PulsingDotState();
+}
+
+class _PulsingDotState extends State<PulsingDot>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1500),
+    )..repeat(reverse: true);
   }
 
   @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _controller,
+      builder: (context, child) {
+        return Container(
+          width: widget.size,
+          height: widget.size,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: widget.color,
+            boxShadow: [
+              BoxShadow(
+                color: widget.color.withValues(alpha: 0.4 * _controller.value),
+                blurRadius: 6 * _controller.value,
+                spreadRadius: 2 * _controller.value,
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
 }

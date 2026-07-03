@@ -58,7 +58,7 @@ class _NewsScreenState extends State<NewsScreen> {
                       builder: (context, snapshot) {
                         if (snapshot.connectionState == ConnectionState.waiting) {
                           return Center(
-                            child: CustomAnimatedLoader(
+                            child: CurrencyLoader(
                               color: themeProvider.getAccentColor(),
                             ),
                           );
@@ -115,8 +115,8 @@ class _NewsScreenState extends State<NewsScreen> {
                 child: Container(
                   padding: const EdgeInsets.all(12),
                   decoration: themeProvider.getGlassDecoration(borderRadius: 16).copyWith(
-                    color: themeProvider.getCardBackgroundColor().withOpacity(0.35),
-                    border: Border.all(color: themeProvider.getBorderColor().withOpacity(0.15)),
+                    color: themeProvider.getCardBackgroundColor().withValues(alpha: 0.35),
+                    border: Border.all(color: themeProvider.getBorderColor().withValues(alpha: 0.15)),
                   ),
                   child: Icon(Icons.arrow_back_ios_new_rounded, color: themeProvider.getTextColor(), size: 20),
                 ),
@@ -137,14 +137,14 @@ class _NewsScreenState extends State<NewsScreen> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
             decoration: themeProvider.getGlassDecoration(borderRadius: 20).copyWith(
-              color: themeProvider.getCardBackgroundColor().withOpacity(0.3),
-              border: Border.all(color: themeProvider.getBorderColor().withOpacity(0.1)),
+              color: themeProvider.getCardBackgroundColor().withValues(alpha: 0.3),
+              border: Border.all(color: themeProvider.getBorderColor().withValues(alpha: 0.1)),
             ),
             child: TextField(
               style: TextStyle(color: themeProvider.getTextColor(), fontWeight: FontWeight.w600),
               decoration: InputDecoration(
                 hintText: 'Search market news...',
-                hintStyle: TextStyle(color: themeProvider.getSecondaryTextColor().withOpacity(0.6)),
+                hintStyle: TextStyle(color: themeProvider.getSecondaryTextColor().withValues(alpha: 0.6)),
                 border: InputBorder.none,
                 icon: Icon(Icons.search_rounded, color: themeProvider.getAccentColor(), size: 22),
               ),
@@ -179,17 +179,17 @@ class _NewsScreenState extends State<NewsScreen> {
         decoration: BoxDecoration(
           color: isSelected 
             ? themeProvider.getAccentColor() 
-            : themeProvider.getCardBackgroundColor().withOpacity(0.3),
+            : themeProvider.getCardBackgroundColor().withValues(alpha: 0.3),
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
             color: isSelected 
               ? themeProvider.getAccentColor() 
-              : themeProvider.getBorderColor().withOpacity(0.1),
+              : themeProvider.getBorderColor().withValues(alpha: 0.1),
             width: 1.5,
           ),
           boxShadow: isSelected ? [
             BoxShadow(
-              color: themeProvider.getAccentColor().withOpacity(0.3),
+              color: themeProvider.getAccentColor().withValues(alpha: 0.3),
               blurRadius: 8,
               offset: const Offset(0, 4),
             )
@@ -198,7 +198,7 @@ class _NewsScreenState extends State<NewsScreen> {
         child: Text(
           label,
           style: TextStyle(
-            color: isSelected ? Colors.white : themeProvider.getTextColor().withOpacity(0.7),
+            color: isSelected ? Colors.white : themeProvider.getTextColor().withValues(alpha: 0.7),
             fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
             fontSize: 13,
             letterSpacing: 0.2,
@@ -237,7 +237,7 @@ class _NewsScreenState extends State<NewsScreen> {
                     errorBuilder: (context, error, stackTrace) {
                       return Container(
                         height: 180,
-                        color: themeProvider.getAccentColor().withOpacity(0.1),
+                        color: themeProvider.getAccentColor().withValues(alpha: 0.1),
                         child: Center(
                           child: Icon(
                             Icons.image_not_supported_rounded,
@@ -257,7 +257,7 @@ class _NewsScreenState extends State<NewsScreen> {
                         end: Alignment.bottomCenter,
                         colors: [
                           Colors.transparent,
-                          Colors.black.withOpacity(0.6),
+                          Colors.black.withValues(alpha: 0.6),
                         ],
                       ),
                     ),
@@ -289,7 +289,7 @@ class _NewsScreenState extends State<NewsScreen> {
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                         decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.2),
+                          color: Colors.white.withValues(alpha: 0.2),
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Text(
@@ -305,7 +305,7 @@ class _NewsScreenState extends State<NewsScreen> {
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                         decoration: BoxDecoration(
-                          color: Colors.black.withOpacity(0.5),
+                          color: Colors.black.withValues(alpha: 0.5),
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Row(
@@ -345,7 +345,7 @@ class _NewsScreenState extends State<NewsScreen> {
                         borderRadius: BorderRadius.circular(20),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.orange.withOpacity(0.3),
+                            color: Colors.orange.withValues(alpha: 0.3),
                             blurRadius: 8,
                             offset: const Offset(0, 2),
                           ),
