@@ -26,6 +26,7 @@ class _FadeInSlideState extends State<FadeInSlide> with SingleTickerProviderStat
   late AnimationController _controller;
   late Animation<double> _opacityAnimation;
   late Animation<Offset> _slideAnimation;
+  bool _started = false;
 
   @override
   void initState() {
@@ -40,6 +41,18 @@ class _FadeInSlideState extends State<FadeInSlide> with SingleTickerProviderStat
     _slideAnimation = Tween<Offset>(begin: widget.beginOffset, end: Offset.zero).animate(
       CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic),
     );
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_started) return;
+    _started = true;
+    // Respect the system reduced-motion preference
+    if (MediaQuery.maybeDisableAnimationsOf(context) ?? false) {
+      _controller.value = 1.0;
+      return;
+    }
     Future.delayed(Duration(milliseconds: (widget.delay * 1000).round()), () {
       if (mounted) _controller.forward();
     });
@@ -138,6 +151,7 @@ class _ScaleInState extends State<ScaleIn> with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _scaleAnimation;
   late Animation<double> _opacityAnimation;
+  bool _started = false;
 
   @override
   void initState() {
@@ -152,6 +166,18 @@ class _ScaleInState extends State<ScaleIn> with SingleTickerProviderStateMixin {
     _opacityAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(parent: _controller, curve: Curves.easeOut),
     );
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_started) return;
+    _started = true;
+    // Respect the system reduced-motion preference
+    if (MediaQuery.maybeDisableAnimationsOf(context) ?? false) {
+      _controller.value = 1.0;
+      return;
+    }
     Future.delayed(Duration(milliseconds: (widget.delay * 1000).round()), () {
       if (mounted) _controller.forward();
     });
@@ -182,7 +208,8 @@ class StaggeredList extends StatelessWidget {
   const StaggeredList({
     super.key,
     required this.children,
-    this.delayIncrement = 0.08,
+    // 30–50ms per item per Material motion guidance; 50ms keeps lists snappy
+    this.delayIncrement = 0.05,
   });
 
   @override
@@ -426,13 +453,15 @@ class FullScreenLoader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bgColor = backgroundColor ?? const Color(0xFF090E1A);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final bgColor = backgroundColor ??
+        (isDark ? const Color(0xFF05060A) : const Color(0xFFF1F3F8));
     return Container(
       color: bgColor,
       child: Center(
         child: CurrencyLoader(
           size: 80,
-          color: accentColor ?? const Color(0xFF6366F1),
+          color: accentColor ?? (isDark ? const Color(0xFF6366F1) : const Color(0xFF4F46E5)),
           message: message ?? 'Loading...',
         ),
       ),
@@ -695,7 +724,42 @@ class _DotsPainter extends CustomPainter {
 }
 
 // ──────────────────────────────────────────────────────────────────────────────
-// 12. GLOW OVERLAY — Premium ambient glow positioned
+// 12. GRADIENT TEXT — Premium gradient-filled headline text
+// ──────────────────────────────────────────────────────────────────────────────
+class GradientText extends StatelessWidget {
+  final String text;
+  final TextStyle style;
+  final List<Color> colors;
+  final TextAlign? textAlign;
+
+  const GradientText(
+    this.text, {
+    super.key,
+    required this.style,
+    required this.colors,
+    this.textAlign,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ShaderMask(
+      blendMode: BlendMode.srcIn,
+      shaderCallback: (bounds) => LinearGradient(
+        colors: colors,
+        begin: Alignment.centerLeft,
+        end: Alignment.centerRight,
+      ).createShader(bounds),
+      child: Text(
+        text,
+        textAlign: textAlign,
+        style: style.copyWith(color: Colors.white),
+      ),
+    );
+  }
+}
+
+// ──────────────────────────────────────────────────────────────────────────────
+// 13. GLOW OVERLAY — Premium ambient glow positioned
 // ──────────────────────────────────────────────────────────────────────────────
 class GlowOverlay extends StatelessWidget {
   final Color color;

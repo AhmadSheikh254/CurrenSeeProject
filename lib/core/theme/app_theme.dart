@@ -14,8 +14,8 @@ class AppTheme {
   static const Color darkAccentBlue = Color(0xFF3B82F6);   // Info blue
   static const Color darkAccentPink = Color(0xFFEC4899);   // Pink accent
   static const Color darkTextPrimary = Color(0xFFEDF2F7);  // High contrast text
-  static const Color darkTextSecondary = Color(0xFF7F8EA3); // Muted text
-  static const Color darkTextTertiary = Color(0xFF3D4452);  // Very muted
+  static const Color darkTextSecondary = Color(0xFF94A3B8); // Muted text (≥4.5:1 on dark)
+  static const Color darkTextTertiary = Color(0xFF64748B);  // Very muted (≥3:1 for UI glyphs)
 
   // Light Mode: Soft Pearl + Professional Indigo
   static const Color lightBg1 = Color(0xFFF1F3F8);       // Canvas background

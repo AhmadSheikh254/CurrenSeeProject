@@ -34,14 +34,17 @@ class HistoryScreen extends StatelessWidget {
                     child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
+                      GradientText(
                         'History',
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 32,
                           fontWeight: FontWeight.w900,
                           letterSpacing: -1.0,
-                          color: themeProvider.getTextColor(),
                         ),
+                        colors: [
+                          themeProvider.getTextColor(),
+                          themeProvider.getAccentColor(),
+                        ],
                       ),
                       if (conversions.isNotEmpty)
                         ScaleButton(
@@ -375,6 +378,8 @@ class HistoryScreen extends StatelessWidget {
                         fontWeight: FontWeight.bold,
                         fontSize: 18,
                         color: themeProvider.getTextColor(),
+                        fontFamily: 'JetBrains Mono',
+                        fontFeatures: const [FontFeature.tabularFigures()],
                       ),
                     ),
                     const SizedBox(height: 4),
@@ -385,24 +390,30 @@ class HistoryScreen extends StatelessWidget {
                           style: TextStyle(
                             fontSize: 12,
                             color: themeProvider.getSecondaryTextColor(),
+                            fontFamily: 'JetBrains Mono',
+                            fontFeatures: const [FontFeature.tabularFigures()],
                           ),
                         ),
-                        const SizedBox(width: 8),
-                        GestureDetector(
+                        const SizedBox(width: 4),
+                        // 44pt touch target per Apple HIG / Material
+                        InkWell(
                           onTap: () {
                             historyProvider.toggleSaved(index);
                           },
+                          customBorder: const CircleBorder(),
                           child: Container(
-                            padding: const EdgeInsets.all(6),
+                            width: 44,
+                            height: 44,
+                            alignment: Alignment.center,
                             decoration: BoxDecoration(
-                              color: conversion.isSaved 
-                                  ? themeProvider.getAccentColor().withValues(alpha: 0.1) 
+                              color: conversion.isSaved
+                                  ? themeProvider.getAccentColor().withValues(alpha: 0.1)
                                   : Colors.transparent,
                               shape: BoxShape.circle,
                             ),
                             child: Icon(
                               conversion.isSaved ? Icons.bookmark_rounded : Icons.bookmark_border_rounded,
-                              size: 16,
+                              size: 18,
                               color: conversion.isSaved
                                   ? themeProvider.getAccentColor()
                                   : themeProvider.getSecondaryTextColor(),

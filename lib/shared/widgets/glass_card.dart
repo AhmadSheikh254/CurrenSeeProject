@@ -33,7 +33,6 @@ class GlassCard extends StatelessWidget {
     Widget card = Container(
       width: width,
       margin: margin,
-      padding: padding ?? const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: customBgColor ?? themeProvider.getCardBackgroundColor().withValues(alpha: 0.85),
         borderRadius: BorderRadius.circular(borderRadius),
@@ -56,6 +55,20 @@ class GlassCard extends StatelessWidget {
           ),
         ],
       ),
+      // Specular top edge — the "liquid glass" light-catching highlight
+      foregroundDecoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(borderRadius),
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          stops: const [0.0, 0.08],
+          colors: [
+            Colors.white.withValues(alpha: themeProvider.isDarkMode ? 0.06 : 0.5),
+            Colors.white.withValues(alpha: 0.0),
+          ],
+        ),
+      ),
+      padding: padding ?? const EdgeInsets.all(20),
       child: child,
     );
 

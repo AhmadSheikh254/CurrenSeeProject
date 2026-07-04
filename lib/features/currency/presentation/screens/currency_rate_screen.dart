@@ -98,14 +98,17 @@ class _CurrencyRateScreenState extends State<CurrencyRateScreen> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text(
+                            GradientText(
                               'Exchange Rates',
-                              style: TextStyle(
+                              style: const TextStyle(
                                 fontSize: 32,
                                 fontWeight: FontWeight.w900,
                                 letterSpacing: -1.0,
-                                color: themeProvider.getTextColor(),
                               ),
+                              colors: [
+                                themeProvider.getTextColor(),
+                                themeProvider.getAccentColor(),
+                              ],
                             ),
                             Container(
                               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
@@ -187,7 +190,8 @@ class _CurrencyRateScreenState extends State<CurrencyRateScreen> {
                           'Trending',
                           style: TextStyle(
                             fontSize: 18,
-                            fontWeight: FontWeight.bold,
+                            fontWeight: FontWeight.w800,
+                            letterSpacing: -0.4,
                             color: themeProvider.getTextColor(),
                           ),
                         ),
@@ -277,7 +281,8 @@ class _CurrencyRateScreenState extends State<CurrencyRateScreen> {
           'Quick Actions',
           style: TextStyle(
             fontSize: 18,
-            fontWeight: FontWeight.bold,
+            fontWeight: FontWeight.w800,
+            letterSpacing: -0.4,
             color: themeProvider.getTextColor(),
           ),
         ),
@@ -384,18 +389,40 @@ class _CurrencyRateScreenState extends State<CurrencyRateScreen> {
       ),
     );
   }
-  // Currency flag emoji map for popular currencies
-  static const Map<String, String> _flagEmojis = {
-    'USD': '🇺🇸', 'EUR': '🇪🇺', 'GBP': '🇬🇧', 'JPY': '🇯🇵',
-    'AUD': '🇦🇺', 'CAD': '🇨🇦', 'CHF': '🇨🇭', 'CNY': '🇨🇳',
-    'INR': '🇮🇳', 'MXN': '🇲🇽', 'SGD': '🇸🇬', 'HKD': '🇭🇰',
-    'NOK': '🇳🇴', 'SEK': '🇸🇪', 'DKK': '🇩🇰', 'NZD': '🇳🇿',
-    'ZAR': '🇿🇦', 'BRL': '🇧🇷', 'RUB': '🇷🇺', 'TRY': '🇹🇷',
-    'AED': '🇦🇪', 'SAR': '🇸🇦', 'KWD': '🇰🇼', 'QAR': '🇶🇦',
-    'EGP': '🇪🇬', 'PKR': '🇵🇰', 'BDT': '🇧🇩', 'THB': '🇹🇭',
-    'MYR': '🇲🇾', 'IDR': '🇮🇩', 'PHP': '🇵🇭', 'KRW': '🇰🇷',
-    'ILS': '🇮🇱', 'CZK': '🇨🇿', 'PLN': '🇵🇱', 'HUF': '🇭🇺',
+  // Currencies whose flag cannot be derived from the ISO country prefix
+  static const Map<String, String> _flagOverrides = {
+    'EUR': '🇪🇺', // Euro — EU flag
+    'XAF': '🇨🇲', // Central African CFA franc
+    'XOF': '🇸🇳', // West African CFA franc
+    'XPF': '🇵🇫', // CFP franc
+    'XCD': '🇦🇬', // East Caribbean dollar
+    'XDR': '🏳️', // IMF special drawing rights
+    'ANG': '🇨🇼', // Netherlands Antillean guilder
+    'STN': '🇸🇹', // São Tomé dobra
+    'FOK': '🇫🇴', // Faroese króna
+    'KID': '🇰🇮', // Kiribati dollar
+    'TVD': '🇹🇻', // Tuvaluan dollar
+    'GGP': '🇬🇬', // Guernsey pound
+    'IMP': '🇮🇲', // Manx pound
+    'JEP': '🇯🇪', // Jersey pound
   };
+
+  /// Derives a flag for any ISO-4217 code: explicit override first, then the
+  /// first two letters as a country code (USD→US→🇺🇸, PKR→PK→🇵🇰, …).
+  static String _flagForCurrency(String code) {
+    final override = _flagOverrides[code.toUpperCase()];
+    if (override != null) return override;
+    final cc = code.toUpperCase();
+    if (cc.length >= 2 &&
+        cc.codeUnitAt(0) >= 65 && cc.codeUnitAt(0) <= 90 &&
+        cc.codeUnitAt(1) >= 65 && cc.codeUnitAt(1) <= 90) {
+      return String.fromCharCodes([
+        0x1F1E6 + cc.codeUnitAt(0) - 65,
+        0x1F1E6 + cc.codeUnitAt(1) - 65,
+      ]);
+    }
+    return '🏳️';
+  }
 
   // Deterministic mock change % based on currency code (looks real)
   double _getMockChange(String code) {
@@ -408,7 +435,7 @@ class _CurrencyRateScreenState extends State<CurrencyRateScreen> {
     final code = rate['code'] as String;
     final name = rate['name'] as String;
     final rateValue = rate['rate'] as double;
-    final flag = _flagEmojis[code] ?? '💱';
+    final flag = _flagForCurrency(code);
     final change = _getMockChange(code);
     final isPositive = change >= 0;
     final changeColor = isPositive ? const Color(0xFF10B981) : const Color(0xFFEF4444);
@@ -472,8 +499,8 @@ class _CurrencyRateScreenState extends State<CurrencyRateScreen> {
                         Text(
                           code,
                           style: TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w700,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w800,
                             color: themeProvider.getTextColor(),
                             letterSpacing: 0.3,
                           ),
@@ -519,8 +546,8 @@ class _CurrencyRateScreenState extends State<CurrencyRateScreen> {
                     Text(
                       name,
                       style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w400,
+                        fontSize: 12.5,
+                        fontWeight: FontWeight.w500,
                         color: themeProvider.getSecondaryTextColor(),
                       ),
                       overflow: TextOverflow.ellipsis,
@@ -540,6 +567,7 @@ class _CurrencyRateScreenState extends State<CurrencyRateScreen> {
                       fontWeight: FontWeight.w700,
                       color: themeProvider.getTextColor(),
                       letterSpacing: -0.3,
+                      fontFamily: 'JetBrains Mono',
                       fontFeatures: const [FontFeature.tabularFigures()],
                     ),
                   ),

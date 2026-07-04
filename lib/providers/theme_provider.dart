@@ -19,8 +19,8 @@ class ThemeProvider extends ChangeNotifier {
   // ── Gradient backgrounds ───────────────────────────────────────────────────
   List<Color> getGradientColors() {
     return _isDarkMode
-        ? [AppTheme.darkBg1, const Color(0xFF040512)]
-        : [const Color(0xFFEEF0F7), AppTheme.lightBg2];
+        ? [AppTheme.darkBg1, const Color(0xFF0A0820)]
+        : [const Color(0xFFECEFFB), const Color(0xFFFAF9FF)];
   }
 
   // ── Accent colors ─────────────────────────────────────────────────────────
@@ -89,7 +89,8 @@ class ThemeProvider extends ChangeNotifier {
   Color getBottomNavTextColor() => getAccentColor();
 
   Color getBottomNavUnselectedColor() {
-    return _isDarkMode ? const Color(0xFF3D4452) : const Color(0xFF9CA3AF);
+    // ≥3:1 contrast against nav surface in both themes (WCAG for UI glyphs)
+    return _isDarkMode ? const Color(0xFF64748B) : const Color(0xFF6B7280);
   }
 
   // ── Status colors ──────────────────────────────────────────────────────────

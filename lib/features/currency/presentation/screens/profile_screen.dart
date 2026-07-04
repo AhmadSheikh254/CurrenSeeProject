@@ -46,14 +46,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(
+                        GradientText(
                           'Profile',
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontSize: 32,
                             fontWeight: FontWeight.w900,
                             letterSpacing: -1.0,
-                            color: themeProvider.getTextColor(),
                           ),
+                          colors: [
+                            themeProvider.getTextColor(),
+                            themeProvider.getAccentColor(),
+                          ],
                         ),
                         ScaleButton(
                           onPressed: () {
